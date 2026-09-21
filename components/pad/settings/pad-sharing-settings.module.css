@@ -1,0 +1,109 @@
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.groupDescription {
+  margin: -2px 0 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.passwordHeading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--brand) 6%, var(--surface-strong));
+}
+
+.passwordHeading > span:last-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.passwordHeading b {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.passwordHeading small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.icon {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--brand-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.actions > span {
+  color: var(--brand-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.passwordActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.revealedPassword {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--brand) 24%, var(--line));
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.revealedPassword span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.revealedPassword strong {
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-family: var(--font-mono, monospace);
+  font-size: 14px;
+}
+
+@media (max-width: 520px) {
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actions > span {
+    text-align: center;
+  }
+
+  .passwordActions > button {
+    flex: 1 1 100%;
+  }
+}

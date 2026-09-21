@@ -1,0 +1,54 @@
+.root {
+  display: grid;
+  gap: 7px;
+}
+
+.inputRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.inputRow textarea {
+  min-width: 0;
+  min-height: 76px;
+  flex: 1;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.inputRow button {
+  min-width: 105px;
+  min-height: 42px;
+}
+
+.hint,
+.status,
+.error {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.hint {
+  color: var(--muted);
+}
+
+.status {
+  color: var(--brand);
+}
+
+.error {
+  color: var(--danger-soft-fg);
+}
+
+@media (max-width: 480px) {
+  .inputRow {
+    flex-direction: column;
+  }
+
+  .inputRow button {
+    width: 100%;
+    min-height: 40px;
+  }
+}

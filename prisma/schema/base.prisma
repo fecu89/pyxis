@@ -1,0 +1,17 @@
+// 멀티파일 스키마의 진입 파일입니다. datasource와 generator만 두고, 모델은 도메인별로
+// 나눠 둡니다 — identity(회원·학교·권한·알림), activity(퀴즈·패드 공통 활동),
+// quiz(퀴즈 도메인), pad(패드 도메인).
+//
+// pg_trgm은 패드 게시물 본문·제목 검색(app/api/boards/[boardId]/search)의 ILIKE를 받쳐 주는
+// GIN 인덱스에 필요합니다. quiz 쪽은 확장을 쓰지 않으므로 병합해도 요구사항이 늘지 않습니다.
+
+generator client {
+  provider        = "prisma-client"
+  output          = "../../generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [pg_trgm]
+}

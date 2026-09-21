@@ -1,0 +1,502 @@
+.root {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+}
+
+.comment {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 9px;
+  scroll-margin: 110px;
+}
+
+.bubble {
+  min-width: 0;
+  padding: 11px 12px 9px;
+  border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  border-radius: 5px 14px 14px;
+  background: var(--surface-strong);
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.comment:target .bubble {
+  border-color: color-mix(in srgb, var(--brand) 55%, transparent);
+  background: color-mix(in srgb, var(--brand) 7%, var(--surface-strong));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 12%, transparent);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.meta strong {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta time {
+  margin-left: auto;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.body {
+  margin: 6px 0 0;
+  color: color-mix(in srgb, currentColor 84%, transparent);
+  font-size: 14px;
+  line-height: 1.58;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.mention {
+  padding: 1px 3px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand);
+  font-weight: 750;
+}
+
+.link {
+  color: var(--brand-strong);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--brand) 35%, transparent);
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+.actions {
+  display: flex;
+  margin-top: 7px;
+  gap: 3px;
+}
+
+.actions button {
+  display: inline-flex;
+  min-height: 27px;
+  padding: 0 7px;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  color: var(--ink);
+}
+
+.actions .danger {
+  color: var(--danger-soft-fg);
+}
+
+.loadMore {
+  display: inline-flex;
+  min-height: 34px;
+  align-self: center;
+  padding: 0 12px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.loadMore:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.composer {
+  position: sticky;
+  z-index: 4;
+  bottom: -1px;
+  display: grid;
+  margin-top: auto;
+  padding: 13px;
+  gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--brand) 25%, var(--line));
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--surface-strong) 94%, var(--brand));
+  box-shadow: 0 -8px 28px color-mix(in srgb, var(--ink) 9%, transparent);
+}
+
+.composerHeader {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+}
+
+.composerIcon {
+  display: inline-flex;
+  width: 31px;
+  height: 31px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand);
+}
+
+.composerHeader > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.composerHeader strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.composerHeader div span {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.replyContext {
+  display: flex;
+  min-height: 32px;
+  padding: 0 7px 0 9px;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--brand) 9%, transparent);
+  color: var(--brand);
+  font-size: 11px;
+}
+
+.replyContext button {
+  display: inline-flex;
+  width: 25px;
+  height: 25px;
+  margin-left: auto;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.replyContext button:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.editor {
+  position: relative;
+  border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  border-radius: 11px;
+  background: var(--surface-strong);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.editor:focus-within {
+  border-color: color-mix(in srgb, var(--brand) 62%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 11%, transparent);
+}
+
+.editor textarea {
+  display: block;
+  width: 100%;
+  min-height: 96px;
+  padding: 11px 11px 26px;
+  resize: vertical;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.editor textarea::placeholder {
+  color: color-mix(in srgb, var(--muted) 75%, transparent);
+}
+
+.characterCount {
+  position: absolute;
+  right: 9px;
+  bottom: 7px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  pointer-events: none;
+}
+
+.mentionMenu {
+  position: absolute;
+  z-index: 8;
+  right: 7px;
+  bottom: calc(100% - 8px);
+  left: 7px;
+  max-height: 224px;
+  padding: 5px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface-strong);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--ink) 15%, transparent);
+}
+
+.mentionMenuLabel {
+  display: flex;
+  min-height: 25px;
+  padding: 0 7px;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.mentionMenu button {
+  display: grid;
+  width: 100%;
+  min-height: 43px;
+  padding: 5px 7px;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mentionMenu button:hover,
+.mentionMenu .activeSuggestion {
+  background: color-mix(in srgb, var(--brand) 9%, transparent);
+}
+
+.mentionMenu button > span {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.mentionMenu button strong,
+.mentionMenu button small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mentionMenu button strong {
+  font-size: 11px;
+}
+
+.mentionMenu button small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.composerFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.composerFooter > span {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.attachmentInput {
+  display: grid;
+  gap: 7px;
+}
+
+.attachmentTools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.attachmentTools button,
+.attachmentButton {
+  display: inline-flex;
+  min-height: 29px;
+  padding: 0 8px;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.attachmentTools button:disabled,
+.attachmentButton[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.pendingAttachments {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 5px;
+  list-style: none;
+}
+
+.pendingAttachments li {
+  display: grid;
+  min-width: 0;
+  padding: 6px 7px;
+  grid-template-columns: 18px minmax(0, 1fr) 26px;
+  align-items: center;
+  gap: 5px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--brand) 6%, transparent);
+}
+
+.pendingAttachments span,
+.pendingAttachments strong,
+.pendingAttachments small {
+  display: block;
+  min-width: 0;
+}
+
+.pendingAttachments strong {
+  overflow: hidden;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pendingAttachments small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.pendingAttachments button {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--danger-soft-fg);
+  cursor: pointer;
+}
+
+.attachmentError,
+.error {
+  margin: 0;
+  color: var(--danger-soft-fg);
+  font-size: 10px;
+}
+
+.empty {
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.empty strong {
+  margin-top: 2px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.readOnly {
+  margin: auto 0 0;
+  padding: 11px 12px;
+  border: 1px dashed color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 11px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .composer {
+    position: static;
+    box-shadow: var(--shadow-sm, 0 4px 16px color-mix(in srgb, var(--scrim) 7%, transparent));
+  }
+}
+
+@media (max-width: 520px) {
+  .comment {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .bubble {
+    padding: 10px;
+  }
+
+  .composer {
+    padding: 11px;
+    border-radius: 13px;
+  }
+
+  .composerHeader div span,
+  .composerFooter > span {
+    display: none;
+  }
+
+  .composerFooter {
+    flex-wrap: wrap;
+  }
+}

@@ -1,0 +1,849 @@
+.page {
+  min-height: 100dvh;
+  padding: 0 28px max(34px, env(safe-area-inset-bottom));
+  background-color: var(--canvas);
+  background-image: radial-gradient(var(--canvas-dot) .7px, transparent .7px);
+  background-size: 22px 22px;
+  color: var(--ink);
+}
+
+.nav {
+  display: flex;
+  width: min(100%, 1120px);
+  min-height: 70px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+  font-size: 20px;
+  letter-spacing: -.04em;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.accountSwitch {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-translucent);
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.accountSwitch:hover {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.accountSwitch:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.shell {
+  display: grid;
+  width: min(100%, 980px);
+  margin: 24px auto 0;
+  grid-template-columns: 250px minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.rail,
+.card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.rail {
+  position: sticky;
+  top: 20px;
+  padding: 25px 20px 20px;
+}
+
+.railIntro h1 {
+  margin: 13px 0 9px;
+  font-size: 24px;
+  line-height: 1.22;
+  letter-spacing: -.045em;
+}
+
+.railIntro p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--brand-strong);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.steps {
+  display: grid;
+  margin: 24px 0;
+  padding: 0;
+  gap: 4px;
+  list-style: none;
+}
+
+.steps li {
+  display: flex;
+  min-width: 0;
+  padding: 9px;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--muted);
+}
+
+.steps li > span {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: var(--background);
+  color: inherit;
+  font-family: var(--font-geist-mono);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.steps li > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.steps b {
+  font-size: 12px;
+}
+
+.steps small {
+  font-size: 10px;
+}
+
+.steps li[data-active="true"] {
+  border-color: color-mix(in srgb, var(--brand) 20%, var(--line));
+  background: color-mix(in srgb, var(--brand) 7%, var(--surface));
+  color: var(--brand-strong);
+}
+
+.steps li[data-active="true"] > span {
+  background: var(--brand);
+  color: var(--on-accent);
+}
+
+.steps li[data-done="true"] {
+  color: var(--brand-strong);
+}
+
+.privacyNote {
+  display: flex;
+  padding: 11px;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--brand-strong);
+}
+
+.privacyNote > svg {
+  flex: 0 0 auto;
+}
+
+.privacyNote span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.privacyNote b {
+  font-size: 10px;
+}
+
+.privacyNote small {
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.card {
+  min-height: 610px;
+  padding: 34px;
+}
+
+.cardHeader > span {
+  color: var(--brand);
+  font-family: var(--font-geist-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.cardHeader h2 {
+  margin: 8px 0 6px;
+  font-size: clamp(25px, 3vw, 32px);
+  letter-spacing: -.045em;
+}
+
+.cardHeader p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.panel {
+  display: grid;
+  margin-top: 28px;
+  gap: 16px;
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+.photoEditor {
+  display: flex;
+  padding: 18px;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--brand) 6%, var(--surface)), var(--surface));
+}
+
+.avatarWrap {
+  display: grid;
+  width: 92px;
+  height: 92px;
+  flex: 0 0 92px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 0 0 5px var(--surface), 0 0 0 6px var(--line);
+}
+
+.avatarWrap :global(.avatar) {
+  width: 86px;
+  height: 86px;
+  font-size: 28px;
+}
+
+.photoCopy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.photoCopy > b {
+  font-size: 14px;
+}
+
+.photoCopy > small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.photoCopy > div {
+  display: flex;
+  margin-top: 7px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.photoCopy :global(.button) {
+  min-height: 36px;
+  padding: 0 11px;
+  font-size: 11px;
+}
+
+.hiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.nicknameRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px;
+}
+
+.nicknameRow :global(.button) {
+  min-height: 45px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+.field small span[data-status="available"] {
+  color: var(--brand-strong);
+  font-weight: 700;
+}
+
+.field small span[data-status="taken"] {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.field,
+.readonlyField {
+  display: grid;
+  gap: 7px;
+}
+
+.field > span,
+.readonlyField > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  outline: none;
+  background: var(--field);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  color-scheme: light dark;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 14%, transparent);
+}
+
+.field select:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.field > small {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.field > small b {
+  flex: 0 0 auto;
+}
+
+.field > .warning {
+  color: var(--danger);
+}
+
+.studentOrganization {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.organizationHint {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.organizationHint[data-warning] {
+  color: var(--danger);
+}
+
+.readonlyField {
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--background);
+}
+
+.readonlyField b {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.readonlyField small {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.roleBanner {
+  display: flex;
+  padding: 15px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--brand) 18%, var(--line));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--brand) 7%, var(--surface));
+  color: var(--brand-strong);
+}
+
+.accountTypes {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  border: 0;
+}
+
+.accountTypes legend {
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.accountTypes button {
+  display: grid;
+  min-height: 82px;
+  padding: 13px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--field);
+  color: var(--muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+.accountTypes button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--brand) 38%, var(--line));
+  background: var(--hover);
+}
+
+.accountTypes button[data-selected="true"] {
+  border-color: color-mix(in srgb, var(--brand) 45%, var(--line));
+  background: color-mix(in srgb, var(--brand) 8%, var(--surface));
+  color: var(--brand-strong);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 8%, transparent);
+}
+
+.accountTypes button:disabled {
+  cursor: default;
+}
+
+.accountTypes button > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.accountTypes button b {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.accountTypes button small {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.rejection {
+  display: flex;
+  margin: 0;
+  padding: 12px 14px;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid var(--danger-line);
+  border-radius: 12px;
+  background: var(--danger-surface);
+  color: var(--danger);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.rejection b {
+  font-size: 12px;
+}
+
+.roleBanner > span {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.roleBanner small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.roleBanner b {
+  font-size: 13px;
+}
+
+.roleBanner em {
+  margin-left: auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 750;
+}
+
+.completeIcon {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 2px;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--brand-soft);
+  color: var(--brand-soft-fg);
+}
+
+.summary {
+  display: grid;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.summary > div {
+  display: grid;
+  min-height: 76px;
+  padding: 12px 14px;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.summary > div:last-child {
+  border-bottom: 0;
+}
+
+.summary dt {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.summary dd {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  align-items: center;
+  gap: 9px;
+}
+
+.summary dd > svg {
+  flex: 0 0 auto;
+  color: var(--brand-strong);
+}
+
+.summary dd > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary dd b,
+.summary dd small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary dd b {
+  font-size: 13px;
+}
+
+.summary dd small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.completeNote {
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: 11px;
+  background: var(--background);
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.error {
+  margin: 15px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--danger-line);
+  border-radius: 10px;
+  background: var(--danger-surface);
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.actions {
+  display: grid;
+  margin-top: 24px;
+  padding-top: 18px;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.actions :global(.button) {
+  min-width: 112px;
+}
+
+@media (max-width: 860px) {
+  .shell {
+    width: min(100%, 700px);
+    grid-template-columns: 1fr;
+  }
+
+  .rail {
+    position: static;
+    padding: 18px;
+  }
+
+  .railIntro h1 {
+    margin-top: 9px;
+    font-size: 22px;
+  }
+
+  .railIntro h1 br {
+    display: none;
+  }
+
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 16px 0 0;
+  }
+
+  .privacyNote {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 0 12px max(20px, env(safe-area-inset-bottom));
+  }
+
+  .nav {
+    min-height: 60px;
+    padding: 0 2px;
+  }
+
+  .accountSwitch {
+    width: 38px;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0;
+  }
+
+  .accountSwitch::after {
+    font-size: 16px;
+    content: "↪";
+  }
+
+  .shell {
+    margin-top: 8px;
+    gap: 10px;
+  }
+
+  .rail {
+    padding: 15px;
+    border-radius: 17px;
+  }
+
+  .railIntro p {
+    display: none;
+  }
+
+  .steps {
+    gap: 3px;
+  }
+
+  .steps li {
+    padding: 6px;
+    gap: 5px;
+  }
+
+  .steps li > span {
+    width: 25px;
+    height: 25px;
+    flex-basis: 25px;
+  }
+
+  .steps small {
+    display: none;
+  }
+
+  .card {
+    min-height: 0;
+    padding: 24px 18px 20px;
+    border-radius: 18px;
+  }
+
+  .cardHeader h2 {
+    font-size: 25px;
+  }
+
+  .panel {
+    margin-top: 22px;
+  }
+
+  .photoEditor {
+    padding: 15px;
+    gap: 14px;
+  }
+
+  .avatarWrap {
+    width: 76px;
+    height: 76px;
+    flex-basis: 76px;
+  }
+
+  .avatarWrap :global(.avatar) {
+    width: 70px;
+    height: 70px;
+    font-size: 23px;
+  }
+
+  .photoCopy > div {
+    width: 100%;
+  }
+
+  .photoCopy :global(.button) {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .summary > div {
+    grid-template-columns: 58px minmax(0, 1fr);
+  }
+
+  .accountTypes {
+    grid-template-columns: 1fr;
+  }
+
+  .studentOrganization {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .studentOrganization > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .actions {
+    position: sticky;
+    bottom: 0;
+    margin: 22px -6px -6px;
+    padding: 14px 6px 6px;
+    background: color-mix(in srgb, var(--surface-strong) 94%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .actions :global(.button) {
+    min-width: 104px;
+  }
+}
+
+@media (max-width: 390px) {
+  .studentOrganization {
+    grid-template-columns: 1fr;
+  }
+
+  .studentOrganization > :first-child {
+    grid-column: auto;
+  }
+
+  .nicknameRow {
+    grid-template-columns: 1fr;
+  }
+
+  .brand b {
+    display: none;
+  }
+
+  .railIntro h1 {
+    font-size: 20px;
+  }
+
+  .steps li > div {
+    display: none;
+  }
+
+  .steps li {
+    justify-content: center;
+  }
+
+  .photoEditor {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .photoCopy {
+    width: 100%;
+  }
+
+  .roleBanner em {
+    display: none;
+  }
+}

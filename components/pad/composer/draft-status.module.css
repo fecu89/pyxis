@@ -1,0 +1,79 @@
+.recovery {
+  display: flex;
+  padding: 11px 12px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--warning-soft) 38%, transparent);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--warning-soft) 11%, transparent);
+}
+
+.recovery > svg {
+  flex: none;
+  color: var(--warning-soft-fg);
+}
+
+.copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.copy strong {
+  font-size: 14px;
+}
+
+.copy span,
+.saved,
+.error {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.actions {
+  display: inline-flex;
+  flex: none;
+  gap: 5px;
+}
+
+.actions button {
+  min-height: 29px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  color: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.actions button:first-child {
+  background: var(--brand);
+  color: white;
+}
+
+.saved,
+.error {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.error {
+  color: var(--danger-soft-fg);
+}
+
+@media (max-width: 520px) {
+  .recovery {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

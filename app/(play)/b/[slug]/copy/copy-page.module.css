@@ -1,0 +1,13 @@
+.page { min-height: 100vh; display: flex; padding: 32px 20px 70px; align-items: center; flex-direction: column; justify-content: center; background: radial-gradient(circle at 14% 15%, color-mix(in srgb, var(--brand) 13%, transparent), transparent 28%), var(--paper); }
+.topbar { display: flex; width: min(100%, 690px); margin-bottom: 14px; align-items: center; justify-content: space-between; gap: 14px; color: var(--muted); font-size: 12px; font-weight: 700; }
+.topbar a, .topbar span { display: inline-flex; align-items: center; gap: 6px; }
+.notice { width: min(100%, 560px); padding: 42px 34px; border: 1px solid var(--line); border-radius: 24px; background: var(--surface); box-shadow: var(--shadow-md); text-align: center; }
+.icon { display: inline-flex; width: 58px; height: 58px; margin-bottom: 18px; align-items: center; justify-content: center; border-radius: 18px; background: var(--brand-soft); color: var(--brand); }
+.eyebrow { display: block; color: var(--brand); font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.notice h1 { margin: 9px 0 12px; font-size: 28px; letter-spacing: -.045em; }
+.notice p { margin: 0 auto; max-width: 430px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.noticeActions { display: flex; margin-top: 24px; justify-content: center; gap: 9px; }
+.noticeActions a { display: inline-flex; min-height: 42px; padding: 0 15px; align-items: center; justify-content: center; gap: 6px; border-radius: 11px; font-size: 12px; font-weight: 750; }
+.secondary { border: 1px solid var(--line); color: var(--muted); }
+.primary { border: 1px solid var(--brand); background: var(--brand); color: white; }
+@media (max-width: 600px) { .page { padding: 20px 12px 44px; } .notice { padding: 34px 20px; } .notice h1 { font-size: 23px; } .noticeActions { align-items: stretch; flex-direction: column; } }

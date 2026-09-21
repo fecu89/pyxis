@@ -1,0 +1,8 @@
+[Unit]
+Description=Prune pyxis document preview cache
+
+[Service]
+Type=oneshot
+User=fecu
+WorkingDirectory=/home/fecu/web/pyxis
+ExecStart=/usr/bin/yarn viewer:prune-cache

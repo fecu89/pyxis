@@ -1,0 +1,533 @@
+// 회원·학교 조직·권한·감사 로그·알림. 퀴즈와 패드가 공유하는 계층이라 어느 한쪽 도메인
+// 개념도 여기 들어오지 않습니다(모듈별 값은 enum에만 접두어로 나타납니다).
+//
+// 병합 기준: pad 판을 그대로 두고 quiz 쪽을 맞춰 들였습니다. quiz의 `kakaoId` + `emailLookup`
+// + `username` 3분기 대신 pad의 `loginIdentifierLookup` 단일화를 쓰고, 비밀번호 해시도
+// scrypt(pad)로 통일합니다. quiz의 `authProvider` enum과 `createdById`(발급자 추적)는
+// 빼는데, 전자는 `passwordHash != null`로 유도되고 후자는 pad의 학교·소속 기준 권한 판정이
+// 대신하기 때문입니다.
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum SchoolGroupType {
+  CLASS
+  DEPARTMENT
+}
+
+enum SchoolLevel {
+  ELEMENTARY
+  MIDDLE
+  HIGH
+}
+
+enum SchoolOperatingStatus {
+  OPERATING
+  PLANNED
+  INACTIVE
+}
+
+enum TeacherApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RegistrationApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AuthSecurityEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  LOGIN_RATE_LIMITED
+  REGISTER_SUCCESS
+  REGISTER_REJECTED
+  REGISTER_RATE_LIMITED
+}
+
+// 보조관리자(ADMIN)에게 개별적으로 부여하는 시스템 권한입니다. SUPER_ADMIN은 목록과 무관하게
+// 전부 허용되고, TEACHER 이하에게는 부여할 수 없습니다.
+//
+// 앞의 6개는 모듈과 무관한 회원 관리 권한이고, 나머지는 패드·퀴즈 모듈별입니다. 병합 시
+// 양쪽 값을 그대로 합쳤습니다 — 이름에 BOARD/CONTENT/QUIZ/SESSION이 들어 있어 충돌이 없습니다.
+enum SystemPermission {
+  VIEW_USERS
+  CHANGE_NON_ADMIN_ROLES
+  SUSPEND_USERS
+  REVOKE_USER_SESSIONS
+  VIEW_USER_PII
+  VIEW_AUDIT_LOG
+
+  // 패드
+  VIEW_ALL_BOARDS
+  EDIT_ANY_CONTENT
+  MODERATE_CONTENT
+  CREATE_CONTENT_ANYWHERE
+  MANAGE_BOARD_SETTINGS
+  TRANSFER_BOARD_OWNERSHIP
+
+  // 퀴즈
+  VIEW_ALL_QUIZZES
+  EDIT_ANY_QUIZ
+  MANAGE_ANY_SESSION
+  ISSUE_STUDENT_ACCOUNTS
+}
+
+enum AdminAuditAction {
+  USER_ROLE_CHANGED
+  USER_STATUS_CHANGED
+  USER_ORGANIZATION_CHANGED
+  USER_DELETED
+  USER_SESSIONS_REVOKED
+  USER_PASSWORD_RESET
+  USER_PASSWORD_SET
+  USER_PII_VIEWED
+  ADMIN_PERMISSION_GRANTED
+  ADMIN_PERMISSION_REVOKED
+
+  SCHOOL_CREATED
+  SCHOOL_UPDATED
+  SCHOOL_DELETED
+  SCHOOL_GROUP_CREATED
+  SCHOOL_GROUP_UPDATED
+  SCHOOL_GROUP_DELETED
+  SCHOOL_REPRESENTATIVE_GRANTED
+  SCHOOL_REPRESENTATIVE_REVOKED
+  STUDENT_ACADEMIC_STATUS_CHANGED
+  STUDENTS_CLASS_MOVED
+  ACADEMIC_YEAR_PROMOTED
+  STUDENT_ROSTER_IMPORTED
+  STUDENT_ACCOUNTS_ISSUED
+  ACCOUNT_APPROVAL_APPROVED
+  ACCOUNT_APPROVAL_REJECTED
+  TEACHER_APPROVAL_APPROVED
+  TEACHER_APPROVAL_REJECTED
+  SYSTEM_SETTINGS_UPDATED
+
+  // 패드
+  GLOBAL_POST_CREATED
+  GLOBAL_POST_UPDATED
+  GLOBAL_POST_HIDDEN
+  GLOBAL_POST_RESTORED
+  GLOBAL_BOARD_UPDATED
+  GLOBAL_BOARD_ARCHIVED
+  GLOBAL_BOARD_RESTORED
+  BOARD_OWNERSHIP_TRANSFERRED
+  BOARD_PASSWORD_VIEWED
+  GLOBAL_ENTITY_PURGED
+
+  // 퀴즈
+  GLOBAL_QUIZ_UPDATED
+  GLOBAL_QUIZ_DELETED
+  GLOBAL_SESSION_ENDED
+}
+
+// quiz는 QUIZ_* 2종, pad는 보드·게시물 관련 13종을 각각 갖고 있었고 겹치는 값이 하나도
+// 없어 그대로 합쳤습니다.
+enum NotificationType {
+  // 패드
+  POST_COMMENTED
+  REACTION_ON_POST
+  MEMBER_JOINED
+  ACCESS_REQUEST_RECEIVED
+  ACCESS_REQUEST_APPROVED
+  ACCESS_REQUEST_REJECTED
+  POST_APPROVED
+  POST_REJECTED
+  POST_PENDING_REVIEW
+  COMMENT_MENTIONED
+
+  // 퀴즈
+  QUIZ_ASSIGNED
+  QUIZ_SHARED
+
+  // 설문
+  FORM_SHARED
+  FORM_RESPONSE_DIGEST
+
+  // 공통
+  ACCOUNT_APPROVAL_REQUESTED
+  ACCOUNT_APPROVAL_APPROVED
+  ACCOUNT_APPROVAL_REJECTED
+  TEACHER_APPROVAL_REQUESTED
+  TEACHER_APPROVAL_APPROVED
+  TEACHER_APPROVAL_REJECTED
+}
+
+model User {
+  id                         String                     @id @default(cuid())
+  // 비밀번호 계정은 영문·숫자 loginId, 카카오 계정은 검증된 이메일을 저장합니다. 원문은
+  // AES-GCM으로 암호화하고 로그인·중복 검사에는 HMAC 조회 키만 사용합니다.
+  loginIdentifierEncrypted   String
+  loginIdentifierLookup      String                     @unique
+  // loginId 비밀번호 로그인용 단방향 scrypt 해시입니다. 카카오 전용 계정은 null이며
+  // 평문·복호화 가능한 비밀번호는 저장하지 않습니다.
+  passwordHash               String?
+  // 관리자가 일괄 생성하거나 비밀번호를 초기화한 계정은 임시 비밀번호로만 로그인할 수
+  // 있습니다. true인 동안 proxy.ts가 비밀번호 변경 화면 외의 접근을 차단합니다.
+  mustChangePassword         Boolean                    @default(false)
+  nameEncrypted              String?
+  // 공개 닉네임 원문은 계속 암호화하고, 중복 판정에는 정규화한 닉네임의 HMAC만 사용합니다.
+  // 유일성은 학교 단위입니다(@@unique([schoolId, nameLookup])) — 동명이인이 흔한데 전역으로
+  // 묶으면 다른 학교 학생이 먼저 쓴 이름을 못 쓰게 됩니다.
+  nameLookup                 String?
+  imageEncrypted             String?
+  role                       UserRole                   @default(STUDENT)
+  status                     UserStatus                 @default(ACTIVE)
+  // 기존 계정과 관리자가 발급한 계정은 승인 상태를 유지하고, 자가 가입만 PENDING을 명시합니다.
+  registrationApprovalStatus RegistrationApprovalStatus @default(APPROVED)
+  registrationReviewReason   String?
+  registrationReviewedAt     DateTime?
+  registrationReviewedById   String?
+  authVersion                Int                        @default(1)
+  schoolId                   String?
+  schoolGroupId              String?
+  // 학생 역할의 학교 출석번호입니다. 학년·반은 SchoolGroup → SchoolGrade 관계로 보존합니다.
+  studentNumber              Int?
+  // TEACHER 역할에서만 의미가 있습니다. 이 학교(schoolId) 안에서 학생·교사 반/부서 배치와
+  // 반/부서 생성·수정·삭제를 할 수 있는 "학교 대표교사"인지. SUPER_ADMIN만 부여·회수합니다.
+  isSchoolRepresentative     Boolean                    @default(false)
+  // 새 카카오 또는 일반 loginId 계정은 프로필·학교·반/부서를 직접 고른 뒤 이 시각이
+  // 채워집니다. null인 동안 proxy.ts가 온보딩 외 화면과 수정 API 접근을 막습니다.
+  onboardingCompletedAt      DateTime?
+  lastLoginAt                DateTime?
+  createdAt                  DateTime                   @default(now())
+  updatedAt                  DateTime                   @updatedAt
+
+  // 공통
+  school                  School?                  @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  schoolGroup             SchoolGroup?             @relation(fields: [schoolGroupId], references: [id], onDelete: SetNull)
+  systemPermissions       UserSystemPermission[]   @relation("PermissionUser")
+  grantedPermissions      UserSystemPermission[]   @relation("PermissionGrantor")
+  auditActions            AdminAuditLog[]          @relation("AuditActor")
+  targetedAuditActions    AdminAuditLog[]          @relation("AuditTarget")
+  notifications           Notification[]           @relation("NotificationUser")
+  triggeredNotifications  Notification[]           @relation("NotificationActor")
+  registrationReviewer    User?                    @relation("RegistrationApprovalReviewer", fields: [registrationReviewedById], references: [id], onDelete: SetNull)
+  reviewedRegistrations   User[]                   @relation("RegistrationApprovalReviewer")
+  teacherApprovalRequest  TeacherApprovalRequest?  @relation("TeacherApprovalApplicant")
+  reviewedTeacherRequests TeacherApprovalRequest[] @relation("TeacherApprovalReviewer")
+  settingUpdates          SystemSetting[]          @relation("SystemSettingEditor")
+  ownedActivities         Activity[]               @relation("ActivityOwner")
+  createdShortLinks       ShortLink[]              @relation("ShortLinkCreator")
+
+  // 패드
+  ownedBoards        Board[]              @relation("BoardOwner")
+  memberships        BoardMember[]
+  posts              Post[]
+  comments           Comment[]
+  reactions          Reaction[]
+  attachments        Attachment[]
+  formUploadedFiles  FormUploadedFile[]   @relation("FormFileUploader")
+  accessRequests     BoardAccessRequest[]
+  createdInviteLinks BoardInviteLink[]
+  boardActivities    BoardActivity[]      @relation("BoardActivityActor")
+  boardFollows       BoardFollow[]
+  boardVisits        BoardVisit[]
+  boardFavorites     BoardFavorite[]
+  dashboardFolders   DashboardFolder[]
+  commentMentions    CommentMention[]
+
+  // 퀴즈
+  ownedQuizzes               Quiz[]               @relation("QuizOwner")
+  ownedSubjects              Subject[]            @relation("SubjectOwner")
+  subjectMemberships         SubjectStudent[]     @relation("SubjectStudent")
+  assignedSubjectMemberships SubjectStudent[]     @relation("SubjectStudentAssigner")
+  assignedSubjectGroups      SubjectSchoolGroup[] @relation("SubjectSchoolGroupAssigner")
+  quizShares                 QuizShare[]          @relation("QuizShareUser")
+  grantedQuizShares          QuizShare[]          @relation("QuizShareGrantor")
+  quizFavorites              QuizFavorite[]
+  quizVisits                 QuizVisit[]
+  quizAssignments            QuizAssignment[]     @relation("AssignmentStudent")
+  assignedQuizzes            QuizAssignment[]     @relation("AssignmentAssigner")
+  hostedSessions             QuizSession[]        @relation("SessionHost")
+  participations             SessionParticipant[]
+
+  // 설문
+  ownedForms        Form[]         @relation("FormOwner")
+  formResponses     FormResponse[] @relation("FormRespondent")
+  formShares        FormShare[]    @relation("FormShareUser")
+  grantedFormShares FormShare[]    @relation("FormShareGrantor")
+  formVisits        FormVisit[]
+
+  // 같은 학급 안에서는 출석번호가 겹치지 않게 합니다. PostgreSQL은 null을 서로 다른 값으로
+  // 취급하므로 기존의 번호 미지정 학생은 그대로 둘 수 있습니다.
+  @@unique([schoolGroupId, studentNumber])
+  // 같은 학교 안에서만 닉네임이 겹치지 않게 합니다. schoolId가 null인 계정(관리자, 승인 대기
+  // 교사)은 PostgreSQL이 null을 서로 다른 값으로 보아 이 제약이 걸리지 않으므로,
+  // lib/users/nickname.ts의 응용 검사가 그 구간을 대신 막습니다.
+  @@unique([schoolId, nameLookup])
+  @@index([schoolId, role, status])
+  @@index([schoolGroupId, role, status])
+  @@index([role, status, createdAt])
+  @@index([registrationApprovalStatus, createdAt])
+  @@index([registrationReviewedById])
+}
+
+// 로그인 제한은 프로세스 메모리가 아니라 DB에 저장해 재시작·다중 인스턴스에서도 공유합니다.
+// key에는 IP나 로그인 식별자 원문이 아닌 목적별 HMAC만 들어갑니다.
+model AuthRateLimit {
+  key             String    @id
+  category        String
+  count           Int       @default(0)
+  windowStartedAt DateTime
+  blockedUntil    DateTime?
+  expiresAt       DateTime
+  updatedAt       DateTime  @updatedAt
+
+  @@index([category, expiresAt])
+  @@index([expiresAt])
+}
+
+// 같은 시간대·계정·IP의 인증 이벤트는 한 행에 집계해 공격자가 로그 테이블 자체를
+// 무한히 키우기 어렵게 합니다. accountLookup/ipLookup 역시 HMAC 값입니다.
+model AuthSecurityEvent {
+  key           String                @id
+  type          AuthSecurityEventType
+  accountLookup String?
+  ipLookup      String
+  userId        String?
+  count         Int                   @default(1)
+  firstSeenAt   DateTime              @default(now())
+  lastSeenAt    DateTime              @updatedAt
+  expiresAt     DateTime
+
+  @@index([type, lastSeenAt])
+  @@index([accountLookup, lastSeenAt])
+  @@index([ipLookup, lastSeenAt])
+  @@index([expiresAt])
+}
+
+model School {
+  id              String                @id @default(cuid())
+  name            String                @unique
+  code            String?               @unique
+  level           SchoolLevel           @default(HIGH)
+  district        String?
+  operatingStatus SchoolOperatingStatus @default(OPERATING)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  groups                  SchoolGroup[]
+  grades                  SchoolGrade[]
+  users                   User[]
+  teacherApprovalRequests TeacherApprovalRequest[]
+  activities              Activity[]
+}
+
+// 학생 학급을 이름 문자열 하나로 뭉치지 않고 학교 → 학년 → 반 순서로 관리합니다.
+// 교사 부서는 학년과 무관하므로 기존 SchoolGroup(type=DEPARTMENT)을 그대로 사용합니다.
+model SchoolGrade {
+  id        String   @id @default(cuid())
+  schoolId  String
+  grade     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school  School        @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  classes SchoolGroup[]
+
+  @@unique([schoolId, grade])
+  @@index([schoolId, grade])
+}
+
+model SchoolGroup {
+  id          String          @id @default(cuid())
+  schoolId    String
+  name        String
+  type        SchoolGroupType
+  // CLASS일 때만 학년·반 번호를 갖습니다. DEPARTMENT(교사 부서)는 둘 다 null입니다.
+  gradeId     String?
+  classNumber Int?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  school                  School                   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  grade                   SchoolGrade?             @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+  users                   User[]
+  teacherApprovalRequests TeacherApprovalRequest[]
+  activities              Activity[]
+  // 이 반을 통째로 연결한 교과목들. 명단은 "개별 배정 ∪ 연결 학급"이라 여기가 두 번째 축입니다.
+  subjectLinks            SubjectSchoolGroup[]
+
+  @@unique([schoolId, type, name])
+  @@unique([gradeId, classNumber])
+  @@index([schoolId, type, name])
+  @@index([gradeId, classNumber])
+}
+
+model TeacherApprovalRequest {
+  id            String                @id @default(cuid())
+  userId        String                @unique
+  schoolId      String
+  schoolGroupId String
+  status        TeacherApprovalStatus @default(PENDING)
+  reviewReason  String?
+  reviewedById  String?
+  requestedAt   DateTime              @default(now())
+  reviewedAt    DateTime?
+  updatedAt     DateTime              @updatedAt
+
+  user        User        @relation("TeacherApprovalApplicant", fields: [userId], references: [id], onDelete: Cascade)
+  school      School      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolGroup SchoolGroup @relation(fields: [schoolGroupId], references: [id], onDelete: Cascade)
+  reviewedBy  User?       @relation("TeacherApprovalReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([schoolId, status, requestedAt])
+  @@index([status, requestedAt])
+  @@index([reviewedById])
+}
+
+model UserSystemPermission {
+  userId      String
+  permission  SystemPermission
+  grantedById String
+  createdAt   DateTime         @default(now())
+
+  user      User @relation("PermissionUser", fields: [userId], references: [id], onDelete: Cascade)
+  grantedBy User @relation("PermissionGrantor", fields: [grantedById], references: [id], onDelete: Restrict)
+
+  @@id([userId, permission])
+  @@index([grantedById])
+}
+
+model AdminAuditLog {
+  id           String           @id @default(cuid())
+  actorId      String
+  targetUserId String?
+  action       AdminAuditAction
+  entityType   String?
+  entityId     String?
+  before       Json?
+  after        Json?
+  reason       String?
+  createdAt    DateTime         @default(now())
+
+  actor      User  @relation("AuditActor", fields: [actorId], references: [id], onDelete: Restrict)
+  targetUser User? @relation("AuditTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@index([action, createdAt])
+  @@index([createdAt])
+}
+
+// 알림은 두 모듈이 한 벨(알림함)을 공유하므로 대상 FK를 모듈별로 나란히 둡니다. 전부
+// nullable이고 타입별로 어느 것이 채워지는지가 정해져 있습니다.
+//
+// pad에서는 boardId/postId/commentId가 관계 없는 맨 컬럼이었는데, 병합하면서 quiz 쪽과
+// 똑같이 실제 관계 + onDelete: Cascade로 맞췄습니다. 삭제된 게시물을 가리키는 알림은
+// 어차피 열 수 없으니 함께 지워지는 편이 맞고, 조회 코드는 바뀌지 않습니다.
+model Notification {
+  id              String           @id @default(cuid())
+  userId          String
+  actorId         String?
+  type            NotificationType
+  boardId         String?
+  postId          String?
+  commentId       String?
+  quizId          String?
+  assignmentId    String?
+  formId          String?
+  accessRequestId String?
+  responseCount   Int?
+  readAt          DateTime?
+  createdAt       DateTime         @default(now())
+
+  user          User                @relation("NotificationUser", fields: [userId], references: [id], onDelete: Cascade)
+  actor         User?               @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+  board         Board?              @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  post          Post?               @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment       Comment?            @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  quiz          Quiz?               @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  assignment    QuizAssignment?     @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  form          Form?               @relation(fields: [formId], references: [id], onDelete: Cascade)
+  accessRequest BoardAccessRequest? @relation(fields: [accessRequestId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+  @@index([boardId])
+  @@index([postId])
+  @@index([commentId])
+  @@index([quizId])
+  @@index([assignmentId])
+  @@index([formId])
+  @@index([accessRequestId])
+}
+
+// 플랫폼 전체에 적용되는 정책값을 담는 싱글턴 행입니다(id는 항상 "default" 하나만 존재).
+// 예전에는 코드에 상수로 박아두던 값을 전체관리자가 관리 페이지(/admin/policy)에서 다시
+// 띄우지 않고 바꿀 수 있게 분리했습니다. 비밀키·접속 정보처럼 부팅 시점에 필요하거나
+// 새면 안 되는 값은 계속 환경 변수에 둡니다.
+//
+// quiz의 AppPolicy를 여기로 흡수했습니다(퀴즈 개수 상한, 재인증 유효 기간, 일괄 발급 상한).
+model SystemSetting {
+  id String @id @default("default")
+
+  // 1인이 가진 최대 개수. null이면 무제한입니다.
+  studentBoardLimit Int  @default(10)
+  teacherBoardLimit Int  @default(40)
+  studentQuizLimit  Int? @default(10)
+  teacherQuizLimit  Int?
+
+  // 관리 콘솔의 민감 작업에 요구하는 재인증 유효 기간(분)과 학생 계정 일괄 발급 상한.
+  adminReauthWindowMinutes Int @default(60)
+  maxBulkStudents          Int @default(100)
+
+  // 비로그인 퀴즈 참여 경로의 요청·연결 상한. 운영 중 수업 규모에 맞춰 재배포 없이 조정합니다.
+  publicQuizJoinPerMinute                   Int @default(120)
+  publicQuizApiRequestsPerMinute            Int @default(120)
+  publicQuizSocketEventsPerMinute           Int @default(120)
+  publicQuizSocketMaxConnections            Int @default(500)
+  publicQuizSocketConnectionsPerIp          Int @default(200)
+  publicQuizSocketConnectionsPerParticipant Int @default(3)
+
+  // 업로드 용량 상한(MB). 예전에는 코드 상수(`GUEST_MAX_UPLOAD_BYTES`, 배경 10MB, 퀴즈 이미지
+  // 8MB…)와 환경 변수(`MAX_UPLOAD_SIZE_MB`)에 흩어져 있어, 학교마다 다른 사정에 맞추려면
+  // 재배포가 필요했습니다. 디스크가 얼마나 남았는지는 운영자가 가장 잘 아는 값이라 관리
+  // 페이지에서 직접 조정하게 옮깁니다.
+  //
+  // 바이트가 아니라 MB로 두는 이유: 관리 화면에서 사람이 읽고 쓰는 단위가 MB이고, Int 하나로
+  // 충분합니다. 서버는 읽을 때 바이트로 환산합니다(lib/files/upload-policy.ts).
+  maxUploadMb           Int @default(30)
+  guestMaxUploadMb      Int @default(10)
+  maxImageUploadMb      Int @default(10)
+  maxBoardBackgroundMb  Int @default(10)
+  maxQuizImageMb        Int @default(8)
+  // 퀴즈 하나가 이미지로 차지할 수 있는 총량. 개당 상한만으로는 문항을 계속 늘려 디스크를
+  // 채우는 것을 막지 못합니다.
+  maxQuizImageStorageMb Int @default(256)
+
+  // 라이브 퀴즈의 대기실/진행 BGM과 단계별 효과음 메타데이터. 실제 오디오 바이트는
+  // UPLOAD_DIR/system/quiz-live-audio 아래에 두고, 여기에는 파일 경로·MIME·볼륨만 JSON으로
+  // 저장합니다. immutable URL을 쓰는 최근 교체본의 제한된 유예 메타데이터도 같은 JSON에 둡니다.
+  // 슬롯이 늘어날 때마다 nullable 열 여러 개를 추가하지 않기 위한 설정 묶음입니다.
+  quizLiveAudio Json?
+
+  // 사이트 전체 브랜드 색. app/globals.css의 --brand-h(색상각)와 --brand-c(채도 배율)에
+  // 그대로 주입되고, 나머지 색 토큰(브랜드 11단계, 중립 회색, 장식 팔레트, 정보 계열)은
+  // 전부 이 둘에서 파생됩니다. 그래서 여기 두 숫자가 화면 전체 색을 정합니다.
+  //
+  // 명도 곡선은 CSS가 고정으로 들고 있으므로 관리자가 어떤 값을 넣어도 본문 대비는
+  // 유지됩니다. 채도는 CSS에서 소수 배율이지만 DB에는 백분율 정수로 둡니다(100 = 기본).
+  // 상태색(위험·경고·성공)은 의미가 색 자체라 여기에 묶지 않습니다.
+  brandHue    Int @default(250)
+  brandChroma Int @default(100)
+
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+
+  updatedBy User? @relation("SystemSettingEditor", fields: [updatedById], references: [id], onDelete: SetNull)
+}

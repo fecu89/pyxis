@@ -1,0 +1,242 @@
+.page {
+  min-height: 100dvh;
+  padding: 0 20px max(28px, env(safe-area-inset-bottom));
+  background-color: var(--canvas);
+  background-image: radial-gradient(var(--canvas-dot) .7px, transparent .7px);
+  background-size: 22px 22px;
+  color: var(--ink);
+}
+
+.nav {
+  display: flex;
+  width: min(100%, 960px);
+  min-height: 70px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+  font-size: 20px;
+  letter-spacing: -.04em;
+}
+
+.card {
+  width: min(100%, 590px);
+  margin: clamp(20px, 7vh, 72px) auto 0;
+  padding: 42px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.statusIcon {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 16px;
+  place-items: center;
+  border-radius: 22px;
+  background: var(--warning-soft);
+  color: var(--warning-soft-fg);
+}
+
+.eyebrow {
+  color: var(--brand-strong);
+  font-family: var(--font-geist-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .11em;
+}
+
+.card h1 {
+  margin: 10px 0 9px;
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1.18;
+  letter-spacing: -.05em;
+}
+
+.description {
+  max-width: 440px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.profile {
+  display: flex;
+  margin: 28px 0 12px;
+  padding: 15px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--background);
+  text-align: left;
+}
+
+.profile > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile b,
+.profile small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile b {
+  font-size: 13px;
+}
+
+.profile small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.summary {
+  display: grid;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.summary > div {
+  display: grid;
+  min-height: 51px;
+  padding: 10px 14px;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.summary > div:last-child {
+  border-bottom: 0;
+}
+
+.summary dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.summary dd {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.process {
+  display: grid;
+  margin-top: 20px;
+  grid-template-columns: auto minmax(12px, 1fr) auto minmax(12px, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.process span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+}
+
+.process span[data-done="true"] {
+  color: var(--brand-strong);
+}
+
+.process span[data-active="true"] {
+  color: var(--warning-soft-fg);
+}
+
+.process b {
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.process i {
+  height: 1px;
+  background: var(--line);
+}
+
+.message {
+  margin: 18px 0 0;
+  padding: 10px 12px;
+  border-radius: 11px;
+  background: var(--background);
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.actions {
+  display: grid;
+  margin-top: 22px;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding-inline: 12px;
+  }
+
+  .nav {
+    min-height: 60px;
+  }
+
+  .card {
+    margin-top: 9px;
+    padding: 30px 18px 22px;
+    border-radius: 19px;
+  }
+
+  .card h1 {
+    font-size: 29px;
+  }
+
+  .summary > div {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 390px) {
+  .brand b {
+    display: none;
+  }
+
+  .card h1 {
+    font-size: 26px;
+  }
+
+  .process b {
+    font-size: 8px;
+  }
+}

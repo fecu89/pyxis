@@ -1,0 +1,28 @@
+.panel {
+  display: grid;
+  padding: 12px;
+  gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--brand) 28%, var(--line));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--brand-soft) 32%, var(--surface-strong));
+}
+
+.panel header {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.panel header > span { display: grid; min-width: 0; gap: 2px; }
+.panel header b { overflow: hidden; color: var(--ink); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.panel header small,.panel label small { color: var(--muted); font-size: 10px; font-weight: 450; }
+.panel header button { display: grid; width: 28px; height: 28px; padding: 0; flex: none; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+.panel header button:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+.panel label { display: grid; gap: 5px; color: var(--ink); font-size: 11px; font-weight: 720; }
+.panel textarea { width: 100%; min-height: 58px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px; outline: none; background: var(--field); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.5; resize: vertical; }
+.panel textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 13%, transparent); }
+.panel p { margin: 0; color: var(--danger-soft-fg); font-size: 11px; }
+.panel footer { display: flex; justify-content: flex-end; gap: 6px; }
+.panel footer :global(.button) { min-height: 34px; }

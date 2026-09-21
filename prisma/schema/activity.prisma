@@ -1,0 +1,51 @@
+// 퀴즈 세션·패드 보드·설문이 공유하는 "활동" 레코드입니다. /dashboard, /report,
+// /report/students/[studentId], /report/writeup이 전부 이 테이블 하나만 읽고 필요할 때만
+// 모듈 테이블로 내려가도록 두려고 만들었습니다. 없으면 저 네 화면이 매번 QuizSession과
+// Board를 따로 조회해 응용 코드에서 머지해야 하고, 정렬·페이지네이션이 특히 지저분해집니다.
+//
+// 모듈 테이블이 Activity를 가리키는 방향입니다
+// (QuizSession.activityId / Board.activityId / Form.activityId).
+// 활동의 본문·설정은 모듈 테이블에 그대로 남고, 여기에는 목록·필터·집계에 필요한 최소한의
+// 필드만 복제합니다.
+//
+// QuizSession.activityId / Board.activityId / Form.activityId는 **필수**입니다. 생성 경로마다 활동을 붙였는지
+// 사람이 기억하는 대신 컴파일러가 잡게 하려는 것입니다 — 빠뜨리면 그 활동은 /report에 아예
+// 나타나지 않는데, 화면은 멀쩡히 뜨므로 눈으로는 발견되지 않습니다.
+//
+// FK가 모듈 테이블에 있으므로 onDelete: Cascade는 "활동을 지우면 보드·세션도 지운다"는 뜻입니다.
+// 반대 방향(보드를 하드 삭제하면 활동도)은 FK로 표현할 수 없어, 영구 삭제 경로가 활동을 먼저
+// 지우고 cascade로 대상을 함께 내리도록 되어 있습니다(app/api/admin/boards/[boardId]/purge).
+
+enum ActivityType {
+  QUIZ_SESSION
+  PAD_BOARD
+  FORM
+}
+
+model Activity {
+  id            String       @id @default(cuid())
+  type          ActivityType
+  ownerId       String?
+  // 활동을 연 시점의 학교·학급입니다. 소유자가 학교를 옮겨도 리포트가 흔들리지 않도록
+  // User.schoolId를 따라가지 않고 여기에 고정합니다.
+  schoolId      String?
+  schoolGroupId String?
+  title         String
+  startedAt     DateTime?
+  endedAt       DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  owner       User?        @relation("ActivityOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  school      School?      @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  schoolGroup SchoolGroup? @relation(fields: [schoolGroupId], references: [id], onDelete: SetNull)
+  quizSession QuizSession?
+  board       Board?
+  form        Form?
+
+  @@index([schoolId, createdAt])
+  @@index([schoolGroupId, createdAt])
+  @@index([ownerId, createdAt])
+  @@index([type, createdAt])
+  @@index([endedAt])
+}

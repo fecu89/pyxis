@@ -1,0 +1,473 @@
+// 패드(보드) 도메인. 기존 pad 스키마 그대로이고, 병합으로 바뀐 곳은 두 군데뿐입니다.
+//   1. Board가 Activity를 가리킵니다(activity.prisma).
+//   2. Board·Post·Comment에 Notification 역방향 관계가 생겼습니다 — 예전에는 Notification의
+//      boardId/postId/commentId가 관계 없는 맨 컬럼이라 대상이 지워져도 알림이 남았습니다.
+
+enum BoardDiscoveryScope {
+  PRIVATE
+  LINK
+  PUBLIC
+}
+
+enum BoardVisitorPermission {
+  NO_ACCESS
+  READER
+  COMMENTER
+  WRITER
+}
+
+enum BoardLayout {
+  SECTIONS
+  WALL
+  GRID
+  STREAM
+  TIMELINE
+  TABLE
+}
+
+enum BoardSortMode {
+  MANUAL
+  CREATED_ASC
+  CREATED_DESC
+  TITLE
+  RANDOM
+}
+
+enum NewPostPlacement {
+  START
+  END
+}
+
+enum BoardCardSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum BoardFont {
+  SANS
+  SERIF
+  MONO
+}
+
+enum ReactionPolicy {
+  SINGLE
+  MULTIPLE
+}
+
+enum AttachmentDownloadPolicy {
+  READERS
+  MEMBERS
+  EDITORS
+  DISABLED
+}
+
+enum BoardMemberRole {
+  OWNER
+  ADMIN
+  EDITOR
+  MEMBER
+  VIEWER
+}
+
+enum BoardAccessRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PostBodyFormat {
+  MARKDOWN
+  PLAIN_TEXT
+}
+
+enum PostStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+}
+
+enum ModerationMode {
+  NONE
+  MANUAL
+  STUDENTS_ONLY
+}
+
+// ARCHIVED는 별도로 두지 않습니다 — 30일 복구 가능한 보관은 이미 Board.deletedAt이 담당하고 있어서,
+// 여기서는 "동결(임시 잠금)" 여부만 새로 추가된 책임입니다(padupgrade.md 4.3의 deletedAt과 새 상태 책임 분리).
+enum BoardState {
+  ACTIVE
+  FROZEN
+}
+
+enum AttachmentType {
+  IMAGE
+  PDF
+  DOCUMENT
+  VIDEO
+  AUDIO
+  FILE
+  LINK
+}
+
+enum BoardActivityType {
+  POST_CREATED
+  POST_UPDATED
+  POST_DELETED
+  COMMENT_CREATED
+  MEMBER_JOINED
+  ACCESS_REQUEST_DECIDED
+  POST_MODERATED
+}
+
+model Board {
+  id                        String                   @id @default(cuid())
+  slug                      String                   @unique
+  title                     String
+  description               String?
+  // 소유자 계정이 삭제될 때 승계 대상(패드 ADMIN → 학교 대표교사)을 찾지 못하면 비워 둡니다.
+  // 패드를 같이 지우지 않는 이유는, 내용이 소유자 한 명이 아니라 학생들이 쓴 글이기 때문입니다.
+  // 소유자가 빈 패드는 lib/board/succession.ts가 FROZEN으로 바꿔 읽기 전용으로 남깁니다.
+  ownerId                   String?
+  // 교과목에 넣지 않은 패드도 정상 상태입니다. 대시보드의 교과목 관리에서 연결하거나
+  // 미분류로 되돌리며, 교과목 삭제 시에는 패드를 지우지 않고 이 값만 null이 됩니다.
+  subjectId                 String?
+  // 통합 리포트(/report)와 대시보드가 읽는 공통 활동 레코드입니다. activity.prisma 참고.
+  activityId                String                   @unique
+  layout                    BoardLayout              @default(SECTIONS)
+  sortMode                  BoardSortMode            @default(MANUAL)
+  newPostPlacement          NewPostPlacement         @default(END)
+  cardSize                  BoardCardSize            @default(MEDIUM)
+  font                      BoardFont                @default(SANS)
+  backgroundColor           String?
+  backgroundImageUrl        String?
+  accentColor               String?
+  showAuthor                Boolean                  @default(true)
+  showTimestamp             Boolean                  @default(true)
+  reactionPolicy            ReactionPolicy           @default(SINGLE)
+  attachmentDownloadPolicy  AttachmentDownloadPolicy @default(READERS)
+  postFieldConfig           Json?
+  discoveryScope            BoardDiscoveryScope      @default(PRIVATE)
+  visitorPermission         BoardVisitorPermission   @default(NO_ACCESS)
+  loginRequired             Boolean                  @default(true)
+  passwordHash              String?
+  // 방문자 검증은 passwordHash로 처리하고, 암호화본은 소유자가 현재 공유 비밀번호를 다시
+  // 확인할 때만 복호화합니다. 과거 패드는 재설정 전까지 null입니다.
+  passwordEncrypted         String?
+  state                     BoardState               @default(ACTIVE)
+  moderationMode            ModerationMode           @default(NONE)
+  freezeAt                  DateTime?
+  isTemplate                Boolean                  @default(false)
+  allowComments             Boolean                  @default(true)
+  allowReactions            Boolean                  @default(true)
+  allowMemberPosting        Boolean                  @default(true)
+  // 비로그인 손님이 쓴 글을 바로 게시할지, 교사 승인 뒤에 보일지. 기본은 승인 대기입니다 —
+  // 익명 글은 작성자를 특정할 수 없어 사고가 나면 되돌리기 어렵기 때문입니다. 실시간 수업처럼
+  // 즉시 보여야 하는 자리에서는 교사가 보드 설정에서 끌 수 있습니다.
+  guestPostsRequireApproval Boolean                  @default(true)
+  allowMemberFileUpload     Boolean                  @default(true)
+  createdAt                 DateTime                 @default(now())
+  updatedAt                 DateTime                 @updatedAt
+  deletedAt                 DateTime?
+
+  owner          User?                  @relation("BoardOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  subject        Subject?               @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  activity       Activity               @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  members        BoardMember[]
+  accessRequests BoardAccessRequest[]
+  sections       Section[]
+  posts          Post[]
+  inviteLinks    BoardInviteLink[]
+  activities     BoardActivity[]
+  follows        BoardFollow[]
+  visits         BoardVisit[]
+  favorites      BoardFavorite[]
+  folderItems    DashboardFolderBoard[]
+  notifications  Notification[]
+  shortLinks     ShortLink[]
+
+  @@index([ownerId])
+  @@index([subjectId, deletedAt])
+  @@index([discoveryScope])
+  @@index([deletedAt])
+  @@index([isTemplate, discoveryScope, updatedAt])
+}
+
+model BoardInviteLink {
+  id          String          @id @default(cuid())
+  boardId     String
+  tokenHash   String          @unique
+  role        BoardMemberRole @default(MEMBER)
+  createdById String
+  expiresAt   DateTime?
+  maxUses     Int?
+  useCount    Int             @default(0)
+  revokedAt   DateTime?
+  createdAt   DateTime        @default(now())
+
+  board     Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  createdBy User  @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([boardId])
+}
+
+model BoardMember {
+  boardId  String
+  userId   String
+  role     BoardMemberRole @default(MEMBER)
+  joinedAt DateTime        @default(now())
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([boardId, userId])
+  @@index([userId])
+}
+
+model BoardAccessRequest {
+  id        String                   @id @default(cuid())
+  boardId   String
+  userId    String
+  status    BoardAccessRequestStatus @default(PENDING)
+  createdAt DateTime                 @default(now())
+  updatedAt DateTime                 @updatedAt
+
+  board         Board          @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications Notification[]
+
+  @@unique([boardId, userId])
+  @@index([boardId, status, updatedAt])
+  @@index([userId, status])
+}
+
+model BoardActivity {
+  id        String            @id @default(cuid())
+  boardId   String
+  actorId   String?
+  type      BoardActivityType
+  postId    String?
+  commentId String?
+  createdAt DateTime          @default(now())
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  actor User? @relation("BoardActivityActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([boardId, createdAt])
+}
+
+model BoardFollow {
+  boardId    String
+  userId     String
+  lastSeenAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([boardId, userId])
+  @@index([userId])
+}
+
+model BoardVisit {
+  boardId       String
+  userId        String
+  lastVisitedAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([boardId, userId])
+  @@index([userId, lastVisitedAt])
+}
+
+model BoardFavorite {
+  boardId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([boardId, userId])
+  @@index([userId, createdAt])
+}
+
+model DashboardFolder {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  nameKey   String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  boards DashboardFolderBoard[]
+
+  @@unique([userId, nameKey])
+  @@index([userId, position, createdAt])
+}
+
+model DashboardFolderBoard {
+  folderId  String
+  boardId   String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  folder DashboardFolder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  board  Board           @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@id([folderId, boardId])
+  @@index([boardId])
+}
+
+model Section {
+  id          String    @id @default(cuid())
+  boardId     String
+  title       String
+  description String?
+  position    Int
+  version     Int       @default(1)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  board Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  posts Post[]
+
+  @@index([boardId, position])
+  @@index([deletedAt])
+}
+
+model Post {
+  id                String         @id @default(cuid())
+  boardId           String
+  sectionId         String?
+  // 로그인 사용자가 쓴 글은 authorId, 비로그인 손님이 쓴 글은 guestId/guestName이 채워집니다.
+  // 둘 중 정확히 하나만 있습니다(DB 제약으로 강제 — 마이그레이션의 CHECK 참고).
+  authorId          String?
+  // 손님 세션의 식별자(서명 쿠키 안의 값). 자기 글만 고치도록 판정하는 데 씁니다.
+  guestId           String?
+  // 손님이 글쓰기 전에 입력한 표시 이름. 계정이 아니라 그때 적은 이름일 뿐입니다.
+  guestName         String?
+  title             String?
+  body              String         @default("")
+  bodyFormat        PostBodyFormat @default(MARKDOWN)
+  status            PostStatus     @default(PUBLISHED)
+  moderationReason  String?
+  customFieldValues Json?
+  position          Int
+  isPinned          Boolean        @default(false)
+  version           Int            @default(1)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  deletedAt         DateTime?
+
+  board         Board          @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  section       Section?       @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  author        User?          @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  attachments   Attachment[]
+  comments      Comment[]
+  reactions     Reaction[]
+  notifications Notification[]
+
+  @@index([boardId, sectionId, position])
+  @@index([authorId])
+  // 손님이 "내가 쓴 글"을 찾을 때(수정·삭제 권한 판정)에 씁니다.
+  @@index([boardId, guestId])
+  @@index([deletedAt])
+  @@index([boardId, status])
+  // 보드 내부 검색(app/api/boards/[boardId]/search)의 ILIKE(contains) 검색을 받쳐주는
+  // 트라이그램 GIN 인덱스. pg_trgm 확장이 필요합니다.
+  @@index([title(ops: raw("gin_trgm_ops"))], map: "Post_title_trgm_idx", type: Gin)
+  @@index([body(ops: raw("gin_trgm_ops"))], map: "Post_body_trgm_idx", type: Gin)
+}
+
+model Attachment {
+  id              String         @id @default(cuid())
+  postId          String
+  commentId       String?
+  // 로그인 사용자가 올렸으면 uploaderId, 손님이 올렸으면 guestId. 손님은 계정이 없습니다.
+  uploaderId      String?
+  guestId         String?
+  type            AttachmentType
+  originalName    String
+  storedName      String?        @unique
+  storagePath     String?
+  mimeType        String
+  fileSize        Int
+  width           Int?
+  height          Int?
+  altText         String?
+  caption         String?
+  externalUrl     String?
+  previewImageUrl String?
+  thumbnailPath   String?
+  sortOrder       Int            @default(0)
+  createdAt       DateTime       @default(now())
+  deletedAt       DateTime?
+
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment  Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  uploader User?    @relation(fields: [uploaderId], references: [id], onDelete: Restrict)
+
+  @@index([postId, sortOrder])
+  @@index([commentId, sortOrder])
+  @@index([uploaderId])
+  @@index([deletedAt])
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  postId    String
+  // 글과 같은 규칙입니다: 로그인 사용자면 authorId, 손님이면 guestId + 표시 이름.
+  // 둘 중 정확히 하나만 채워집니다(DB CHECK로 강제).
+  authorId  String?
+  guestId   String?
+  guestName String?
+  parentId  String?
+  body      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  post          Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author        User?            @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  parent        Comment?         @relation("CommentReplies", fields: [parentId], references: [id])
+  replies       Comment[]        @relation("CommentReplies")
+  attachments   Attachment[]
+  mentions      CommentMention[]
+  notifications Notification[]
+
+  @@index([postId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([postId, guestId])
+}
+
+model CommentMention {
+  commentId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([commentId, userId])
+  @@index([userId, createdAt])
+}
+
+model Reaction {
+  postId    String
+  userId    String
+  key       String   @default("LIKE")
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([postId, userId, key])
+  @@index([userId])
+}

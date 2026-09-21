@@ -1,0 +1,154 @@
+/*
+ * 문서 뷰어(PDF·한글) 공통 껍데기. 색·치수는 globals.css의 의미 토큰만 씁니다.
+ */
+.root {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-inset);
+  overflow: hidden;
+}
+
+/* 문서 지면. 세로로 이어 붙여 스크롤하고, 좌우는 넘치면 잘리지 않게 스크롤합니다. */
+.pages {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-height: min(78vh, 900px);
+  padding: 12px;
+  gap: 12px;
+  justify-items: safe center;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.page {
+  border-radius: 4px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 캔버스는 픽셀 크기를 JS가 정하므로 CSS로는 폭만 제한합니다. */
+.page canvas,
+.page svg,
+.page img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.toolbar {
+  display: flex;
+  padding: 7px 10px;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.toolbar button {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.toolbar button:disabled {
+  color: var(--content-subtle);
+  cursor: default;
+  opacity: .5;
+}
+
+.toolbar button:not(:disabled):hover {
+  background: var(--surface-strong);
+}
+
+.toolbar button[aria-pressed="true"] {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-soft-fg);
+}
+
+.counter {
+  min-width: 84px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-align: center;
+}
+
+.title {
+  min-width: 0;
+  margin-right: auto;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zoom {
+  min-width: 46px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-align: center;
+}
+
+.status {
+  display: flex;
+  min-height: 160px;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.status strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.status a {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+/* 미리보기를 못 만든 이유를 내려받기 카드 아래에 한 줄로 덧붙입니다. */
+.note {
+  margin: 6px 2px 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+  .toolbar {
+    padding-inline: 6px;
+    gap: 4px;
+  }
+
+  .title {
+    display: none;
+  }
+
+  .counter {
+    min-width: 64px;
+  }
+
+  .zoom {
+    min-width: 40px;
+  }
+}

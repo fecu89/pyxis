@@ -1,0 +1,365 @@
+// 퀴즈 도메인. quiz 프로젝트에서 그대로 가져오되 QuizSession이 Activity를 가리키도록만
+// 바꿨습니다. 회원·학교·권한·알림은 identity.prisma를 공유합니다.
+
+// 점수가 붙는 채점형과, 정답 없이 반응만 모으는 참여형이 한 열거형에 섞여 있습니다.
+// 어느 쪽인지는 lib/quiz/participation.ts의 PARTICIPATION_TYPES가 정본입니다.
+enum QuestionType {
+  SINGLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+  ORDERING
+  NUMERIC
+  PIN_ANCHOR // 채점형: 이미지 위 정답 영역에 핀을 놓습니다
+  SURVEY // 참여형: 보기 중 하나 선택
+  WORD_CLOUD // 참여형: 자유 입력 → 빈도로 워드 클라우드
+  DROP_PIN // 참여형: 정답 없이 이미지 위에 핀만 모읍니다
+  LIKERT // 참여형: 리커트 척도
+  SLIDE
+}
+
+enum SlideLayout {
+  CLASSIC
+  BIG_TITLE
+  TITLE_TEXT
+  BULLETS
+  QUOTE
+  BIG_MEDIA
+}
+
+enum AnswerPalette {
+  BRAND
+  SOFT
+  FOREST
+}
+
+enum SessionMode {
+  LIVE
+  ASYNC
+}
+
+enum SessionStatus {
+  LOBBY
+  IN_PROGRESS
+  FINISHED
+  CANCELLED
+}
+
+enum LivePhase {
+  LOBBY
+  QUESTION_ACTIVE
+  QUESTION_REVEAL
+  LEADERBOARD
+  ENDED
+}
+
+enum ParticipantStatus {
+  JOINED
+  IN_PROGRESS
+  COMPLETED
+  KICKED
+  LEFT
+}
+
+enum QuizPermission {
+  VIEWER
+  EDITOR
+}
+
+model Quiz {
+  id            String        @id @default(cuid())
+  ownerId       String
+  subjectId     String?
+  title         String
+  description   String?
+  thumbnailUrl  String?
+  thumbnailAlt  String?
+  isPublished   Boolean       @default(false)
+  requiresLogin Boolean       @default(true)
+  isSearchable  Boolean       @default(false) // 검색 공개: 다른 교사가 탐색 탭에서 찾아 열람·복제할 수 있음
+  answerPalette AnswerPalette @default(BRAND)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+  // 소유자 계정이 삭제됐는데 이어받을 교사가 없어 잠긴 퀴즈입니다. deletedAt과 뜻이 달라 컬럼을
+  // 나눕니다. deletedAt은 "소유자가 버렸다"(목록에서 사라짐), frozenAt은 "주인이 없다"(읽기·복제는
+  // 되고 편집·발행·새 세션만 막힘). 한 컬럼으로 겸하면 공유받은 교사와 학생 과제까지 함께 사라집니다.
+  frozenAt      DateTime?
+
+  owner         User             @relation("QuizOwner", fields: [ownerId], references: [id])
+  subject       Subject?         @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  shares        QuizShare[]
+  favorites     QuizFavorite[]
+  visits        QuizVisit[]
+  assignments   QuizAssignment[]
+  notifications Notification[]
+  questions     Question[]
+  sessions      QuizSession[]
+
+  @@index([ownerId, deletedAt])
+  @@index([subjectId, deletedAt])
+}
+
+model Subject {
+  id             String   @id @default(cuid())
+  ownerId        String
+  name           String
+  nameNormalized String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  owner        User                 @relation("SubjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  quizzes      Quiz[]
+  boards       Board[]
+  forms        Form[]
+  students     SubjectStudent[]
+  schoolGroups SubjectSchoolGroup[]
+
+  @@unique([ownerId, nameNormalized])
+  @@index([ownerId, name])
+}
+
+// 한 학생은 여러 교과목에 참여할 수 있고, 한 교과목에도 여러 학생이 들어갑니다. 퀴즈의
+// QuizAssignment는 특정 활동을 실제로 내는 기록이고, 이 모델은 수업 단위의 명부라 책임이
+// 다릅니다. 교과목을 지우면 명부만 지우고 학생 계정에는 영향을 주지 않습니다.
+model SubjectStudent {
+  subjectId    String
+  studentId    String
+  assignedById String
+  createdAt    DateTime @default(now())
+
+  subject    Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  student    User    @relation("SubjectStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  assignedBy User    @relation("SubjectStudentAssigner", fields: [assignedById], references: [id], onDelete: Restrict)
+
+  @@id([subjectId, studentId])
+  @@index([studentId, createdAt])
+  @@index([assignedById])
+}
+
+// 교과목에 **학급을 통째로 연결**합니다. 위 SubjectStudent가 "이 학생 한 명"을 박아 두는
+// 개별 배정이라면, 이쪽은 "3학년 1반"이라는 조직 단위를 가리키는 살아 있는 연결입니다.
+//
+// 왜 둘 다 필요한가 — 400명 규모에서 반 하나를 넣으려고 체크박스를 28번 누르는 건 쓸 수
+// 없고, 반대로 "이 반에서 3명만 빼고" 같은 예외도 실제로 생깁니다. 그래서 교과목의 실제
+// 명단은 `개별 배정 ∪ 연결된 학급의 활성 학생`으로 계산합니다(lib/subjects/roster.ts).
+//
+// 연결이라서 학생이 전학·반 이동으로 그 반에 들어오면 교과목 명단에도 **자동으로** 들어오고,
+// 반을 떠나면 자동으로 빠집니다. 명단을 그 순간 고정하고 싶으면 UI의 "명단만 복사"가
+// 연결 대신 개별 배정 행을 그만큼 만들어 줍니다 — 그쪽은 이후 반 변경을 따라가지 않습니다.
+//
+// 이미 응시한 퀴즈 기록(QuizAssignment·응답)은 이 명부와 별개라 학생이 빠져도 남습니다.
+model SubjectSchoolGroup {
+  subjectId     String
+  schoolGroupId String
+  assignedById  String
+  createdAt     DateTime @default(now())
+
+  subject     Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  schoolGroup SchoolGroup @relation(fields: [schoolGroupId], references: [id], onDelete: Cascade)
+  assignedBy  User        @relation("SubjectSchoolGroupAssigner", fields: [assignedById], references: [id], onDelete: Restrict)
+
+  @@id([subjectId, schoolGroupId])
+  // 학급 → 교과목 역방향 조회(이 반이 어떤 교과목에 걸려 있나)와 명단 합집합 계산에 씁니다.
+  @@index([schoolGroupId])
+  @@index([assignedById])
+}
+
+model QuizShare {
+  quizId      String
+  userId      String
+  permission  QuizPermission
+  grantedById String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  quiz      Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user      User @relation("QuizShareUser", fields: [userId], references: [id], onDelete: Cascade)
+  grantedBy User @relation("QuizShareGrantor", fields: [grantedById], references: [id], onDelete: Restrict)
+
+  @@id([quizId, userId])
+  @@index([userId, permission])
+}
+
+model QuizFavorite {
+  userId    String
+  quizId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@id([userId, quizId])
+  @@index([quizId])
+}
+
+// 퀴즈 수정일과 사용자가 마지막으로 열어 본 시각은 서로 다른 정보입니다. 최근 방문 목록은
+// updatedAt을 재활용하지 않고 사용자별로 이 행을 갱신합니다.
+model QuizVisit {
+  quizId        String
+  userId        String
+  lastVisitedAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([quizId, userId])
+  @@index([userId, lastVisitedAt])
+}
+
+model Question {
+  id                String       @id @default(cuid())
+  quizId            String
+  type              QuestionType @default(SINGLE_CHOICE)
+  text              String
+  imageUrl          String?
+  imageAlt          String?
+  imagePlaceholder  String?
+  timeLimitSec      Int          @default(20)
+  points            Int          @default(1000)
+  position          Int
+  multipleSelection Boolean      @default(false) // SINGLE_CHOICE 전용: true면 복수 정답 선택
+  acceptedAnswers   String[]     @default([]) // SHORT_ANSWER 전용, 대소문자/공백은 채점 시 정규화
+  orderedItems      String[]     @default([]) // ORDERING 전용, 저장 순서가 정답 순서
+  numericMin        Float? // NUMERIC 전용
+  numericMax        Float? // NUMERIC 전용
+  numericAnswer     Float? // NUMERIC 전용. 슬라이더 눈금은 범위·정답에서 자동 계산한다(lib/quiz/numeric.ts)
+  slideLayout       SlideLayout? // SLIDE 전용
+  slideBody         String? // SLIDE 전용 본문
+
+  // PIN_ANCHOR 전용 정답 영역. 이미지 크기와 무관하게 판정되도록 0~1로 정규화한 좌표를 씁니다.
+  // 형태는 lib/quiz/image-pin.ts의 pinAreaSchema가 정본입니다(직사각형·원·자유형 다각형).
+  // DROP_PIN(참여형)은 정답이 없어 항상 비어 있습니다.
+  pinAreas Json?
+
+  // LIKERT 전용. 눈금 수(3~10)와 양 끝 라벨입니다. 가운데 눈금은 번호로만 표시합니다.
+  likertSteps    Int?
+  likertMinLabel String?
+  likertMaxLabel String?
+
+  // 참여형 전용: 응답이 들어오는 즉시 호스트 화면에 집계를 보여줄지. 끄면 정답 공개 단계에서만
+  // 드러납니다 — 먼저 답한 사람의 응답이 뒤에 답하는 사람에게 영향을 주는 걸 막고 싶을 때 씁니다.
+  revealResponsesLive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  choices Choice[]
+  answers Answer[]
+
+  @@index([quizId, position])
+}
+
+model Choice {
+  id         String  @id @default(cuid())
+  questionId String
+  text       String
+  isCorrect  Boolean @default(false)
+  position   Int
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers  Answer[]
+
+  @@index([questionId, position])
+}
+
+model QuizSession {
+  id                       String        @id @default(cuid())
+  quizId                   String
+  hostId                   String
+  // 통합 리포트(/report)와 대시보드가 읽는 공통 활동 레코드입니다. activity.prisma 참고.
+  activityId               String        @unique
+  mode                     SessionMode
+  status                   SessionStatus @default(LOBBY)
+  pinCode                  String?       @unique
+  livePhase                LivePhase?
+  currentQuestionIndex     Int?
+  currentQuestionStartedAt DateTime?
+  openAt                   DateTime?
+  dueAt                    DateTime?
+  allowLateSubmission      Boolean       @default(false)
+  requiresLogin            Boolean       @default(true)
+  startedAt                DateTime?
+  endedAt                  DateTime?
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+
+  quiz         Quiz                 @relation(fields: [quizId], references: [id])
+  host         User                 @relation("SessionHost", fields: [hostId], references: [id])
+  activity     Activity             @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  participants SessionParticipant[]
+  answers      Answer[]
+  assignments  QuizAssignment[]
+  shortLinks   ShortLink[]
+
+  @@index([mode, status])
+  @@index([hostId, createdAt])
+}
+
+model QuizAssignment {
+  id           String   @id @default(cuid())
+  quizId       String
+  sessionId    String
+  studentId    String
+  assignedById String
+  createdAt    DateTime @default(now())
+
+  quiz          Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  session       QuizSession    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student       User           @relation("AssignmentStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  assignedBy    User           @relation("AssignmentAssigner", fields: [assignedById], references: [id], onDelete: Restrict)
+  notifications Notification[]
+
+  @@unique([sessionId, studentId])
+  @@index([studentId, createdAt])
+  @@index([quizId, createdAt])
+}
+
+model SessionParticipant {
+  id                   String            @id @default(cuid())
+  sessionId            String
+  userId               String?
+  guestTokenHash       String?
+  nickname             String
+  status               ParticipantStatus @default(JOINED)
+  score                Int               @default(0)
+  currentQuestionIndex Int               @default(0)
+  joinedAt             DateTime          @default(now())
+  completedAt          DateTime?
+
+  session QuizSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User?       @relation(fields: [userId], references: [id])
+  answers Answer[]
+
+  @@unique([sessionId, userId])
+  @@index([sessionId, score])
+  @@index([sessionId, guestTokenHash])
+  // @@unique([sessionId, userId])는 sessionId가 선두라 userId 단독 조회(/api/me/history,
+  // 학생별 응시 기록, /quiz/assignments 진행률)에 쓰이지 못해 매번 순차 스캔이 됩니다.
+  @@index([userId, joinedAt])
+}
+
+model Answer {
+  id                  String   @id @default(cuid())
+  sessionId           String
+  participantId       String
+  questionId          String
+  choiceId            String?
+  selectedChoiceIds   String[] @default([]) // 복수 정답 객관식·설문 선택값
+  selectedChoiceTexts String[] @default([]) // 보기 수정·삭제 후에도 과거 제출 내용을 보존하는 스냅샷
+  textResponse        String? // SHORT_ANSWER 제출 원문(정규화 전)
+  isCorrect           Boolean  @default(false)
+  responseTimeMs      Int?
+  pointsAwarded       Int      @default(0)
+  answeredAt          DateTime @default(now())
+
+  session     QuizSession        @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  participant SessionParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  question    Question           @relation(fields: [questionId], references: [id])
+  choice      Choice?            @relation(fields: [choiceId], references: [id])
+
+  @@unique([participantId, questionId])
+  @@index([sessionId, questionId])
+  @@index([questionId, choiceId])
+}

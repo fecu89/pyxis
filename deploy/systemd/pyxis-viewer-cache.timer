@@ -1,0 +1,11 @@
+[Unit]
+Description=Prune pyxis document preview cache daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+RandomizedDelaySec=30m
+Unit=pyxis-viewer-cache.service
+
+[Install]
+WantedBy=timers.target

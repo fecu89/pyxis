@@ -1,0 +1,19 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+      fontconfig \
+      fonts-nanum \
+      fonts-noto-cjk \
+      libreoffice-calc \
+      libreoffice-impress \
+      libreoffice-writer \
+    && fc-cache -f \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /work
+
+# 실제 실행 UID/GID는 rootless Podman의 keep-id로 호스트 서비스 계정에 맞춥니다.
+ENTRYPOINT ["/usr/bin/soffice"]

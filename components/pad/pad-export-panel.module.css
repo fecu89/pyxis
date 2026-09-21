@@ -1,0 +1,125 @@
+.panel {
+  display: grid;
+  gap: 14px;
+  padding: 20px 24px 24px;
+}
+
+.panel section {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--surface);
+}
+
+.sectionHeading h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 780;
+}
+
+.sectionHeading p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.linkRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.linkRow a {
+  display: flex;
+  min-width: 0;
+  min-height: 58px;
+  padding: 10px 12px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-strong);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .16s ease, background .16s ease, transform .16s ease;
+}
+
+.linkRow a:hover {
+  border-color: color-mix(in srgb, var(--brand) 42%, var(--line));
+  background: color-mix(in srgb, var(--brand) 5%, var(--surface));
+  transform: translateY(-1px);
+}
+
+.linkRow a > span:not(.icon) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.linkRow b {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linkRow small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.icon {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand) 10%, var(--surface));
+  color: var(--brand-strong);
+}
+
+.dataLinks {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.dataLinks a {
+  min-height: 52px;
+}
+
+.dataLinks a > svg {
+  flex: 0 0 auto;
+  color: var(--brand-strong);
+}
+
+.note {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--background);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+@media (max-width: 620px) {
+  .panel {
+    padding: 16px 18px max(20px, env(safe-area-inset-bottom));
+  }
+
+  .panel section {
+    padding: 14px;
+  }
+
+  .linkRow,
+  .dataLinks {
+    grid-template-columns: 1fr;
+  }
+}

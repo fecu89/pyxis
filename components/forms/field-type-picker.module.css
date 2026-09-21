@@ -1,0 +1,7 @@
+.trigger { display: inline-flex; min-width: 146px; max-width: 100%; min-height: 40px; padding: 0 10px 0 12px; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; font-weight: 750; white-space: nowrap; cursor: pointer; }
+.trigger > svg:first-child { flex: none; color: var(--muted); }
+.trigger > span { flex: 1; overflow: hidden; text-align: left; text-overflow: ellipsis; }
+.trigger > svg:last-child { flex: none; color: var(--content-subtle); }
+.trigger:hover,.trigger[aria-expanded="true"] { border-color: var(--brand); background: var(--hover); }
+.trigger:focus-visible { outline: 3px solid color-mix(in srgb, var(--brand) 26%, transparent); outline-offset: 2px; }
+.trigger:disabled { cursor: not-allowed; opacity: .5; }

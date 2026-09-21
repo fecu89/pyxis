@@ -1,0 +1,86 @@
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.reaction,
+.add {
+  display: inline-flex;
+  min-height: 30px;
+  padding: 0 9px;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid color-mix(in srgb, currentColor 13%, transparent);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  color: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.reaction[data-selected="true"] {
+  border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+  background: color-mix(in srgb, var(--brand) 11%, transparent);
+  color: var(--brand);
+}
+
+.reaction:disabled,
+.add:disabled {
+  cursor: default;
+  opacity: .55;
+}
+
+.emoji {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.count {
+  min-width: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.picker {
+  position: relative;
+}
+
+/* 위치(position/top/left/transform)는 컴포넌트가 트리거의 뷰포트 좌표로 계산해 인라인
+   style로 얹습니다(document.body 포털) — 여기서는 생김새만 담당합니다. */
+.menu {
+  z-index: 200;
+  display: grid;
+  width: 210px;
+  padding: 8px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  border-radius: 12px;
+  background: var(--surface-strong);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--scrim) 16%, transparent);
+}
+
+.menu button {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.menu button:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.menu button[data-selected="true"] {
+  background: color-mix(in srgb, var(--brand) 14%, transparent);
+}

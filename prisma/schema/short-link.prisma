@@ -1,0 +1,33 @@
+enum ShortLinkTargetType {
+  BOARD
+  QUIZ_SESSION
+  FORM
+}
+
+// 공개 콘텐츠의 원주소는 그대로 둔 채 사람이 기억할 수 있는 별칭 하나를 붙입니다.
+// 세 대상 중 정확히 하나만 연결된다는 불변식은 마이그레이션의 CHECK 제약으로도 지킵니다.
+model ShortLink {
+  id            String              @id @default(cuid())
+  slug          String              @unique @db.VarChar(40)
+  targetType    ShortLinkTargetType
+  boardId       String?
+  quizSessionId String?
+  formId        String?
+  createdById   String?
+  // 사용자가 주소를 변경하거나 삭제해도 행은 남겨 과거 QR/인쇄물의 주소를 다시 빼앗지 못하게
+  // 합니다. 대상별 활성 주소 하나는 DB의 부분 유니크 인덱스로 보장합니다.
+  disabledAt    DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  board       Board?       @relation(fields: [boardId], references: [id], onDelete: SetNull)
+  quizSession QuizSession? @relation(fields: [quizSessionId], references: [id], onDelete: SetNull)
+  form        Form?        @relation(fields: [formId], references: [id], onDelete: SetNull)
+  createdBy   User?        @relation("ShortLinkCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([createdById])
+  @@index([boardId, disabledAt])
+  @@index([quizSessionId, disabledAt])
+  @@index([formId, disabledAt])
+  @@index([disabledAt])
+}

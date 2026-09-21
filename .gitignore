@@ -1,0 +1,73 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+/.next-verify/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# 스타일 변경 전후 비교용 스냅샷 (scripts/capture-baseline.ts)
+.screenshots/
+
+# 개발(.next)과 분리한 빌드 산출물
+.next-prod/
+.next-a/
+.next-b/
+.deploy.lock
+
+# pdf.js 실행 자산 — scripts/sync-pdfjs-assets.mjs가 설치·빌드 때 복사합니다.
+/public/pdfjs/
+/public/rhwp/
+
+# 런타임 업로드와 문서 미리보기 캐시. 디렉터리 설명 문서만 저장소에 남깁니다.
+/data/uploads/*
+!/data/uploads/overview.md
+
+# Claude Code 개인 설정 (팀 공유 안 함)
+.claude/settings.local.json
+
+# 개인 메모·운영 문서는 로컬에서만 보관합니다.
+/mdFiles/
+
+# scripts 전체를 제외하면 설치·빌드·배포와 공용 검증 명령이 깨집니다.
+# 개인 계정 정보가 있는 기존 검증 파일과 개인용/일회성 스크립트만 제외합니다.
+/scripts/verify-credential-auth.ts
+/scripts/verify-guest-posting.sh
+/scripts/private/
+/scripts/_*

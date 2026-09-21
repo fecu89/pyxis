@@ -1,0 +1,16 @@
+# lib/quiz 개요
+
+퀴즈 제작·세션 진행·채점·리포트의 핵심 도메인 로직. API 라우트와 `lib/realtime/socket-server.ts`가 공통으로 호출한다.
+
+- `access.ts`: `requireManageableQuiz()`(퀴즈 소유자/ADMIN만), `requireSessionAccess()`(세션 호스트 또는 참여 등록된 학생 본인만 — 반환값의 `participant === null`이 곧 "호스트로 접근함"을 의미).
+- `guest-access.ts`: 공개 세션의 난수 토큰 생성·SHA-256 해시 조회·세션별 HttpOnly 쿠키 처리. 커스텀 Socket.IO 서버와 Route Handler가 함께 import하므로 Next 전용 `server-only` 가드는 쓰지 않지만 클라이언트에서는 import하지 않는다.
+- `pin.ts`: 6자리 PIN 생성(`generateUniquePin`, 충돌 시 재시도).
+- `choice-bulk-update.ts`: 편집 저장에서 서로 다른 보기 값을 PostgreSQL `VALUES` 한 번으로 갱신합니다. 기존 보기 ID와 과거 답안 FK를 유지하면서 보기 수만큼 발생하던 순차 DB 왕복을 없앱니다.
+- `image-store.ts` / `image-maintenance.ts` / `image-sweep.ts` / `image-access.ts` / `image.ts`: 문항 이미지·퀴즈 썸네일의 저장·정리·접근 판정. 이미지는 더 이상 base64 data URL로 DB에 들어가지 않고 `UPLOAD_DIR/quiz/{quizId}/`에 파일로 저장되며, 컬럼에는 주소만 남습니다. `image-sweep.ts`는 저장하지 않고 떠난 파일을 24시간 유예 뒤 회수하고, 기본 90일이 지난 삭제 퀴즈 중 응시 세션이 없는 것만 영구 정리합니다. 자세한 규칙과 이유는 `lib/files/overview.md`에 모아 두었습니다. `image.ts`만 클라이언트 모듈(업로드 호출)이고 나머지는 Node 서버에서만 사용합니다.
+- `grading.ts`: `computeScore()`(LIVE 정답은 즉답 100%에서 제한시간 끝 30%까지 선형 감소, ASYNC는 고정 만점), `gradeAndRecordAnswer()`(Answer 생성 + 참여자 점수 반영, `@@unique[participantId, questionId]`로 재제출 방지). 동시 탭·더블 클릭이 사전 조회를 함께 통과해도 Answer 생성과 점수 증가는 한 트랜잭션이라 한 요청만 이기며, P2002를 받은 요청은 승자 Answer를 다시 읽어 `alreadyAnswered` 성공 결과로 수렴합니다. 객관식은 `multipleSelection`에 따라 단일 선택 또는 선택 집합 일치를 검증하고, 제출 당시의 보기 문구를 `selectedChoiceTexts`에 함께 저장한다. O/X는 하나의 `choiceId`를 비교하며, `SHORT_ANSWER`는 `normalizeAnswerText()`(trim + 공백 축소 + 소문자화)로 `textResponse`와 `acceptedAnswers`를 정규화해 비교(대소문자·공백 차이는 항상 관대하게 허용). **소켓 핸들러(`student:submit-answer`)와 ASYNC REST(`/api/sessions/[id]/answer`)가 이 함수를 그대로 공유**하므로 LIVE/ASYNC 채점 결과가 항상 동일한 규칙을 따른다. `server.ts`가 순수 Node(tsx)로 이 파일을 직접 로드하므로 `"server-only"` 가드를 두지 않는다.
+- `point-multiplier.ts`: 기본 1,000점을 기준으로 문항 배수를 계산한다. 2,000점 이상 문항은 2.7초 배점 강조 화면을 사용하며, LIVE 서버의 예약 시작 시각과 LIVE/ASYNC UI가 같은 상수와 판정 함수를 공유한다.
+- `async-session.ts`: ASYNC 모드 전용 헬퍼. 세션·참여자 로드 + `openAt`/`dueAt` 시간창 검증을 한 곳에 모아 `start`/`current-question`/`answer` 세 라우트가 공유한다.
+- `history.ts`: `getStudentQuizHistory(userId)` — 학생 한 명의 전체 참여 이력을 문항별 선택/정답 텍스트까지 포함해 반환. 주관식 문항은 Choice가 없으므로 `chosenChoiceText`/`correctChoiceText` 자리에 제출 원문(`textResponse`)과 `acceptedAnswers.join(" / ")`를 대신 채워 화면이 필드 이름을 그대로 재사용할 수 있게 한다. `/api/me/history`와 `/api/students/[id]/history`가 공유.
+- `report.ts`: 로그인 호스트/학생 리포트와 공개 참여자 본인 리포트를 생성한다. HOST는 참여자별 정답·응답·평균 응답시간과 문항별 분포·오답자, SELF는 미제출을 포함한 문항별 답안·정답·배점·응답시간을 반환한다.
+- `admin-queries.ts`: `getAdminQuizPage()` — 관리자 센터 "전체 퀴즈" 탭 전용. `library-page.ts`의 `getQuizLibraryPage`(본인 서재용, 즐겨찾기·배정·과목 사이드바까지 계산)와 달리 `lib/board/queries.ts`의 `getAdminBoardPage`처럼 검색·소유자 정확 검색·수정일 범위·보관 토글·정렬만 받는 얇은 skip/take 페이지네이션이다.
+- `assign-candidates.ts`: 퀴즈를 학생에게 할당하는 화면의 후보 조회. `assignableStudentWhere()`(권한 있는 관리자는 전체, 그 외 교사는 자기 학교만 — 원래 `app/api/quiz/quizzes/[quizId]/assignments/route.ts` 안의 `studentScope`였던 것을 GET 후보 조회와 POST 할당 확정이 같은 판정을 쓰도록 이관), `getAssignableClassGroups()`(범위 학교의 CLASS 그룹, `lib/subjects/roster.ts`의 `getLinkableSchoolGroups`와 같은 정렬·상한이지만 `AssignClassOption`에 학교 이름은 담지 않는다), `getAssignableStudentCandidates()`(역할·상태·학교/학급 범위를 조립해 `lib/users/student-search.ts`의 `searchActiveStudents`에 위임 — 범위 밖 `schoolGroupId`는 AND 조건이라 자동으로 빈 결과가 된다).

@@ -1,0 +1,460 @@
+/*
+ * 카드 안의 댓글 영역. 카드 본문과 구분하되 입력면이 탁한 회색 덩어리가 되지 않도록
+ * globals.css의 의미 토큰에서 가져옵니다(structure.md 5장 — 리터럴 색 금지).
+ * 커서는 카드 전체가 pointer라 여기서 auto로 되돌립니다 — 이 영역은 "글 열기"가 아닙니다.
+ */
+.root {
+  padding: 9px 12px 11px;
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 88%, var(--background));
+  cursor: auto;
+}
+
+/* 높이를 가두지 않습니다. 댓글이 늘면 카드가 그만큼 길어지는 게 맞습니다 — 카드 안에 또
+   스크롤 영역을 만들면 내용이 숨고, 벽 레이아웃에서 스크롤 안쪽/바깥쪽이 헷갈립니다.
+   한 글의 댓글은 많아야 20개(CARD_COMMENT_LIMIT)라 카드가 감당 못 할 만큼 길어지지 않습니다. */
+.list {
+  display: grid;
+  margin: 0 0 7px;
+  padding: 0;
+  gap: 7px;
+  list-style: none;
+}
+
+.list li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 7px;
+}
+
+.commentContent {
+  min-width: 0;
+}
+
+/* 줄바꿈 규칙은 상세 화면 댓글(threaded-comments.module.css)과 같습니다 — 같은 내용이
+   두 화면에서 다르게 접히면 안 됩니다. anywhere는 띄어쓰기 없는 긴 URL·문자열이 카드를
+   밀어내는 걸 막고, pre-wrap은 사용자가 Shift+Enter로 넣은 줄바꿈을 살립니다. */
+.list p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.list b {
+  margin-right: 5px;
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.list time {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.guest {
+  margin-right: 5px;
+  padding: 1px 5px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.mention {
+  padding: 0 2px;
+  border-radius: 4px;
+  background: var(--brand-soft);
+  color: var(--brand-soft-fg);
+  font-weight: 600;
+}
+
+.link {
+  color: var(--brand-strong);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--brand) 35%, transparent);
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+.commentAttachments {
+  display: grid;
+  min-width: 0;
+  margin-top: 6px;
+  gap: 5px;
+}
+
+.commentAttachments > a:not(.commentFile) {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.commentAttachments img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 116px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.commentAttachments audio {
+  width: 100%;
+  height: 32px;
+}
+
+.commentFile {
+  display: grid;
+  min-width: 0;
+  min-height: 32px;
+  padding: 5px 7px;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-strong);
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.commentFile span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.remove:hover {
+  background: var(--danger-surface);
+  color: var(--danger);
+}
+
+/* 한 페이지(20개)를 넘겨 카드에 다 싣지 못한 경우의 안내. 버튼이 아니라 한 줄 설명입니다. */
+.hidden {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.quick {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  padding: 2px 4px 4px;
+  gap: 4px;
+  background: var(--field);
+}
+
+.quickRow {
+  position: relative;
+  min-width: 0;
+}
+
+.quickRow textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  max-height: 96px;
+  box-sizing: border-box;
+  padding: 7px 36px;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: none;
+}
+
+.quick:focus-within {
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--brand) 60%, transparent);
+}
+
+.quickRow > button {
+  position: absolute;
+  bottom: 2px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--brand);
+  cursor: pointer;
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+.quickRow > .attachButton {
+  left: 0;
+  color: var(--muted);
+}
+
+.quickRow > .sendButton {
+  right: 0;
+}
+
+.quickRow > button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.quickRow > button:focus-visible {
+  border-radius: 6px;
+  outline: 2px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  outline-offset: 0;
+}
+
+.quickRow > button:disabled {
+  opacity: .28;
+  cursor: default;
+}
+
+.pendingFiles {
+  display: grid;
+  max-height: 106px;
+  margin: 0;
+  padding: 0;
+  gap: 3px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.pendingFiles li {
+  display: grid;
+  min-width: 0;
+  min-height: 29px;
+  padding: 3px 3px 3px 6px;
+  grid-template-columns: 16px minmax(0, 1fr) auto 26px;
+  align-items: center;
+  gap: 5px;
+  background: color-mix(in srgb, var(--brand) 5%, var(--surface));
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.pendingFiles li > span {
+  overflow: hidden;
+  color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pendingFiles small {
+  font-size: 9px;
+}
+
+.pendingFiles button {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.pendingFiles button:hover:not(:disabled) {
+  background: var(--danger-surface);
+  color: var(--danger);
+}
+
+.pendingFiles button:disabled {
+  cursor: default;
+  opacity: .4;
+}
+
+.fileInput {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mobileTrigger {
+  display: none;
+}
+
+.mobileSheetForm {
+  display: flex;
+  min-height: 112px;
+  flex-direction: column;
+  background: var(--surface);
+}
+
+.mobileEditor {
+  position: relative;
+  display: flex;
+  min-height: 55px;
+  flex: 1;
+}
+
+.mobileEditor textarea {
+  display: block;
+  width: 100%;
+  min-height: 55px;
+  max-height: 132px;
+  padding: 10px 12px 21px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: var(--field);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.mobileEditor > span {
+  position: absolute;
+  right: 11px;
+  bottom: 5px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  pointer-events: none;
+}
+
+.mobileSheetForm > .pendingFiles {
+  max-height: 92px;
+  padding: 4px 9px;
+  border-top: 1px solid var(--line);
+}
+
+.capturePanel {
+  max-height: min(44dvh, 310px);
+  padding: 8px 10px;
+  overflow-y: auto;
+  border-top: 1px solid var(--line);
+}
+
+.mobileTools {
+  display: flex;
+  min-height: 56px;
+  padding: 5px 9px max(5px, env(safe-area-inset-bottom));
+  align-items: center;
+  gap: 2px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.mobileTools button {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.mobileTools button:hover:not(:disabled),
+.mobileTools button:focus-visible,
+.mobileTools button[data-active="true"] {
+  outline: 0;
+  background: var(--brand-soft);
+  color: var(--brand-soft-fg);
+}
+
+.mobileTools button:disabled {
+  cursor: default;
+  opacity: .35;
+}
+
+.mobileToolSpacer {
+  flex: 1;
+}
+
+.mobileTools .mobileSend {
+  color: var(--brand);
+}
+
+.mobileError {
+  margin: 0;
+  padding: 6px 10px;
+  border-top: 1px solid var(--danger-line);
+  background: var(--danger-surface);
+  color: var(--danger);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+:global(.modal-bottom-backdrop[data-keyboard="true"]) .mobileTools {
+  padding-bottom: 5px;
+}
+
+.error {
+  margin: 8px 0 0;
+  color: var(--danger);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .root {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .quick {
+    display: none;
+  }
+
+  .mobileTrigger {
+    display: flex;
+    width: 100%;
+    min-height: 36px;
+    padding: 5px 1px;
+    align-items: center;
+    gap: 7px;
+    border: 0;
+    border-top: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .mobileTrigger:hover,
+  .mobileTrigger:focus-visible {
+    outline: 0;
+    color: var(--brand-strong);
+  }
+
+  .commentAttachments img {
+    max-height: 148px;
+  }
+}
