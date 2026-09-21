@@ -71,3 +71,5 @@ next-env.d.ts
 /scripts/verify-guest-posting.sh
 /scripts/private/
 /scripts/_*
+
+/uploads/*
