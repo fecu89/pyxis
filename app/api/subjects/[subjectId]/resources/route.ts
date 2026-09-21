@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireActiveUser } from "@/lib/auth/authorization";
+import type { CurrentUser } from "@/lib/auth/current-user";
 import { inviteSubjectRosterToBoard } from "@/lib/board/subject-invite";
 import { apiError, assertSameOrigin } from "@/lib/http";
 import { readJsonWithLimit } from "@/lib/http-json";
@@ -15,11 +16,15 @@ const deltaSchema = z.object({
     add: z.array(z.string().min(1)).optional(),
     remove: z.array(z.string().min(1)).optional(),
   }).optional(),
-}).refine((value) => value.quizzes || value.boards, "바꿀 내용을 입력해 주세요.");
+  forms: z.object({
+    add: z.array(z.string().min(1)).optional(),
+    remove: z.array(z.string().min(1)).optional(),
+  }).optional(),
+}).refine((value) => value.quizzes || value.boards || value.forms, "바꿀 내용을 입력해 주세요.");
 const RESOURCE_DELTA_BODY_MAX_BYTES = 256 * 1024;
 const BOARD_INVITE_CONCURRENCY = 4;
 
-async function inviteBoardRosters(boardIds: string[], subjectId: string, actorId: string) {
+async function inviteBoardRosters(boardIds: string[], subjectId: string, actor: CurrentUser) {
   const uniqueBoardIds = [...new Set(boardIds)];
   // 각 초대는 명단 조회와 트랜잭션을 포함합니다. 모두 직렬이면 큰 선택이 타임아웃에 가깝고,
   // 모두 병렬이면 DB pool을 독점하므로 작은 묶음 단위로만 병렬 처리합니다.
@@ -27,7 +32,7 @@ async function inviteBoardRosters(boardIds: string[], subjectId: string, actorId
     await Promise.all(
       uniqueBoardIds
         .slice(index, index + BOARD_INVITE_CONCURRENCY)
-        .map((boardId) => inviteSubjectRosterToBoard(boardId, subjectId, actorId)),
+        .map((boardId) => inviteSubjectRosterToBoard(boardId, subjectId, actor)),
     );
   }
 }
@@ -39,15 +44,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ sub
     assertSameOrigin(request);
     const actor = await requireActiveUser();
     const { subjectId } = await params;
-    await requireOwnedSubject(subjectId, actor.id);
+    await requireOwnedSubject(subjectId, actor);
     const input = deltaSchema.parse(await readJsonWithLimit(request, RESOURCE_DELTA_BODY_MAX_BYTES));
 
     if (input.quizzes) await applyResourceDelta(subjectId, actor, "quiz", input.quizzes);
+    if (input.forms) await applyResourceDelta(subjectId, actor, "form", input.forms);
     if (input.boards) {
       await applyResourceDelta(subjectId, actor, "board", input.boards);
       // 새로 연결한(add) 패드마다 그 순간의 교과목 명단을 한 번에 초대합니다(1회성). 이미
       // 연결돼 있던 패드를 다시 add해도 대상 학생이 전부 이미 멤버라 안전하게 0명 추가로 끝납니다.
-      await inviteBoardRosters(input.boards.add ?? [], subjectId, actor.id);
+      await inviteBoardRosters(input.boards.add ?? [], subjectId, actor);
     }
 
     return Response.json({ subject: await getCourseSummary(subjectId, actor.id) });

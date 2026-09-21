@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
     // 패드를 교과목에 새로 연결했을 때만 그 순간의 교과목 명단을 한 번에 초대합니다(1회성).
     // 미분류로 되돌리는 경우(subjectId === null)나 퀴즈는 대상이 아닙니다.
-    if (kind === "board" && subjectId) await inviteSubjectRosterToBoard(id, subjectId, actor.id);
+    if (kind === "board" && subjectId) await inviteSubjectRosterToBoard(id, subjectId, actor);
 
     return Response.json({ ok: true, subjectId });
   } catch (error) {

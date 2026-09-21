@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { QuizLibrary } from "@/components/quiz/quiz-library";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { redirectToLogin } from "@/lib/auth/page-guard";
 import { currentQuizLimit } from "@/lib/quiz/creation-limit";
@@ -17,6 +16,13 @@ export async function renderQuizLibraryPage(
   if (!user) redirectToLogin(path);
   if (options.tab === "discover" && user.role === "STUDENT") redirect("/quiz");
 
+  if (user.role === "STUDENT" && (options.view === "ALL" || options.view === "ASSIGNED")) {
+    const { LearningListPage } = await import("@/components/learning/learning-page");
+    const query = await searchParams;
+    return <LearningListPage user={user} kind="quiz" page={Number(query.page)} basePath={path} />;
+  }
+
+  const { LazyQuizLibrary: QuizLibrary } = await import("@/components/learning/lazy-management");
   const params = parseLibraryParams(await searchParams, options.tab, options.view);
   const [data, quizLimit] = await Promise.all([getQuizLibraryPage(user, params), currentQuizLimit(user.role)]);
   return <QuizLibrary

@@ -14,7 +14,6 @@ async function main() {
     homeActions,
     padGrid,
     formList,
-    formLibraryLayout,
     formRootPage,
     quizLibrary,
     quizLibraryLayout,
@@ -93,7 +92,6 @@ async function main() {
     read("components/home/home-actions.tsx"),
     read("components/home/pad-grid.tsx"),
     read("components/forms/form-list.tsx"),
-    read("app/(workspace)/forms/(library)/layout.tsx"),
     read("app/(workspace)/forms/(library)/page.tsx"),
     read("components/quiz/quiz-library.tsx"),
     read("app/(workspace)/quiz/(library)/layout.tsx"),
@@ -208,7 +206,8 @@ async function main() {
   assert(proxySource.includes('pathname === "/quiz"') && proxySource.includes("legacyQuizLibraryView") && proxySource.includes("redirectWithoutLegacySearch"), "예전 퀴즈 URL은 페이지 렌더 전에 리다이렉트해야 합니다.");
   assert(quizLibrary.includes('discover ? "/quiz/discover" : QUIZ_LIBRARY_PATHS[params.view]') && !quizLibrary.includes('search.set("view"'), "퀴즈 보기는 경로로, 검색·정렬만 쿼리로 이동해야 합니다.");
   assert(quizLibraryData.includes('if (params.tab === "discover")') && quizLibraryData.includes("viewCounts: {}"), "퀴즈 탐색이 내 보관함 집계를 함께 조회하면 안 됩니다.");
-  assert(formLibraryLayout.includes("PageHeader") && formRootPage.includes("legacyFormListView") && routesSource.includes('path: "/forms/open"'), "설문 상태별 화면은 공통 layout 아래 정식 라우트여야 합니다.");
+  // 학생/관리자 분기와 layout의 children 전달은 verify-learning-routes에서 실제 실행합니다.
+  assert(formRootPage.includes("legacyFormListView") && routesSource.includes('path: "/forms/open"'), "설문 상태별 정식 라우트와 기존 URL 호환을 유지해야 합니다.");
   assert(reportActivityLayout.includes("PageHeader") && reportRootPage.includes("legacyReportActivityType") && routesSource.includes('path: "/report/quizzes"'), "활동 종류별 리포트는 공통 layout 아래 정식 라우트여야 합니다.");
   assert(adminError.includes("router.back()") && adminError.includes("이전으로") && !adminError.includes("내 패드로"), "관리자 오류 화면은 패드가 아니라 이전 화면으로 돌아가야 합니다.");
   assert(adminThemePanel.includes("applyRootBrandTheme(savedRef.current)"), "테마 탭을 떠날 때 저장된 브랜드 색을 기본 파랑으로 지우면 안 됩니다.");

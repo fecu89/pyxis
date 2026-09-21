@@ -21,6 +21,11 @@ export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirectToLogin("/dashboard");
 
+  if (user.role === "STUDENT") {
+    const { StudentDashboard } = await import("@/components/learning/student-dashboard");
+    return <StudentDashboard user={user} />;
+  }
+
   const prisma = getPrisma();
   const [quizCount, boardCount, recent, recentVisits, courseData] = await Promise.all([
     prisma.quiz.count({ where: { ownerId: user.id, deletedAt: null } }),

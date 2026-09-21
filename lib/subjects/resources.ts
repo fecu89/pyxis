@@ -12,7 +12,7 @@ import { getPrisma } from "@/lib/prisma";
  */
 export const RESOURCE_PAGE_SIZE = 20;
 
-export type ResourceKind = "quiz" | "board";
+export type ResourceKind = "quiz" | "board" | "form";
 
 export type CourseResourceItem = {
   id: string;
@@ -121,4 +121,30 @@ export async function getCourseBoardCandidates(
     page: safePage,
     pageSize,
   };
+}
+
+export async function getCourseFormCandidates(
+  subjectId: string,
+  ownerId: string,
+  { search = "", page = 1, pageSize = RESOURCE_PAGE_SIZE, filter = "all" }: Query = {},
+): Promise<CourseResourcePage> {
+  const prisma = getPrisma();
+  const safePage = Math.max(1, Math.floor(page));
+  const term = search.trim();
+  const where: Prisma.FormWhereInput = {
+    ownerId, deletedAt: null,
+    ...(term ? { title: { contains: term, mode: "insensitive" } } : {}),
+    ...subjectFilter(subjectId, filter),
+  };
+  const [totalCount, rows] = await Promise.all([
+    prisma.form.count({ where }),
+    prisma.form.findMany({ where, orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
+      skip: (safePage - 1) * pageSize, take: pageSize,
+      select: { id: true, title: true, subjectId: true, updatedAt: true, subject: { select: { name: true } } },
+    }),
+  ]);
+  return { items: rows.map(row => ({ id: row.id, title: row.title, linked: row.subjectId === subjectId,
+    otherCourseName: row.subjectId && row.subjectId !== subjectId ? row.subject?.name ?? null : null,
+    updatedAt: row.updatedAt.toISOString(),
+  })), totalCount, page: safePage, pageSize };
 }

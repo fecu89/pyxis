@@ -8,6 +8,7 @@ export function resolveFormAccessLevel(form: {
   frozenAt: Date | null;
   shares: Array<{ permission: "EDITOR" | "VIEWER" }>;
 }, actor: PermissionHolder & { id: string }): FormAccessLevel | null {
+  if (actor.role === "STUDENT") return null;
   const canEditAny = hasSystemPermission(actor, "EDIT_ANY_QUIZ");
   const level = form.ownerId === actor.id || canEditAny
     ? "OWNER"

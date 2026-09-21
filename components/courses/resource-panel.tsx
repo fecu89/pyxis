@@ -23,10 +23,10 @@ export function ResourcePanel({
   onChanged,
 }: {
   subjectId: string;
-  kind: "quiz" | "board";
+  kind: "quiz" | "board" | "form";
   onChanged?: () => void;
 }) {
-  const label = kind === "quiz" ? "퀴즈" : "패드";
+  const label = kind === "quiz" ? "퀴즈" : kind === "form" ? "설문" : "패드";
   const [filter, setFilter] = useState<ResourceFilter>("all");
   const [added, setAdded] = useState<Set<string>>(new Set());
   const [removed, setRemoved] = useState<Set<string>>(new Set());
@@ -83,7 +83,7 @@ export function ResourcePanel({
     setError(null);
     setNotice(null);
     try {
-      const key = kind === "quiz" ? "quizzes" : "boards";
+      const key = kind === "quiz" ? "quizzes" : kind === "form" ? "forms" : "boards";
       await readJson(await fetch(`/api/subjects/${subjectId}/resources`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

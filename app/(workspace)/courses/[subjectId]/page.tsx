@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/ui/page-layout";
-import { CourseDetail } from "@/components/courses/course-detail";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { redirectToLogin } from "@/lib/auth/page-guard";
 import { getCourseSummary } from "@/lib/subjects/course-dashboard";
-import { getCourseRosterData, rosterMemberWhere } from "@/lib/subjects/roster";
-import { getPrisma } from "@/lib/prisma";
+import { getCourseAccess } from "@/lib/learning/queries";
+import { CourseActivities } from "@/components/learning/course-activities";
 import { getMetadata } from "@/utils/seo/getMetadata";
 
 export const dynamic = "force-dynamic";
@@ -16,17 +15,18 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
   const user = await getCurrentUser();
   if (!user) redirectToLogin(`/courses/${subjectId}`);
 
-  const course = await getCourseSummary(subjectId, user.id);
+  const access = await getCourseAccess(subjectId, user);
+  if (!access) notFound();
+  if (!access.canManage) return <PageShell><CourseActivities course={access} initiallyOpen /></PageShell>;
+
+  // 권한을 확인하기 전에는 관리 컴포넌트와 학생 명단을 로드하지 않습니다.
+  const [{ CourseDetail }, { getCourseRosterData }] = await Promise.all([
+    import("@/components/learning/lazy-management").then(m => ({ CourseDetail: m.LazyCourseDetail })), import("@/lib/subjects/roster"),
+  ]);
+  const [course, initialRoster] = await Promise.all([
+    getCourseSummary(subjectId, user.id), getCourseRosterData(subjectId, user, true),
+  ]);
   if (!course) notFound();
-
-  // 소유자가 아니면 자기가 그 교과목 명단에 들어 있을 때만 볼 수 있습니다. 명단 조건을 그대로
-  // 재사용해 학급 연결로 들어온 학생도 자기 교과목을 열 수 있게 합니다.
-  if (!course.editable) {
-    const member = await getPrisma().user.count({ where: { AND: [{ id: user.id }, rosterMemberWhere(subjectId)] } });
-    if (!member) notFound();
-  }
-
-  const initialRoster = await getCourseRosterData(subjectId, user, course.editable);
 
   return (
     <PageShell>

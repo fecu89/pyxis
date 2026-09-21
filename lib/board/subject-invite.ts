@@ -4,6 +4,8 @@ import { followBoardUsers, recordBoardActivity } from "@/lib/board/activity";
 import { getPrisma } from "@/lib/prisma";
 import { publishBoardEvent } from "@/lib/realtime/board-events";
 import { rosterMemberWhere } from "@/lib/subjects/roster";
+import type { CurrentUser } from "@/lib/auth/current-user";
+import { canAssignStudentsToCourses } from "@/lib/subjects/scope";
 
 /**
  * 패드가 교과목에 새로 연결되는 순간, 그 교과목 명단(개별 배정 ∪ 연결 학급)의 학생 전체를
@@ -11,7 +13,10 @@ import { rosterMemberWhere } from "@/lib/subjects/roster";
  * 이미 멤버인 학생은 건드리지 않습니다. `app/api/boards/[boardId]/members/groups/route.ts`의
  * 학급·부서 일괄 추가와 같은 패턴(createMany + skipDuplicates, 부수효과도 일괄 처리)입니다.
  */
-export async function inviteSubjectRosterToBoard(boardId: string, subjectId: string, actorId: string) {
+export async function inviteSubjectRosterToBoard(boardId: string, subjectId: string, actor: Pick<CurrentUser, "id" | "role">) {
+  // 개인 분류는 학생도 사용하지만, 과거 소유 명단을 읽거나 일괄 초대할 권한은 주지 않습니다.
+  if (!canAssignStudentsToCourses(actor)) return { addedCount: 0 };
+  const actorId = actor.id;
   const prisma = getPrisma();
   const [board, existingMembers, students] = await Promise.all([
     prisma.board.findUnique({ where: { id: boardId }, select: { ownerId: true } }),

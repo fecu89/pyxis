@@ -16,4 +16,8 @@ assert.equal(resolveFormAccessLevel(form, { ...teacher, role: "ADMIN", systemPer
 assert.equal(resolveFormAccessLevel(form, { ...teacher, role: "ADMIN", systemPermissions: ["EDIT_ANY_QUIZ"] }), "OWNER");
 assert.equal(resolveFormAccessLevel({ ...form, frozenAt: new Date() }, { ...teacher, role: "SUPER_ADMIN" }), "OWNER");
 assert.equal(resolveFormAccessLevel({ ...form, frozenAt: new Date() }, { ...teacher, role: "ADMIN", systemPermissions: ["EDIT_ANY_QUIZ"] }), "OWNER");
-console.log("Forms 목록·API 공용 권한: 소유·공유·관리자·동결 11개 조합 통과");
+const student = { ...teacher, role: "STUDENT" } satisfies PermissionHolder & { id: string };
+assert.equal(resolveFormAccessLevel({ ...form, ownerId: student.id }, student), null);
+assert.equal(resolveFormAccessLevel({ ...form, shares: [{ permission: "EDITOR" }] }, student), null);
+assert.equal(resolveFormAccessLevel(form, { ...student, systemPermissions: ["EDIT_ANY_QUIZ"] }), null);
+console.log("Forms 목록·API 공용 권한: 소유·공유·관리자·동결·학생 14개 조합 통과");

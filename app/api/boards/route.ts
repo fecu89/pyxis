@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     });
     // 교과목을 골라 만든 패드는 그 순간의 교과목 명단을 한 번에 멤버로 초대합니다(1회성 —
     // 이후 명단이 바뀌어도 자동으로 반영되지 않습니다).
-    if (board.subjectId) await inviteSubjectRosterToBoard(board.id, board.subjectId, user.id);
+    if (board.subjectId) await inviteSubjectRosterToBoard(board.id, board.subjectId, user);
     return Response.json({ board: { id: board.id, slug: board.slug } }, { status: 201 });
   } catch (error) {
     if (error instanceof BoardCreateSelectionError) {

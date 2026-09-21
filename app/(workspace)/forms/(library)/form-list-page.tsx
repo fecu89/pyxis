@@ -1,4 +1,3 @@
-import { FormList } from "@/components/forms/form-list";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { redirectToLogin } from "@/lib/auth/page-guard";
 import { getFormListPage, parseFormListParams } from "@/lib/forms/list";
@@ -9,9 +8,13 @@ export type FormListSearchParams = Promise<Record<string, string | string[] | un
 export async function renderFormListPage(searchParams: FormListSearchParams, view: FormListView) {
   const user = await getCurrentUser();
   if (!user) redirectToLogin(FORM_LIST_PATHS[view]);
-  // layout이 학생용 권한 안내를 렌더링하므로 목록 쿼리는 실행하지 않습니다.
-  if (user.role === "STUDENT") return null;
+  if (user.role === "STUDENT") {
+    const { LearningListPage } = await import("@/components/learning/learning-page");
+    const query = await searchParams;
+    return <LearningListPage user={user} kind="form" page={Number(query.page)} basePath={FORM_LIST_PATHS[view]} />;
+  }
 
+  const { LazyFormList: FormList } = await import("@/components/learning/lazy-management");
   const params = parseFormListParams(await searchParams, view);
   const data = await getFormListPage(user, params);
   return (

@@ -9,8 +9,9 @@ export async function GET(request: Request) {
     if (section !== "pad" && section !== "dashboard" && section !== "quiz" && section !== "form") {
       return Response.json({ error: "사이드바 영역을 확인해 주세요." }, { status: 400 });
     }
-    if (section === "form" && user.role === "STUDENT") {
-      return Response.json({ error: "설문 사이드바를 볼 권한이 없습니다." }, { status: 403 });
+    if ((section === "form" || section === "quiz") && user.role === "STUDENT") {
+      // 원본 편집/응답 관리로 이어지는 최근 목록을 학생에게 내려보내지 않습니다.
+      return Response.json({ items: [] }, { headers: { "Cache-Control": "private, no-store" } });
     }
     const data = section === "dashboard" ? await getCourseSidebarData(user)
       : section === "quiz" ? await getQuizSidebarData(user)

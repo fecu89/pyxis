@@ -65,10 +65,8 @@ export const TOP_SECTIONS = [
   { key: "dashboard", label: "대시보드", path: "/dashboard", prefixes: ["/dashboard", "/courses"], icon: "report", sidebar: "dashboard" },
   { key: "quiz", label: "퀴즈", path: "/quiz", prefixes: ["/quiz"], icon: "quiz", sidebar: "quiz" },
   { key: "pad", label: "패드", path: "/pad", prefixes: ["/pad"], icon: "pad", sidebar: "pad" },
-  // 설문은 응답에 개인정보가 담기므로 학생에게는 섹션 자체를 보이지 않습니다. 받은 설문은
-  // 선생님이 보낸 공개 링크(/s/:slug)로 응답합니다.
-  { key: "form", label: "설문", path: "/forms", prefixes: ["/forms"], icon: "form", sidebar: "form",
-    roles: ["SUPER_ADMIN", "ADMIN", "TEACHER"] },
+  // 학생은 응답 가능한 설문 목록만 봅니다. 편집·타인 응답 관리는 별도 서버 권한 경계입니다.
+  { key: "form", label: "설문", path: "/forms", prefixes: ["/forms"], icon: "form", sidebar: "form" },
   // 생기부 문안(옛 /recode)은 이 섹션의 사이드바 한 줄로 들어옵니다. 재료가 전부 리포트의
   // Activity라서 섹션을 따로 차지할 이유가 없었고, 상단 섹션 판정이 URL 접두사 기반이라
   // 사이드바로 내리려면 경로도 /report 아래로 와야 했습니다.
@@ -188,7 +186,7 @@ export const ROUTES = [
     nav: { section: "quiz", label: "퀴즈 탐색", icon: "search", match: "exact", order: 40 } },
   // 설문 — 상태별 보기는 본문의 필터 칩이 담당합니다. 정식 하위 경로는 북마크와 필터 상태를
   // 유지하되 사이드바에는 반복하지 않습니다.
-  { id: "formList", path: "/forms", zone: "workspace", roles: ["SUPER_ADMIN", "ADMIN", "TEACHER"],
+  { id: "formList", path: "/forms", zone: "workspace",
     nav: { section: "form", label: "내 설문", icon: "form", match: "exact", order: 10 } },
   { id: "formViewOpen", path: "/forms/open", zone: "workspace", roles: ["SUPER_ADMIN", "ADMIN", "TEACHER"] },
   { id: "formViewDraft", path: "/forms/drafts", zone: "workspace", roles: ["SUPER_ADMIN", "ADMIN", "TEACHER"] },

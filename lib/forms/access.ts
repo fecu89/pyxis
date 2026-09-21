@@ -15,6 +15,8 @@ import { resolveFormAccessLevel } from "@/lib/forms/access-level";
 export type { FormAccessLevel } from "@/lib/forms/access-level";
 
 export async function getFormAccess(formId: string, actor: CurrentUser) {
+  // 역할 변경 후 남아 있는 소유/공유 기록은 관리 화면 접근 권한이 아닙니다.
+  if (actor.role === "STUDENT") return null;
   const form = await getPrisma().form.findUnique({
     where: { id: formId },
     include: { shares: { where: { userId: actor.id }, select: { permission: true } } },

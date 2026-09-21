@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FileQuestion, LayoutGrid, Pencil, Trash2, Users } from "lucide-react";
+import { FileQuestion, ClipboardList, LayoutGrid, Pencil, Trash2, Users } from "lucide-react";
 import { useDialog } from "@/components/ui/app-dialog";
 import { InlineNotice } from "@/components/ui/feedback";
 import { RosterPanel } from "@/components/courses/roster-panel";
@@ -12,7 +12,7 @@ import { COURSE_LIST_PATH } from "@/lib/route-paths";
 import type { CourseSummary } from "@/lib/subjects/course-dashboard";
 import type { CourseRosterData } from "@/lib/subjects/roster";
 
-type Tab = "students" | "quizzes" | "boards";
+type Tab = "students" | "quizzes" | "boards" | "forms";
 
 async function readJson(response: Response) {
   const data = await response.json().catch(() => ({})) as Record<string, unknown>;
@@ -58,7 +58,7 @@ export function CourseDetail({ initial, initialRoster }: { initial: CourseSummar
   async function remove() {
     const ok = await dialog.confirm({
       title: `'${course.name}' 교과목을 삭제할까요?`,
-      description: "퀴즈와 패드는 삭제되지 않고 미분류로 이동하며, 학생 배정과 학급 연결만 해제됩니다.",
+      description: "퀴즈·패드·설문은 삭제되지 않고 미분류로 이동하며, 학생 배정과 학급 연결만 해제됩니다.",
       danger: true,
       confirmLabel: "삭제",
     });
@@ -81,6 +81,7 @@ export function CourseDetail({ initial, initialRoster }: { initial: CourseSummar
     { key: "students", label: "학생", count: course.studentCount, icon: <Users size={15} /> },
     { key: "quizzes", label: "퀴즈", count: course.quizCount, icon: <FileQuestion size={15} /> },
     { key: "boards", label: "패드", count: course.boardCount, icon: <LayoutGrid size={15} /> },
+    { key: "forms", label: "설문", count: course.formCount, icon: <ClipboardList size={15} /> },
   ];
 
   return (
@@ -134,6 +135,7 @@ export function CourseDetail({ initial, initialRoster }: { initial: CourseSummar
             ? <ResourcePanel subjectId={course.id} kind="board" onChanged={refreshCounts} />
             : <p className="course-picker-empty">이 교과목의 패드는 담당 선생님이 구성합니다.</p>
         ) : null}
+        {tab === "forms" && course.editable ? <ResourcePanel subjectId={course.id} kind="form" onChanged={refreshCounts} /> : null}
       </div>
     </div>
   );

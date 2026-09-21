@@ -20,6 +20,7 @@ export type CourseSummary = {
   name: string;
   quizCount: number;
   boardCount: number;
+  formCount: number;
   /** 개별 배정 + 연결 학급을 합친 **실제** 학생 수입니다. */
   studentCount: number;
   /** 연결된 학급 수. 0이면 개별 배정만으로 이루어진 교과목입니다. */
@@ -85,6 +86,7 @@ export const getCourseDashboardData = cache(async function getCourseDashboardDat
           select: {
             quizzes: { where: { deletedAt: null } },
             boards: { where: { deletedAt: null } },
+            forms: { where: { deletedAt: null } },
             schoolGroups: true,
           },
         },
@@ -109,6 +111,7 @@ export const getCourseDashboardData = cache(async function getCourseDashboardDat
           select: {
             quizzes: { where: { deletedAt: null } },
             boards: { where: { deletedAt: null } },
+            forms: { where: { deletedAt: null } },
             schoolGroups: true,
           },
         },
@@ -126,6 +129,7 @@ export const getCourseDashboardData = cache(async function getCourseDashboardDat
       name: subject.name,
       quizCount: subject._count.quizzes,
       boardCount: subject._count.boards,
+      formCount: subject._count.forms,
       studentCount: studentCounts.get(subject.id) ?? 0,
       groupCount: subject._count.schoolGroups,
       editable: true,
@@ -136,6 +140,7 @@ export const getCourseDashboardData = cache(async function getCourseDashboardDat
       name: subject.name,
       quizCount: subject._count.quizzes,
       boardCount: subject._count.boards,
+      formCount: subject._count.forms,
       studentCount: studentCounts.get(subject.id) ?? 0,
       groupCount: subject._count.schoolGroups,
       ownerName: toPublicAuthorDTO(subject.owner).name,
@@ -164,6 +169,7 @@ export async function getCourseSummary(subjectId: string, viewerId: string): Pro
         select: {
           quizzes: { where: { deletedAt: null } },
           boards: { where: { deletedAt: null } },
+          forms: { where: { deletedAt: null } },
           schoolGroups: true,
         },
       },
@@ -176,6 +182,7 @@ export async function getCourseSummary(subjectId: string, viewerId: string): Pro
     name: subject.name,
     quizCount: subject._count.quizzes,
     boardCount: subject._count.boards,
+    formCount: subject._count.forms,
     studentCount: await prisma.user.count({ where: rosterMemberWhere(subjectId) }),
     groupCount: subject._count.schoolGroups,
     ownerName: toPublicAuthorDTO(subject.owner).name,

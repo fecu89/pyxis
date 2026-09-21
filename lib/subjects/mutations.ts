@@ -19,9 +19,10 @@ import { canAssignStudentsToCourses, courseScopeSchoolId, eligibleCourseStudentW
 
 const MAX_DELTA = 500;
 
-export async function requireOwnedSubject(subjectId: string, userId: string) {
+export async function requireOwnedSubject(subjectId: string, actor: CurrentUser) {
+  if (!canAssignStudentsToCourses(actor)) throw new AuthorizationError("교과목을 관리할 권한이 없습니다.");
   const subject = await getPrisma().subject.findUnique({ where: { id: subjectId } });
-  if (!subject || subject.ownerId !== userId) throw new AuthorizationError("교과목을 관리할 권한이 없습니다.");
+  if (!subject || subject.ownerId !== actor.id) throw new AuthorizationError("교과목을 관리할 권한이 없습니다.");
   return subject;
 }
 
@@ -134,27 +135,28 @@ export async function expandGroupsIntoStudents(subjectId: string, actor: Current
 export async function applyResourceDelta(
   subjectId: string,
   actor: CurrentUser,
-  kind: "quiz" | "board",
+  kind: "quiz" | "board" | "form",
   { add = [], remove = [] }: { add?: string[]; remove?: string[] },
 ) {
   const addIds = [...new Set(add)];
   const removeIds = [...new Set(remove)];
-  assertDeltaSize(addIds, kind === "quiz" ? "퀴즈" : "패드");
-  assertDeltaSize(removeIds, kind === "quiz" ? "퀴즈" : "패드");
+  const label = kind === "quiz" ? "퀴즈" : kind === "form" ? "설문" : "패드";
+  assertDeltaSize(addIds, label);
+  assertDeltaSize(removeIds, label);
   const prisma = getPrisma();
-  const model = kind === "quiz" ? prisma.quiz : prisma.board;
+  const model = kind === "quiz" ? prisma.quiz : kind === "form" ? prisma.form : prisma.board;
 
   if (addIds.length) {
     const allowed = await (model as typeof prisma.quiz).count({
       where: { id: { in: addIds }, ownerId: actor.id, deletedAt: null },
     });
     if (allowed !== addIds.length) {
-      throw new AuthorizationError(`관리할 수 없는 ${kind === "quiz" ? "퀴즈" : "패드"}가 포함되어 있습니다.`);
+      throw new AuthorizationError(`관리할 수 없는 ${label}가 포함되어 있습니다.`);
     }
   }
 
   await prisma.$transaction(async (tx) => {
-    const target = kind === "quiz" ? tx.quiz : tx.board;
+    const target = kind === "quiz" ? tx.quiz : kind === "form" ? tx.form : tx.board;
     if (removeIds.length) {
       // 떼는 건 "이 교과목에 붙어 있는 것"만 건드립니다. 다른 교과목 소속을 실수로
       // 미분류로 만들지 않기 위해서입니다.

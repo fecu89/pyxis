@@ -3,8 +3,7 @@ import { requireActiveUser } from "@/lib/auth/authorization";
 import { apiError, assertSameOrigin } from "@/lib/http";
 import { readJsonWithLimit } from "@/lib/http-json";
 import { applyGroupDelta, applyStudentDelta, expandGroupsIntoStudents, requireOwnedSubject } from "@/lib/subjects/mutations";
-import { getCourseRosterData, getCourseGroupLinks, getCourseRoster, getLinkableSchoolGroups, rosterMemberWhere, ROSTER_PAGE_SIZE } from "@/lib/subjects/roster";
-import { getPrisma } from "@/lib/prisma";
+import { getCourseRosterData, getCourseGroupLinks, getCourseRoster, getLinkableSchoolGroups, ROSTER_PAGE_SIZE } from "@/lib/subjects/roster";
 
 // 명단은 개별 배정과 학급 연결의 합집합이라 한 번에 다 내려보내지 않습니다. 400명 규모에서
 // 전체를 보내면 그만큼 복호화가 돌고 클라이언트가 통째로 들고 있어야 하기 때문입니다.
@@ -14,24 +13,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ subj
     const { subjectId } = await params;
     const url = new URL(request.url);
 
-    // 소유자가 아니면 자기가 그 교과목 명단에 들어 있을 때만 읽을 수 있습니다.
-    const subject = await getPrisma().subject.findUnique({ where: { id: subjectId }, select: { ownerId: true } });
-    if (!subject) return Response.json({ error: "교과목을 찾을 수 없습니다." }, { status: 404 });
-    const isOwner = subject.ownerId === actor.id;
-    if (!isOwner) {
-      // 명단 조건을 그대로 재사용합니다 — "이 교과목에 속한 사람인가"의 판정이 한 곳에만 있어야
-      // 학급 연결이 늘어도 여기 검사가 뒤처지지 않습니다.
-      const member = await getPrisma().user.count({ where: { AND: [{ id: actor.id }, rosterMemberWhere(subjectId)] } });
-      if (!member) return Response.json({ error: "교과목을 볼 권한이 없습니다." }, { status: 403 });
-    }
+    // 수강생에게는 학습 목록만 제공합니다. 소유 기록만 있는 학생도 명단을 읽지 못합니다.
+    await requireOwnedSubject(subjectId, actor);
 
     const page = Number(url.searchParams.get("page") ?? "1") || 1;
     const data = page === 1
-      ? await getCourseRosterData(subjectId, actor, isOwner)
+      ? await getCourseRosterData(subjectId, actor, true)
       : await Promise.all([
           getCourseRoster(subjectId, { page, pageSize: ROSTER_PAGE_SIZE }),
           getCourseGroupLinks(subjectId),
-          isOwner ? getLinkableSchoolGroups(subjectId, actor) : Promise.resolve([]),
+          getLinkableSchoolGroups(subjectId, actor),
         ]).then(([roster, groups, linkableGroups]) => ({ ...roster, groups, linkableGroups }));
     return Response.json(data, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
@@ -60,7 +51,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ sub
     assertSameOrigin(request);
     const actor = await requireActiveUser();
     const { subjectId } = await params;
-    await requireOwnedSubject(subjectId, actor.id);
+    await requireOwnedSubject(subjectId, actor);
     const input = deltaSchema.parse(await readJsonWithLimit(request, ROSTER_DELTA_BODY_MAX_BYTES));
 
     let expanded = 0;

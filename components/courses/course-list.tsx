@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { BookOpen, ChevronRight, LayoutGrid, Link2, FileQuestion, Plus, Users } from "lucide-react";
+import { BookOpen, ChevronRight, ClipboardList, LayoutGrid, Link2, FileQuestion, Plus, Users } from "lucide-react";
 import { EmptyState, InlineNotice } from "@/components/ui/feedback";
 import { invalidateCourseOptions } from "@/components/courses/course-select";
 import { COURSE_LIST_PATH } from "@/lib/route-paths";
@@ -43,6 +43,7 @@ export function CourseList({ initial }: { initial: CourseDashboardData }) {
         href: `${COURSE_LIST_PATH}/${subject.id}`,
         quizCount: 0,
         boardCount: 0,
+        formCount: 0,
         studentCount: 0,
         groupCount: 0,
         editable: true,
@@ -110,6 +111,7 @@ export function CourseList({ initial }: { initial: CourseDashboardData }) {
                   <span className="course-card-meta">
                     <span><FileQuestion size={13} aria-hidden />{course.quizCount}</span>
                     <span><LayoutGrid size={13} aria-hidden />{course.boardCount}</span>
+                    <span><ClipboardList size={13} aria-hidden />{course.formCount}</span>
                     {course.groupCount > 0 ? <span><Link2 size={13} aria-hidden />{course.groupCount}</span> : null}
                     <span><Users size={13} aria-hidden />{course.studentCount}</span>
                   </span>

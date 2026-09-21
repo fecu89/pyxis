@@ -25,7 +25,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ su
     assertSameOrigin(request);
     const actor = await requireActiveUser();
     const { subjectId } = await params;
-    await requireOwnedSubject(subjectId, actor.id);
+    await requireOwnedSubject(subjectId, actor);
     const input = updateSchema.parse(await request.json());
 
     const name = cleanSubjectName(input.name);
@@ -44,7 +44,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ s
     assertSameOrigin(request);
     const actor = await requireActiveUser();
     const { subjectId } = await params;
-    await requireOwnedSubject(subjectId, actor.id);
+    await requireOwnedSubject(subjectId, actor);
     // 퀴즈·패드의 subjectId는 외래키 정책(SetNull)으로 미분류가 되고, 명부와 학급 연결만
     // 함께 사라집니다(Cascade). 학생 계정에는 영향이 없습니다.
     await getPrisma().subject.delete({ where: { id: subjectId } });
