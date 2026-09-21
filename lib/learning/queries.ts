@@ -5,16 +5,10 @@ import type { CurrentUser } from "@/lib/auth/current-user";
 import { AuthorizationError } from "@/lib/auth/authorization";
 import { getPrisma } from "@/lib/prisma";
 import { rosterMemberWhere } from "@/lib/subjects/roster";
-import { canAssignStudentsToCourses } from "@/lib/subjects/scope";
+import { canAssignStudentsToCourses, enrolledSubjectWhere as enrolledSubjects } from "@/lib/subjects/scope";
+import { getQuizLearningPage } from "./quiz-queries";
 import { formClosedReason } from "@/lib/forms/field-types";
 import type { LearningCourse, LearningKind, LearningPage } from "./types";
-
-function enrolledSubjects(userId: string): Prisma.SubjectWhereInput {
-  return { OR: [
-    { students: { some: { studentId: userId } } },
-    { schoolGroups: { some: { schoolGroup: { users: { some: { id: userId, role: "STUDENT", status: "ACTIVE" } } } } } },
-  ] };
-}
 
 /** 관리 컴포넌트/명단 조회보다 먼저 실행하는 서버 권한 경계. */
 export async function getCourseAccess(subjectId: string, user: CurrentUser): Promise<LearningCourse | null> {
@@ -54,38 +48,7 @@ export async function getLearningPage(user: CurrentUser, options: {
   };
   const courseSelect = { select: { name: true } } as const;
 
-  if (kind === "quiz") {
-    // 할당은 원본 퀴즈의 보기/편집 권한이 아닙니다. 본인의 참여 세션만 풀이 링크로 전달합니다.
-    const where: Prisma.QuizAssignmentWhereInput = {
-      studentId: user.id,
-      quiz: { deletedAt: null, ...(subjectId ? { subjectId } : {}) },
-      session: { participants: { some: { userId: user.id, status: { not: "KICKED" } } } },
-    };
-    const paging = pagination(await prisma.quizAssignment.count({ where }));
-    const rows = await prisma.quizAssignment.findMany({
-      where, orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (paging.page - 1) * pageSize, take: pageSize,
-      select: {
-        id: true,
-        quiz: { select: { title: true, description: true, subject: courseSelect } },
-        session: { select: { id: true, status: true, openAt: true, dueAt: true, allowLateSubmission: true,
-          participants: { where: { userId: user.id }, select: { status: true, currentQuestionIndex: true } },
-        } },
-      },
-    });
-    const now = new Date();
-    return { ...paging, items: rows.map(({ id, quiz, session }) => {
-      const participant = session.participants[0];
-      const completed = participant?.status === "COMPLETED";
-      const started = participant?.status === "IN_PROGRESS" || (participant?.currentQuestionIndex ?? 0) > 0;
-      const upcoming = Boolean(session.openAt && session.openAt > now);
-      const ended = session.status === "FINISHED" || session.status === "CANCELLED" || Boolean(session.dueAt && session.dueAt < now && !session.allowLateSubmission);
-      return { id, title: quiz.title, description: quiz.description, subjectName: quiz.subject?.name ?? null,
-        status: completed ? "완료" : ended ? "마감" : upcoming ? "시작 전" : started ? "진행 중" : "새 과제",
-        action: completed ? "결과 보기" : started ? "이어서 풀기" : "퀴즈 시작",
-        href: completed ? `/quiz/activities/${session.id}/report` : ended || upcoming ? null : `/p/${session.id}`,
-      };
-    }) };
-  }
+  if (kind === "quiz") return getQuizLearningPage(user, { subjectId, page: requestedPage, pageSize });
 
   if (kind === "pad") {
     const membership: Prisma.BoardWhereInput[] = [{ ownerId: user.id }, { members: { some: { userId: user.id } } }];

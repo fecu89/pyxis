@@ -4,12 +4,15 @@ import { readJsonWithLimit } from "@/lib/http-json";
 import { getPrisma } from "@/lib/prisma";
 import { createGuestToken, findGuestParticipant, hashGuestToken, readGuestToken, withGuestCookie } from "@/lib/quiz/guest-access";
 import { assertPublicQuizInvalidPinRateLimit, assertPublicQuizJoinRateLimit } from "@/lib/security/public-quiz-rate-limit";
+import { getCurrentUser } from "@/lib/auth/current-user";
+import { assertCourseLiveAccess } from "@/lib/quiz/course-participation";
 
 const JOIN_BODY_MAX_BYTES = 16 * 1024;
 
 const bodySchema = z.object({
   pin: z.string().trim().regex(/^\d{6}$/, "PIN은 6자리 숫자입니다."),
   nickname: z.string().trim().min(1).max(40),
+  subjectId: z.string().min(1).max(100).optional(),
 });
 
 export async function POST(request: Request) {
@@ -17,12 +20,12 @@ export async function POST(request: Request) {
     assertSameOrigin(request);
     // 인증이 없는 경로라 PIN 전수 대입과 참여자 행 무한 생성이 모두 가능합니다.
     await assertPublicQuizJoinRateLimit(request);
-    const { pin, nickname } = bodySchema.parse(await readJsonWithLimit(request, JOIN_BODY_MAX_BYTES));
+    const { pin, nickname, subjectId } = bodySchema.parse(await readJsonWithLimit(request, JOIN_BODY_MAX_BYTES));
     const session = await getPrisma().quizSession.findUnique({
       where: { pinCode: pin },
       select: {
-        id: true, mode: true, status: true, openAt: true, dueAt: true, allowLateSubmission: true, requiresLogin: true,
-        quiz: { select: { deletedAt: true } },
+        id: true, mode: true, status: true, hostId: true, openAt: true, dueAt: true, allowLateSubmission: true, requiresLogin: true,
+        quiz: { select: { deletedAt: true, subjectId: true, isPublished: true } },
       },
     });
     if (!session || session.requiresLogin) {
@@ -30,6 +33,7 @@ export async function POST(request: Request) {
       assertPublicQuizInvalidPinRateLimit(request);
       throw new Error("공개 세션을 찾을 수 없습니다.");
     }
+    if (subjectId) await assertCourseLiveAccess(session, subjectId, await getCurrentUser());
     // 링크 미리보기(utils/seo/sessionShare.ts)는 삭제된 퀴즈를 CLOSED로 가리는데 참여 자체는
     // 막히지 않았습니다. 잠긴 퀴즈(frozenAt)는 주인만 없을 뿐 유효하므로 그대로 받습니다.
     if (session.quiz.deletedAt) throw new Error("이미 종료된 세션입니다.");

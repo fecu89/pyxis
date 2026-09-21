@@ -1,11 +1,14 @@
 /* 목록 카드의 정본: 기존 Pad 카드의 치수·간격·색상과 반응형을 공유합니다. */
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: 12px; }
+/* 모달처럼 뷰포트보다 좁은 영역에서는 실제 카드 영역의 폭을 기준으로 열 수를 결정합니다. */
+.grid.adaptiveGrid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
 .card { position: relative; display: flex; min-width: 0; min-height: var(--card-min-h); flex-direction: column; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow-sm); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
 .card:hover { border-color: color-mix(in srgb, var(--brand) 55%, var(--line)); box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .accent { height: 5px; flex: 0 0 5px; border-radius: 7px 7px 0 0; background-color: var(--brand); }
 .link { display: flex; min-width: 0; min-height: 0; overflow: hidden; flex: 1; flex-direction: column; color: inherit; }
 .link:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
 .body { display: flex; min-width: 0; min-height: 0; padding: 14px 46px 13px 16px; flex: 1; flex-direction: column; }
+.card[data-has-menu="false"] .body { padding-right: 16px; }
 .cover { position: relative; height: var(--card-cover-h); flex: 0 0 var(--card-cover-h); overflow: hidden; border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent); background: var(--background); }
 .cover::after { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--scrim) 3%, transparent), color-mix(in srgb, var(--scrim) 16%, transparent)); content: ""; pointer-events: none; }
 .cover img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }

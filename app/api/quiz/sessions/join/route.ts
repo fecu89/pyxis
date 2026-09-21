@@ -4,8 +4,9 @@ import { apiError, assertSameOrigin } from "@/lib/http";
 import { readJsonWithLimit } from "@/lib/http-json";
 import { getPrisma } from "@/lib/prisma";
 import { assertRateLimit } from "@/lib/security/rate-limit";
+import { assertCourseLiveAccess } from "@/lib/quiz/course-participation";
 
-const bodySchema = z.object({ pin: z.string().trim().regex(/^\d{6}$/, "PIN은 6자리 숫자입니다.") });
+const bodySchema = z.object({ pin: z.string().trim().regex(/^\d{6}$/, "PIN은 6자리 숫자입니다."), subjectId: z.string().min(1).max(100).optional() });
 const JOIN_BODY_MAX_BYTES = 16 * 1024;
 
 export async function POST(request: Request) {
@@ -15,15 +16,16 @@ export async function POST(request: Request) {
     // 로그인 학생은 계정별로 셉니다. 인증 전에 IP로 세면 학교 NAT 뒤 학생 20명이 서로의
     // 참여 횟수를 소모해 정상 PIN인데도 429를 받습니다.
     assertRateLimit(request, { scope: "session-join", userId: actor.id, windowMs: 60_000, maxAttempts: 20 });
-    const { pin } = bodySchema.parse(await readJsonWithLimit(request, JOIN_BODY_MAX_BYTES));
+    const { pin, subjectId } = bodySchema.parse(await readJsonWithLimit(request, JOIN_BODY_MAX_BYTES));
     const session = await getPrisma().quizSession.findUnique({
       where: { pinCode: pin },
       select: {
         id: true, mode: true, status: true, hostId: true, openAt: true, dueAt: true, allowLateSubmission: true, requiresLogin: true,
-        quiz: { select: { deletedAt: true } },
+        quiz: { select: { deletedAt: true, subjectId: true, isPublished: true } },
       },
     });
     if (!session) throw new Error("PIN이 올바르지 않습니다.");
+    if (subjectId) await assertCourseLiveAccess(session, subjectId, actor);
     // 목록(app/assignments/page.tsx)은 삭제된 퀴즈를 걸러내는데 여기서 안 보면 PIN을 아는 학생은
     // 계속 입장할 수 있었습니다. 잠긴 퀴즈(frozenAt)는 주인만 없을 뿐 유효하므로 그대로 받습니다.
     if (session.quiz.deletedAt) throw new Error("이미 종료된 세션입니다.");

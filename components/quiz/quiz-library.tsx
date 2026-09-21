@@ -318,7 +318,7 @@ function QuizCard({ quiz, viewerRole, canClone, favorite, busy, menuOpen, course
       </>}
       footerLabel={<>{quiz.requiresLogin ? <LockIcon className="h-3.5 w-3.5" /> : <GlobeIcon className="h-3.5 w-3.5" />}{quiz.requiresLogin ? "로그인 참여" : "닉네임 참여"}</>}
       footerAction={canEdit && canTeach
-        ? <QuizSessionLauncher quizId={quiz.id} quizTitle={quiz.title} requiresLogin={quiz.requiresLogin} isPublished={quiz.isPublished} compact />
+        ? <QuizSessionLauncher quizId={quiz.id} quizTitle={quiz.title} requiresLogin={quiz.requiresLogin} isPublished={quiz.isPublished} compact onAssign={onAssign} />
         : <Link href={href} prefetch={false}>{canEdit ? "수정하기" : "내용 보기"}</Link>}
       menu={{
         open: menuOpen,

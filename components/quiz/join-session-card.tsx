@@ -6,7 +6,7 @@ import { ArrowRightIcon, GlobeIcon, LockIcon, QuizIcon } from "@/components/ui/i
 import { StatusBadge } from "@/components/ui/data-display";
 import { InlineNotice } from "@/components/ui/feedback";
 
-export function JoinSessionCard({ pin, quizTitle, mode, requiresLogin, initialNickname, canJoin, resume, publicAccess = false, autoJoin = false }: {
+export function JoinSessionCard({ pin, quizTitle, mode, requiresLogin, initialNickname, canJoin, resume, publicAccess = false, autoJoin = false, subjectId }: {
   pin: string;
   quizTitle: string;
   mode: "LIVE" | "ASYNC";
@@ -16,6 +16,7 @@ export function JoinSessionCard({ pin, quizTitle, mode, requiresLogin, initialNi
   resume: boolean;
   publicAccess?: boolean;
   autoJoin?: boolean;
+  subjectId?: string;
 }) {
   const router = useRouter();
   const [nickname, setNickname] = useState(initialNickname);
@@ -31,7 +32,7 @@ export function JoinSessionCard({ pin, quizTitle, mode, requiresLogin, initialNi
     void fetch("/api/quiz/sessions/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pin }),
+      body: JSON.stringify({ pin, subjectId }),
       signal: controller.signal,
     }).then(async (response) => ({ response, data: await response.json() })).then(({ response, data }) => {
       if (controller.signal.aborted) return;
@@ -52,7 +53,7 @@ export function JoinSessionCard({ pin, quizTitle, mode, requiresLogin, initialNi
       // React 개발 모드의 effect 재실행에서도 두 번째 입장을 정상 시작할 수 있어야 합니다.
       autoJoinStarted.current = false;
     };
-  }, [autoJoin, canJoin, pin, publicAccess, router]);
+  }, [autoJoin, canJoin, pin, publicAccess, router, subjectId]);
 
   async function join(event: React.FormEvent) {
     event.preventDefault();
@@ -62,7 +63,7 @@ export function JoinSessionCard({ pin, quizTitle, mode, requiresLogin, initialNi
     const response = await fetch(publicAccess ? "/api/public/sessions/join" : "/api/quiz/sessions/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pin, ...(!requiresLogin ? { nickname } : {}) }),
+      body: JSON.stringify({ pin, subjectId, ...(!requiresLogin ? { nickname } : {}) }),
     });
     const data = await response.json();
     setSubmitting(false);

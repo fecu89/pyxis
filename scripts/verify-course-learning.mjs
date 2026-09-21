@@ -65,19 +65,19 @@ test("학생의 개인 교과목 분류는 명단 조회나 패드 자동 초대
 
 test("내게 할당된 퀴즈만 조회하고 원본 대신 풀이/본인 결과로 연결한다", async () => {
   available();
-  db = { quizAssignment: {
-    count: async ({ where }) => { assert.equal(where.studentId, actor.id); return 2; },
+  db = { subject: { findMany: async () => [] }, quizSession: { count: async () => 0 }, quiz: { count: async () => 0 }, quizAssignment: {
+    count: async ({ where }) => { assert.equal(where.studentId, actor.id); return 1; },
     findMany: async ({ where, select, take }) => {
       assert.equal(where.studentId, actor.id);
       assert.equal(where.quiz.deletedAt, null);
       assert.deepEqual(where.session.participants.some, { userId: actor.id, status: { not: "KICKED" } });
       assert.equal(select.quiz.select.questions, undefined, "문항·정답을 목록에 싣지 않는다");
-      assert.equal(take, 24);
-      return [false, true].map((complete, i) => ({ id: `a${i}`, createdAt: date,
+      assert.equal(take, 1);
+      return [Boolean(where.NOT)].map(complete => { const i = Number(complete); return ({ id: `a${i}`, createdAt: date,
         quiz: { title: `퀴즈 ${i}`, description: null, subject: { name: "과학" } },
         session: { id: `session${i}`, status: "LOBBY", openAt: null, dueAt: null, allowLateSubmission: false,
           participants: [{ status: complete ? "COMPLETED" : "IN_PROGRESS", currentQuestionIndex: 1 }] },
-      }));
+      }); });
     },
   } };
   const page = await queries.getLearningPage(actor, { kind: "quiz" });

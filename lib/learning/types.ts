@@ -7,6 +7,7 @@ export type LearningItem = {
   status: string;
   action: string;
   href: string | null;
+  mode?: "LIVE" | "ASYNC";
 };
 export type LearningPage = {
   kind: LearningKind;

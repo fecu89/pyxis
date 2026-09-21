@@ -33,7 +33,7 @@ const result = await build({ stdin: { contents: `
       db: "export const getPrisma = () => globalThis.learningRouteTest.db;",
       user: "export class AuthenticationError extends Error {}; export const getCurrentUser = async () => globalThis.learningRouteTest.actor;",
       auth: "import {AuthenticationError} from '@/lib/auth/current-user'; export class AuthorizationError extends Error {}; export const hasSystemPermission=()=>false; export const canViewAllQuizzes=()=>false; export const requireActiveUser=async()=>{const user=globalThis.learningRouteTest.actor;if(!user) throw new AuthenticationError('로그인이 필요합니다.');return user;};",
-      navigation: "export const notFound=()=>{throw new Error('NOT_FOUND')}; export const redirect=path=>{throw new Error('REDIRECT:'+path)};",
+      navigation: "export const useRouter=()=>({refresh(){}}); export const notFound=()=>{throw new Error('NOT_FOUND')}; export const redirect=path=>{throw new Error('REDIRECT:'+path)};",
       empty: "",
     }[path] }));
     // 클라이언트 스타일은 이 서버 실행 검증 범위 밖입니다. 모달 브라우저 검증에서 실제 CSS를 씁니다.
@@ -50,6 +50,8 @@ state.db = {
   },
   user: { count: async () => Number(state.member), findMany: async () => { throw new Error("학생 화면에서 명단을 읽었습니다."); } },
   quizAssignment: { count: async () => 0, findMany: async () => [] },
+  quizSession: { count: async () => 0, findMany: async () => [] },
+  quiz: { count: async () => 0, findMany: async () => [] },
   form: { count: async () => 0, findMany: async () => [] },
 };
 

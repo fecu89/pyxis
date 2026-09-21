@@ -15,22 +15,37 @@ function ActivityResults({ subjectId, kind }: { subjectId: string; kind: Learnin
   useEffect(() => {
     const controller = new AbortController();
     const params = new URLSearchParams({ kind, subjectId, page: String(page) });
-    void fetch(`/api/me/learning?${params}`, { cache: "no-store", signal: controller.signal })
-      .then(async response => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "활동을 불러오지 못했습니다.");
-        if (!controller.signal.aborted) setState({ data });
-      }).catch(cause => {
-        if (!controller.signal.aborted) setState({ error: cause instanceof Error ? cause.message : "활동을 불러오지 못했습니다." });
-      });
-    return () => controller.abort();
+    let busy = false;
+    const load = () => {
+      if (busy || controller.signal.aborted) return;
+      busy = true;
+      void fetch(`/api/me/learning?${params}`, { cache: "no-store", signal: controller.signal })
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "활동을 불러오지 못했습니다.");
+          if (!controller.signal.aborted) setState({ data });
+        }).catch(cause => {
+          if (!controller.signal.aborted) setState({ error: cause instanceof Error ? cause.message : "활동을 불러오지 못했습니다." });
+        }).finally(() => { busy = false; });
+    };
+    load();
+    const refresh = () => { if (document.visibilityState === "visible") load(); };
+    const timer = kind === "quiz" ? window.setInterval(refresh, 15000) : undefined;
+    if (kind === "quiz") window.addEventListener("focus", refresh);
+    if (kind === "quiz") document.addEventListener("visibilitychange", refresh);
+    return () => {
+      controller.abort();
+      window.clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
   }, [subjectId, kind, page, retry]);
   if (state.error) return <div><InlineNotice tone="error">{state.error}</InlineNotice><button type="button" className="button ghost mt-3" onClick={() => { setState({}); setRetry(n => n + 1); }}>다시 시도</button></div>;
   if (!state.data) return <p role="status" className="flex items-center gap-2 py-8 text-sm text-content-muted"><LoaderCircle className="animate-spin" size={18} />활동을 불러오는 중입니다.</p>;
   const data = state.data;
   function changePage(next: number) { setState({}); setPage(next); }
   return <>
-    <p className="mb-3 text-xs text-content-muted">내가 참여할 수 있는 {LEARNING_LABELS[kind]} {data.total}개</p>
+    <p className="mb-3 text-xs text-content-muted">{kind === "quiz" ? "내 퀴즈 활동" : `내가 참여할 수 있는 ${LEARNING_LABELS[kind]}`} {data.total}개</p>
     <LearningItems data={data} />
     {data.totalPages > 1 ? <nav className="mt-4 flex items-center justify-center gap-3" aria-label="활동 페이지">
       <button type="button" className="button ghost" disabled={data.page <= 1} onClick={() => changePage(data.page - 1)}>이전</button>
@@ -43,7 +58,7 @@ function ActivityResults({ subjectId, kind }: { subjectId: string; kind: Learnin
 /** 관리 컴포넌트와의 import 연결이 없는 학생용 모달입니다. */
 function CourseActivitiesModal({ course, onClose }: { course: LearningCourse; onClose: () => void }) {
   const [kind, setKind] = useState<LearningKind>("quiz");
-  return <Modal open onClose={onClose} title={course.name} description="수업 활동을 선택해 바로 참여하세요." className="max-w-3xl">
+  return <Modal open onClose={onClose} title={course.name} description="수업 활동을 선택해 바로 참여하세요." className="modal-lg">
     <div className="min-w-0 overflow-y-auto p-4 sm:p-6">
       <div className="mb-5 flex gap-2" role="group" aria-label="활동 종류">
         {(Object.keys(LEARNING_LABELS) as LearningKind[]).map(value => <button type="button" key={value}

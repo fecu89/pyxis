@@ -6,7 +6,9 @@ import { JoinSessionCard } from "@/components/quiz/join-session-card";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { findGuestParticipant, guestCookieName } from "@/lib/quiz/guest-access";
 import { getPrisma } from "@/lib/prisma";
-import { loginRedirectPath } from "@/lib/auth/page-guard";
+import { loginRedirectPath, redirectToLogin } from "@/lib/auth/page-guard";
+import { assertCourseLiveAccess } from "@/lib/quiz/course-participation";
+import { AuthorizationError } from "@/lib/auth/authorization";
 import { href } from "@/lib/routes";
 import { buildJoinPageMetadata } from "@/utils/seo/sessionShare";
 
@@ -23,15 +25,17 @@ export async function generateMetadata({ params }: { params: Promise<{ pin: stri
  * 끼었습니다. 어느 쪽이 맞는지는 세션을 조회해야 알 수 있고 조회는 어차피 두 페이지가
  * 똑같이 하고 있었으므로, 한 번 조회하고 그 자리에서 분기하는 게 맞습니다.
  */
-export default async function JoinWithPinPage({ params }: { params: Promise<{ pin: string }> }) {
+export default async function JoinWithPinPage({ params, searchParams }: { params: Promise<{ pin: string }>; searchParams: Promise<{ subjectId?: string | string[] }> }) {
   const { pin } = await params;
+  const { subjectId } = await searchParams;
   if (!/^\d{6}$/.test(pin)) notFound();
+  if (subjectId !== undefined && (typeof subjectId !== "string" || !subjectId || subjectId.length > 100)) notFound();
 
   const [user, session] = await Promise.all([
     getCurrentUser(),
     getPrisma().quizSession.findUnique({
       where: { pinCode: pin },
-      select: { id: true, mode: true, status: true, requiresLogin: true, quiz: { select: { title: true } } },
+      select: { id: true, mode: true, status: true, hostId: true, requiresLogin: true, quiz: { select: { title: true, subjectId: true, isPublished: true, deletedAt: true } } },
     }),
   ]);
 
@@ -42,6 +46,12 @@ export default async function JoinWithPinPage({ params }: { params: Promise<{ pi
         description="PIN이 올바르지 않거나 이미 종료된 세션입니다."
       />
     );
+  }
+
+  if (subjectId) {
+    if (!user) redirectToLogin(`/j/${pin}?subjectId=${encodeURIComponent(subjectId)}`);
+    try { await assertCourseLiveAccess(session, subjectId, user); }
+    catch (error) { if (error instanceof AuthorizationError) notFound(); throw error; }
   }
 
   // 공개 세션 — 게스트 쿠키로 이전 참여를 이어받고, 없으면 닉네임부터 받습니다.
@@ -59,6 +69,7 @@ export default async function JoinWithPinPage({ params }: { params: Promise<{ pi
           canJoin={guest?.status !== "KICKED"}
           resume={Boolean(guest)}
           publicAccess
+          subjectId={subjectId}
         />
       </main>
     );
@@ -88,6 +99,7 @@ export default async function JoinWithPinPage({ params }: { params: Promise<{ pi
         canJoin={participant?.status !== "KICKED"}
         resume={Boolean(participant)}
         autoJoin
+        subjectId={subjectId}
       />
     </main>
   );

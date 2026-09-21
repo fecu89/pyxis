@@ -12,12 +12,13 @@ import cardStyles from "@/components/ui/content-card.module.css";
 const loadQuizSessionDialog = () => import("@/components/quiz/quiz-session-dialog");
 const QuizSessionDialog = dynamic(() => loadQuizSessionDialog().then((mod) => mod.QuizSessionDialog), { ssr: false });
 
-export function QuizSessionLauncher({ quizId, quizTitle, requiresLogin, isPublished, compact = false }: {
+export function QuizSessionLauncher({ quizId, quizTitle, requiresLogin, isPublished, compact = false, onAssign }: {
   quizId: string;
   quizTitle: string;
   requiresLogin: boolean;
   isPublished: boolean;
   compact?: boolean;
+  onAssign?: () => void;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -67,7 +68,7 @@ export function QuizSessionLauncher({ quizId, quizTitle, requiresLogin, isPublis
         </span>
       ) : null}
 
-      {open ? <QuizSessionDialog quizId={quizId} quizTitle={quizTitle} requiresLogin={requiresLogin} publishedHere={publishedHere} onClose={() => setOpen(false)} /> : null}
+      {open ? <QuizSessionDialog quizId={quizId} quizTitle={quizTitle} requiresLogin={requiresLogin} publishedHere={publishedHere} onClose={() => setOpen(false)} onAssign={onAssign ? () => { setOpen(false); onAssign(); } : undefined} /> : null}
     </span>
   );
 }

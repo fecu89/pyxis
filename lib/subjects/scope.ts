@@ -14,6 +14,14 @@ export function canAssignStudentsToCourses(user: Pick<CurrentUser, "role">) {
   return user.role === "SUPER_ADMIN" || user.role === "ADMIN" || user.role === "TEACHER";
 }
 
+/** 학생이 개별 배정 또는 연결 학급으로 수강하는 교과목. 콘텐츠 발견/참여에서 함께 사용합니다. */
+export function enrolledSubjectWhere(studentId: string): Prisma.SubjectWhereInput {
+  return { OR: [
+    { students: { some: { studentId } } },
+    { schoolGroups: { some: { schoolGroup: { users: { some: { id: studentId, role: "STUDENT", status: "ACTIVE" } } } } } },
+  ] };
+}
+
 type ScopeUser = Pick<CurrentUser, "role" | "school" | "systemPermissions">;
 
 /**
