@@ -1,10 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { PageShell } from "@/components/ui/page-layout";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { redirectToLogin } from "@/lib/auth/page-guard";
 import { getCourseSummary } from "@/lib/subjects/course-dashboard";
 import { getCourseAccess } from "@/lib/learning/queries";
-import { CourseActivities } from "@/components/learning/course-activities";
 import { getMetadata } from "@/utils/seo/getMetadata";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +16,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
 
   const access = await getCourseAccess(subjectId, user);
   if (!access) notFound();
-  if (!access.canManage) return <PageShell><CourseActivities course={access} initiallyOpen /></PageShell>;
+  if (!access.canManage) redirect(`/dashboard?subjectId=${encodeURIComponent(subjectId)}`);
 
   // 권한을 확인하기 전에는 관리 컴포넌트와 학생 명단을 로드하지 않습니다.
   const [{ CourseDetail }, { getCourseRosterData }] = await Promise.all([

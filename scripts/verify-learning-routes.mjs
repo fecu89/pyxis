@@ -56,11 +56,11 @@ state.db = {
 };
 
 test("학생의 교과목 상세/목록은 관리 컴포넌트를 로드하거나 명단을 조회하지 않는다", async () => {
-  await routes.CoursePage({ params: Promise.resolve({ subjectId: "course" }) });
+  await assert.rejects(routes.CoursePage({ params: Promise.resolve({ subjectId: "course" }) }), /REDIRECT:\/dashboard\?subjectId=course/);
   await routes.CoursesPage();
   assert.equal(state.managerLoads, 0);
 });
-test("수강생이 아닌 직접 URL 접근은 학생 모달 렌더링 전에 거절한다", async () => {
+test("수강생이 아닌 직접 URL 접근은 학생 페이지 이동 전에 거절한다", async () => {
   state.member = false;
   try { await assert.rejects(routes.CoursePage({ params: Promise.resolve({ subjectId: "other" }) }), /NOT_FOUND/); }
   finally { state.member = true; }
@@ -105,7 +105,7 @@ test("학생 소유 교과목도 관리 화면·명단·후보 API를 열지 않
   const findUnique = state.db.subject.findUnique;
   state.db.subject.findUnique = async () => ({ id: "course", name: "내 과목", ownerId: state.actor.id });
   try {
-    await routes.CoursePage({ params: Promise.resolve({ subjectId: "course" }) });
+    await assert.rejects(routes.CoursePage({ params: Promise.resolve({ subjectId: "course" }) }), /REDIRECT:\/dashboard\?subjectId=course/);
     assert.equal(state.managerLoads, 0);
     const params = { params: Promise.resolve({ subjectId: "course" }) };
     assert.equal((await routes.RosterAPI(new Request("http://localhost/api/subjects/course/roster"), params)).status, 403);

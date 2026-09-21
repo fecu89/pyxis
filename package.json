@@ -27,7 +27,7 @@
     "predev": "node scripts/sync-viewer-assets.mjs",
     "start": "NODE_ENV=production NEXT_DIST_DIR=${NEXT_DIST_DIR:-.next-prod} tsx server.ts",
     "verify:deploy": "node --test scripts/verify-deploy.mjs",
-    "verify:learning": "node --test scripts/verify-course-learning.mjs scripts/verify-course-live.mjs scripts/verify-course-join.mjs scripts/verify-learning-routes.mjs scripts/verify-learning-ui.mjs && node scripts/verify-learning-browser.mjs && node scripts/verify-quiz-entry-browser.mjs",
+    "verify:learning": "node --test scripts/verify-course-learning.mjs scripts/verify-course-live.mjs scripts/verify-course-join.mjs scripts/verify-learning-routes.mjs scripts/verify-learning-ui.mjs scripts/verify-learning-filter.mjs && node scripts/verify-learning-browser.mjs && node scripts/verify-quiz-entry-browser.mjs",
     "verify:access": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-board-access-policy.ts",
     "verify:api-boundaries": "tsx scripts/verify-api-boundaries.ts",
     "verify:auth": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-credential-auth.ts",

@@ -17,13 +17,19 @@ const RECENT_TYPE_LABEL = { PAD: "패드", QUIZ: "퀴즈", FORM: "설문" } as c
 
 // 퀴즈·패드를 아우르는 통합 현황입니다. 로그인 후 기본 도착지이고, 각 섹션의 목록으로
 // 들어가는 진입점 역할만 합니다 — 상세 조작은 각 섹션이 담당합니다.
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: {
+  searchParams: Promise<{ subjectId?: string | string[]; kind?: string | string[]; page?: string | string[] }>;
+}) {
   const user = await getCurrentUser();
   if (!user) redirectToLogin("/dashboard");
 
   if (user.role === "STUDENT") {
+    const search = await searchParams;
+    const subjectId = typeof search.subjectId === "string" ? search.subjectId : undefined;
+    const kind = search.kind === "quiz" || search.kind === "pad" || search.kind === "form" ? search.kind : undefined;
+    const page = typeof search.page === "string" ? Number(search.page) : undefined;
     const { StudentDashboard } = await import("@/components/learning/student-dashboard");
-    return <StudentDashboard user={user} />;
+    return <StudentDashboard user={user} subjectId={subjectId} kind={kind} page={page} />;
   }
 
   const prisma = getPrisma();
