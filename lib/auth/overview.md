@@ -2,6 +2,10 @@
 
 `lib/auth`는 NextAuth 설정과 현재 사용자 조회의 단일 진입점입니다.
 
+- `signup-consent.ts`: 필수 이용약관·개인정보 수집/이용·14세 이상 확인 및 최신 문서 버전의 서버 검증과 동의 저장 필드 생성. 일반 가입과 카카오 신규 계정 생성에 공통 적용합니다.
+- `signup-consent-cookie.ts`: AUTH_SECRET에서 세션과 다른 salt로 키를 파생한 15분 OAuth 동의 티켓. HttpOnly·SameSite=Lax, 운영에서는 Secure이며 `/api/auth/`에만 전송됩니다. 위조·만료·구버전은 거절하고, 로그인 전용 시도 전과 카카오 콜백 응답 후에 지웁니다. 기존 카카오 계정에는 동의 기록을 소급 작성하지 않습니다.
+- 동의 없는 신규 카카오 콜백은 `/login?signup=required`로 돌아갑니다. 내부 목적지를 보존하되 절대 주소는 설정된 서비스 출처만 허용합니다. 세부 정책·검증·배포 순서는 `docs/signup-consent.md`를 참고합니다.
+
 - `auth-options.ts`: `loginId` Credentials와 Kakao provider, 7일 JWT 세션, HMAC 로그인 식별자 조회, 카카오 이메일 검증, `authVersion`·계정 가입 승인·최초 가입 완료·강제 비밀번호 변경 상태 검증을 담당합니다. 자가 회원가입과 최초 카카오 로그인은 `PENDING` 계정을 만들고 전체 관리자의 승인 뒤 온보딩으로 넘어갑니다.
 - `credentials.ts`: 로그인 호환 입력과 회원가입용 10~128자·영문자·숫자·특수문자·흔한 비밀번호 차단 계약을 분리합니다.
 - `password.ts`: 사용자별 salt와 고정 scrypt 파라미터로 비밀번호를 비동기 해시·검증합니다. 미등록 아이디와 카카오 전용 계정도 더미 연산을 수행하고 변조된 DB 파라미터로 메모리 비용을 키울 수 없게 고정 형식만 허용합니다.

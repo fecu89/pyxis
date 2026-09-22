@@ -48,6 +48,10 @@ export type UserMinAggregateOutputType = {
   role: $Enums.UserRole | null
   status: $Enums.UserStatus | null
   registrationApprovalStatus: $Enums.RegistrationApprovalStatus | null
+  registrationConsentAt: Date | null
+  termsVersion: string | null
+  privacyVersion: string | null
+  age14Confirmed: boolean | null
   registrationReviewReason: string | null
   registrationReviewedAt: Date | null
   registrationReviewedById: string | null
@@ -74,6 +78,10 @@ export type UserMaxAggregateOutputType = {
   role: $Enums.UserRole | null
   status: $Enums.UserStatus | null
   registrationApprovalStatus: $Enums.RegistrationApprovalStatus | null
+  registrationConsentAt: Date | null
+  termsVersion: string | null
+  privacyVersion: string | null
+  age14Confirmed: boolean | null
   registrationReviewReason: string | null
   registrationReviewedAt: Date | null
   registrationReviewedById: string | null
@@ -100,6 +108,10 @@ export type UserCountAggregateOutputType = {
   role: number
   status: number
   registrationApprovalStatus: number
+  registrationConsentAt: number
+  termsVersion: number
+  privacyVersion: number
+  age14Confirmed: number
   registrationReviewReason: number
   registrationReviewedAt: number
   registrationReviewedById: number
@@ -138,6 +150,10 @@ export type UserMinAggregateInputType = {
   role?: true
   status?: true
   registrationApprovalStatus?: true
+  registrationConsentAt?: true
+  termsVersion?: true
+  privacyVersion?: true
+  age14Confirmed?: true
   registrationReviewReason?: true
   registrationReviewedAt?: true
   registrationReviewedById?: true
@@ -164,6 +180,10 @@ export type UserMaxAggregateInputType = {
   role?: true
   status?: true
   registrationApprovalStatus?: true
+  registrationConsentAt?: true
+  termsVersion?: true
+  privacyVersion?: true
+  age14Confirmed?: true
   registrationReviewReason?: true
   registrationReviewedAt?: true
   registrationReviewedById?: true
@@ -190,6 +210,10 @@ export type UserCountAggregateInputType = {
   role?: true
   status?: true
   registrationApprovalStatus?: true
+  registrationConsentAt?: true
+  termsVersion?: true
+  privacyVersion?: true
+  age14Confirmed?: true
   registrationReviewReason?: true
   registrationReviewedAt?: true
   registrationReviewedById?: true
@@ -303,6 +327,10 @@ export type UserGroupByOutputType = {
   role: $Enums.UserRole
   status: $Enums.UserStatus
   registrationApprovalStatus: $Enums.RegistrationApprovalStatus
+  registrationConsentAt: Date | null
+  termsVersion: string | null
+  privacyVersion: string | null
+  age14Confirmed: boolean
   registrationReviewReason: string | null
   registrationReviewedAt: Date | null
   registrationReviewedById: string | null
@@ -352,6 +380,10 @@ export type UserWhereInput = {
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFilter<"User"> | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  termsVersion?: Prisma.StringNullableFilter<"User"> | string | null
+  privacyVersion?: Prisma.StringNullableFilter<"User"> | string | null
+  age14Confirmed?: Prisma.BoolFilter<"User"> | boolean
   registrationReviewReason?: Prisma.StringNullableFilter<"User"> | string | null
   registrationReviewedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   registrationReviewedById?: Prisma.StringNullableFilter<"User"> | string | null
@@ -426,6 +458,10 @@ export type UserOrderByWithRelationInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   registrationApprovalStatus?: Prisma.SortOrder
+  registrationConsentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  termsVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  privacyVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  age14Confirmed?: Prisma.SortOrder
   registrationReviewReason?: Prisma.SortOrderInput | Prisma.SortOrder
   registrationReviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   registrationReviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -505,6 +541,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFilter<"User"> | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  termsVersion?: Prisma.StringNullableFilter<"User"> | string | null
+  privacyVersion?: Prisma.StringNullableFilter<"User"> | string | null
+  age14Confirmed?: Prisma.BoolFilter<"User"> | boolean
   registrationReviewReason?: Prisma.StringNullableFilter<"User"> | string | null
   registrationReviewedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   registrationReviewedById?: Prisma.StringNullableFilter<"User"> | string | null
@@ -579,6 +619,10 @@ export type UserOrderByWithAggregationInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   registrationApprovalStatus?: Prisma.SortOrder
+  registrationConsentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  termsVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  privacyVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  age14Confirmed?: Prisma.SortOrder
   registrationReviewReason?: Prisma.SortOrderInput | Prisma.SortOrder
   registrationReviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   registrationReviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -613,6 +657,10 @@ export type UserScalarWhereWithAggregatesInput = {
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusWithAggregatesFilter<"User"> | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  termsVersion?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  privacyVersion?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  age14Confirmed?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   registrationReviewReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   registrationReviewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   registrationReviewedById?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -639,6 +687,10 @@ export type UserCreateInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -710,6 +762,10 @@ export type UserUncheckedCreateInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -781,6 +837,10 @@ export type UserUpdateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -852,6 +912,10 @@ export type UserUncheckedUpdateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -923,6 +987,10 @@ export type UserCreateManyInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -949,6 +1017,10 @@ export type UserUpdateManyMutationInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -972,6 +1044,10 @@ export type UserUncheckedUpdateManyInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1028,6 +1104,10 @@ export type UserCountOrderByAggregateInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   registrationApprovalStatus?: Prisma.SortOrder
+  registrationConsentAt?: Prisma.SortOrder
+  termsVersion?: Prisma.SortOrder
+  privacyVersion?: Prisma.SortOrder
+  age14Confirmed?: Prisma.SortOrder
   registrationReviewReason?: Prisma.SortOrder
   registrationReviewedAt?: Prisma.SortOrder
   registrationReviewedById?: Prisma.SortOrder
@@ -1059,6 +1139,10 @@ export type UserMaxOrderByAggregateInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   registrationApprovalStatus?: Prisma.SortOrder
+  registrationConsentAt?: Prisma.SortOrder
+  termsVersion?: Prisma.SortOrder
+  privacyVersion?: Prisma.SortOrder
+  age14Confirmed?: Prisma.SortOrder
   registrationReviewReason?: Prisma.SortOrder
   registrationReviewedAt?: Prisma.SortOrder
   registrationReviewedById?: Prisma.SortOrder
@@ -1085,6 +1169,10 @@ export type UserMinOrderByAggregateInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   registrationApprovalStatus?: Prisma.SortOrder
+  registrationConsentAt?: Prisma.SortOrder
+  termsVersion?: Prisma.SortOrder
+  privacyVersion?: Prisma.SortOrder
+  age14Confirmed?: Prisma.SortOrder
   registrationReviewReason?: Prisma.SortOrder
   registrationReviewedAt?: Prisma.SortOrder
   registrationReviewedById?: Prisma.SortOrder
@@ -1912,6 +2000,10 @@ export type UserCreateWithoutOwnedActivitiesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -1982,6 +2074,10 @@ export type UserUncheckedCreateWithoutOwnedActivitiesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -2068,6 +2164,10 @@ export type UserUpdateWithoutOwnedActivitiesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2138,6 +2238,10 @@ export type UserUncheckedUpdateWithoutOwnedActivitiesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2208,6 +2312,10 @@ export type UserCreateWithoutOwnedFormsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -2278,6 +2386,10 @@ export type UserUncheckedCreateWithoutOwnedFormsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -2364,6 +2476,10 @@ export type UserUpdateWithoutOwnedFormsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2434,6 +2550,10 @@ export type UserUncheckedUpdateWithoutOwnedFormsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2504,6 +2624,10 @@ export type UserCreateWithoutFormVisitsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -2574,6 +2698,10 @@ export type UserUncheckedCreateWithoutFormVisitsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -2660,6 +2788,10 @@ export type UserUpdateWithoutFormVisitsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2730,6 +2862,10 @@ export type UserUncheckedUpdateWithoutFormVisitsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2800,6 +2936,10 @@ export type UserCreateWithoutFormResponsesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -2870,6 +3010,10 @@ export type UserUncheckedCreateWithoutFormResponsesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -2956,6 +3100,10 @@ export type UserUpdateWithoutFormResponsesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3026,6 +3174,10 @@ export type UserUncheckedUpdateWithoutFormResponsesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3096,6 +3248,10 @@ export type UserCreateWithoutFormUploadedFilesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -3166,6 +3322,10 @@ export type UserUncheckedCreateWithoutFormUploadedFilesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -3252,6 +3412,10 @@ export type UserUpdateWithoutFormUploadedFilesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3322,6 +3486,10 @@ export type UserUncheckedUpdateWithoutFormUploadedFilesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3392,6 +3560,10 @@ export type UserCreateWithoutFormSharesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -3462,6 +3634,10 @@ export type UserUncheckedCreateWithoutFormSharesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -3537,6 +3713,10 @@ export type UserCreateWithoutGrantedFormSharesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -3607,6 +3787,10 @@ export type UserUncheckedCreateWithoutGrantedFormSharesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -3693,6 +3877,10 @@ export type UserUpdateWithoutFormSharesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3763,6 +3951,10 @@ export type UserUncheckedUpdateWithoutFormSharesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3844,6 +4036,10 @@ export type UserUpdateWithoutGrantedFormSharesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -3914,6 +4110,10 @@ export type UserUncheckedUpdateWithoutGrantedFormSharesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3984,6 +4184,10 @@ export type UserCreateWithoutReviewedRegistrationsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -4054,6 +4258,10 @@ export type UserUncheckedCreateWithoutReviewedRegistrationsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -4129,6 +4337,10 @@ export type UserCreateWithoutRegistrationReviewerInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -4199,6 +4411,10 @@ export type UserUncheckedCreateWithoutRegistrationReviewerInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -4290,6 +4506,10 @@ export type UserUpdateWithoutReviewedRegistrationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -4360,6 +4580,10 @@ export type UserUncheckedUpdateWithoutReviewedRegistrationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4449,6 +4673,10 @@ export type UserScalarWhereInput = {
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFilter<"User"> | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  termsVersion?: Prisma.StringNullableFilter<"User"> | string | null
+  privacyVersion?: Prisma.StringNullableFilter<"User"> | string | null
+  age14Confirmed?: Prisma.BoolFilter<"User"> | boolean
   registrationReviewReason?: Prisma.StringNullableFilter<"User"> | string | null
   registrationReviewedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   registrationReviewedById?: Prisma.StringNullableFilter<"User"> | string | null
@@ -4475,6 +4703,10 @@ export type UserCreateWithoutSchoolInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -4545,6 +4777,10 @@ export type UserUncheckedCreateWithoutSchoolInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -4641,6 +4877,10 @@ export type UserCreateWithoutSchoolGroupInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -4711,6 +4951,10 @@ export type UserUncheckedCreateWithoutSchoolGroupInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -4807,6 +5051,10 @@ export type UserCreateWithoutTeacherApprovalRequestInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -4877,6 +5125,10 @@ export type UserUncheckedCreateWithoutTeacherApprovalRequestInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -4952,6 +5204,10 @@ export type UserCreateWithoutReviewedTeacherRequestsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -5022,6 +5278,10 @@ export type UserUncheckedCreateWithoutReviewedTeacherRequestsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -5108,6 +5368,10 @@ export type UserUpdateWithoutTeacherApprovalRequestInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -5178,6 +5442,10 @@ export type UserUncheckedUpdateWithoutTeacherApprovalRequestInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5259,6 +5527,10 @@ export type UserUpdateWithoutReviewedTeacherRequestsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -5329,6 +5601,10 @@ export type UserUncheckedUpdateWithoutReviewedTeacherRequestsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5399,6 +5675,10 @@ export type UserCreateWithoutSystemPermissionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -5469,6 +5749,10 @@ export type UserUncheckedCreateWithoutSystemPermissionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -5544,6 +5828,10 @@ export type UserCreateWithoutGrantedPermissionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -5614,6 +5902,10 @@ export type UserUncheckedCreateWithoutGrantedPermissionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -5700,6 +5992,10 @@ export type UserUpdateWithoutSystemPermissionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -5770,6 +6066,10 @@ export type UserUncheckedUpdateWithoutSystemPermissionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5851,6 +6151,10 @@ export type UserUpdateWithoutGrantedPermissionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -5921,6 +6225,10 @@ export type UserUncheckedUpdateWithoutGrantedPermissionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5991,6 +6299,10 @@ export type UserCreateWithoutAuditActionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -6061,6 +6373,10 @@ export type UserUncheckedCreateWithoutAuditActionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -6136,6 +6452,10 @@ export type UserCreateWithoutTargetedAuditActionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -6206,6 +6526,10 @@ export type UserUncheckedCreateWithoutTargetedAuditActionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -6292,6 +6616,10 @@ export type UserUpdateWithoutAuditActionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -6362,6 +6690,10 @@ export type UserUncheckedUpdateWithoutAuditActionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6443,6 +6775,10 @@ export type UserUpdateWithoutTargetedAuditActionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -6513,6 +6849,10 @@ export type UserUncheckedUpdateWithoutTargetedAuditActionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6583,6 +6923,10 @@ export type UserCreateWithoutNotificationsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -6653,6 +6997,10 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -6728,6 +7076,10 @@ export type UserCreateWithoutTriggeredNotificationsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -6798,6 +7150,10 @@ export type UserUncheckedCreateWithoutTriggeredNotificationsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -6884,6 +7240,10 @@ export type UserUpdateWithoutNotificationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -6954,6 +7314,10 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7035,6 +7399,10 @@ export type UserUpdateWithoutTriggeredNotificationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -7105,6 +7473,10 @@ export type UserUncheckedUpdateWithoutTriggeredNotificationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7175,6 +7547,10 @@ export type UserCreateWithoutSettingUpdatesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -7245,6 +7621,10 @@ export type UserUncheckedCreateWithoutSettingUpdatesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -7331,6 +7711,10 @@ export type UserUpdateWithoutSettingUpdatesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -7401,6 +7785,10 @@ export type UserUncheckedUpdateWithoutSettingUpdatesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7471,6 +7859,10 @@ export type UserCreateWithoutOwnedBoardsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -7541,6 +7933,10 @@ export type UserUncheckedCreateWithoutOwnedBoardsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -7627,6 +8023,10 @@ export type UserUpdateWithoutOwnedBoardsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -7697,6 +8097,10 @@ export type UserUncheckedUpdateWithoutOwnedBoardsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7767,6 +8171,10 @@ export type UserCreateWithoutCreatedInviteLinksInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -7837,6 +8245,10 @@ export type UserUncheckedCreateWithoutCreatedInviteLinksInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -7923,6 +8335,10 @@ export type UserUpdateWithoutCreatedInviteLinksInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -7993,6 +8409,10 @@ export type UserUncheckedUpdateWithoutCreatedInviteLinksInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8063,6 +8483,10 @@ export type UserCreateWithoutMembershipsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -8133,6 +8557,10 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -8219,6 +8647,10 @@ export type UserUpdateWithoutMembershipsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -8289,6 +8721,10 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8359,6 +8795,10 @@ export type UserCreateWithoutAccessRequestsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -8429,6 +8869,10 @@ export type UserUncheckedCreateWithoutAccessRequestsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -8515,6 +8959,10 @@ export type UserUpdateWithoutAccessRequestsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -8585,6 +9033,10 @@ export type UserUncheckedUpdateWithoutAccessRequestsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8655,6 +9107,10 @@ export type UserCreateWithoutBoardActivitiesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -8725,6 +9181,10 @@ export type UserUncheckedCreateWithoutBoardActivitiesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -8811,6 +9271,10 @@ export type UserUpdateWithoutBoardActivitiesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -8881,6 +9345,10 @@ export type UserUncheckedUpdateWithoutBoardActivitiesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8951,6 +9419,10 @@ export type UserCreateWithoutBoardFollowsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -9021,6 +9493,10 @@ export type UserUncheckedCreateWithoutBoardFollowsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -9107,6 +9583,10 @@ export type UserUpdateWithoutBoardFollowsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -9177,6 +9657,10 @@ export type UserUncheckedUpdateWithoutBoardFollowsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9247,6 +9731,10 @@ export type UserCreateWithoutBoardVisitsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -9317,6 +9805,10 @@ export type UserUncheckedCreateWithoutBoardVisitsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -9403,6 +9895,10 @@ export type UserUpdateWithoutBoardVisitsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -9473,6 +9969,10 @@ export type UserUncheckedUpdateWithoutBoardVisitsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9543,6 +10043,10 @@ export type UserCreateWithoutBoardFavoritesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -9613,6 +10117,10 @@ export type UserUncheckedCreateWithoutBoardFavoritesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -9699,6 +10207,10 @@ export type UserUpdateWithoutBoardFavoritesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -9769,6 +10281,10 @@ export type UserUncheckedUpdateWithoutBoardFavoritesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9839,6 +10355,10 @@ export type UserCreateWithoutDashboardFoldersInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -9909,6 +10429,10 @@ export type UserUncheckedCreateWithoutDashboardFoldersInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -9995,6 +10519,10 @@ export type UserUpdateWithoutDashboardFoldersInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -10065,6 +10593,10 @@ export type UserUncheckedUpdateWithoutDashboardFoldersInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10135,6 +10667,10 @@ export type UserCreateWithoutPostsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -10205,6 +10741,10 @@ export type UserUncheckedCreateWithoutPostsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -10291,6 +10831,10 @@ export type UserUpdateWithoutPostsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -10361,6 +10905,10 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10431,6 +10979,10 @@ export type UserCreateWithoutAttachmentsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -10501,6 +11053,10 @@ export type UserUncheckedCreateWithoutAttachmentsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -10587,6 +11143,10 @@ export type UserUpdateWithoutAttachmentsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -10657,6 +11217,10 @@ export type UserUncheckedUpdateWithoutAttachmentsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10727,6 +11291,10 @@ export type UserCreateWithoutCommentsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -10797,6 +11365,10 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -10883,6 +11455,10 @@ export type UserUpdateWithoutCommentsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -10953,6 +11529,10 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11023,6 +11603,10 @@ export type UserCreateWithoutCommentMentionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -11093,6 +11677,10 @@ export type UserUncheckedCreateWithoutCommentMentionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -11179,6 +11767,10 @@ export type UserUpdateWithoutCommentMentionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -11249,6 +11841,10 @@ export type UserUncheckedUpdateWithoutCommentMentionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11319,6 +11915,10 @@ export type UserCreateWithoutReactionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -11389,6 +11989,10 @@ export type UserUncheckedCreateWithoutReactionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -11475,6 +12079,10 @@ export type UserUpdateWithoutReactionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -11545,6 +12153,10 @@ export type UserUncheckedUpdateWithoutReactionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11615,6 +12227,10 @@ export type UserCreateWithoutOwnedQuizzesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -11685,6 +12301,10 @@ export type UserUncheckedCreateWithoutOwnedQuizzesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -11771,6 +12391,10 @@ export type UserUpdateWithoutOwnedQuizzesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -11841,6 +12465,10 @@ export type UserUncheckedUpdateWithoutOwnedQuizzesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11911,6 +12539,10 @@ export type UserCreateWithoutOwnedSubjectsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -11981,6 +12613,10 @@ export type UserUncheckedCreateWithoutOwnedSubjectsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -12067,6 +12703,10 @@ export type UserUpdateWithoutOwnedSubjectsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -12137,6 +12777,10 @@ export type UserUncheckedUpdateWithoutOwnedSubjectsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12207,6 +12851,10 @@ export type UserCreateWithoutSubjectMembershipsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -12277,6 +12925,10 @@ export type UserUncheckedCreateWithoutSubjectMembershipsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -12352,6 +13004,10 @@ export type UserCreateWithoutAssignedSubjectMembershipsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -12422,6 +13078,10 @@ export type UserUncheckedCreateWithoutAssignedSubjectMembershipsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -12508,6 +13168,10 @@ export type UserUpdateWithoutSubjectMembershipsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -12578,6 +13242,10 @@ export type UserUncheckedUpdateWithoutSubjectMembershipsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12659,6 +13327,10 @@ export type UserUpdateWithoutAssignedSubjectMembershipsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -12729,6 +13401,10 @@ export type UserUncheckedUpdateWithoutAssignedSubjectMembershipsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12799,6 +13475,10 @@ export type UserCreateWithoutAssignedSubjectGroupsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -12869,6 +13549,10 @@ export type UserUncheckedCreateWithoutAssignedSubjectGroupsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -12955,6 +13639,10 @@ export type UserUpdateWithoutAssignedSubjectGroupsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -13025,6 +13713,10 @@ export type UserUncheckedUpdateWithoutAssignedSubjectGroupsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13095,6 +13787,10 @@ export type UserCreateWithoutQuizSharesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -13165,6 +13861,10 @@ export type UserUncheckedCreateWithoutQuizSharesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -13240,6 +13940,10 @@ export type UserCreateWithoutGrantedQuizSharesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -13310,6 +14014,10 @@ export type UserUncheckedCreateWithoutGrantedQuizSharesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -13396,6 +14104,10 @@ export type UserUpdateWithoutQuizSharesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -13466,6 +14178,10 @@ export type UserUncheckedUpdateWithoutQuizSharesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13547,6 +14263,10 @@ export type UserUpdateWithoutGrantedQuizSharesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -13617,6 +14337,10 @@ export type UserUncheckedUpdateWithoutGrantedQuizSharesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13687,6 +14411,10 @@ export type UserCreateWithoutQuizFavoritesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -13757,6 +14485,10 @@ export type UserUncheckedCreateWithoutQuizFavoritesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -13843,6 +14575,10 @@ export type UserUpdateWithoutQuizFavoritesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -13913,6 +14649,10 @@ export type UserUncheckedUpdateWithoutQuizFavoritesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13983,6 +14723,10 @@ export type UserCreateWithoutQuizVisitsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -14053,6 +14797,10 @@ export type UserUncheckedCreateWithoutQuizVisitsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -14139,6 +14887,10 @@ export type UserUpdateWithoutQuizVisitsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -14209,6 +14961,10 @@ export type UserUncheckedUpdateWithoutQuizVisitsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -14279,6 +15035,10 @@ export type UserCreateWithoutHostedSessionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -14349,6 +15109,10 @@ export type UserUncheckedCreateWithoutHostedSessionsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -14435,6 +15199,10 @@ export type UserUpdateWithoutHostedSessionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -14505,6 +15273,10 @@ export type UserUncheckedUpdateWithoutHostedSessionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -14575,6 +15347,10 @@ export type UserCreateWithoutQuizAssignmentsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -14645,6 +15421,10 @@ export type UserUncheckedCreateWithoutQuizAssignmentsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -14720,6 +15500,10 @@ export type UserCreateWithoutAssignedQuizzesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -14790,6 +15574,10 @@ export type UserUncheckedCreateWithoutAssignedQuizzesInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -14876,6 +15664,10 @@ export type UserUpdateWithoutQuizAssignmentsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -14946,6 +15738,10 @@ export type UserUncheckedUpdateWithoutQuizAssignmentsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15027,6 +15823,10 @@ export type UserUpdateWithoutAssignedQuizzesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -15097,6 +15897,10 @@ export type UserUncheckedUpdateWithoutAssignedQuizzesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15167,6 +15971,10 @@ export type UserCreateWithoutParticipationsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -15237,6 +16045,10 @@ export type UserUncheckedCreateWithoutParticipationsInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -15323,6 +16135,10 @@ export type UserUpdateWithoutParticipationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -15393,6 +16209,10 @@ export type UserUncheckedUpdateWithoutParticipationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15463,6 +16283,10 @@ export type UserCreateWithoutCreatedShortLinksInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -15533,6 +16357,10 @@ export type UserUncheckedCreateWithoutCreatedShortLinksInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -15619,6 +16447,10 @@ export type UserUpdateWithoutCreatedShortLinksInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -15689,6 +16521,10 @@ export type UserUncheckedUpdateWithoutCreatedShortLinksInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15759,6 +16595,10 @@ export type UserCreateManyRegistrationReviewerInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   authVersion?: number
@@ -15784,6 +16624,10 @@ export type UserUpdateWithoutRegistrationReviewerInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -15854,6 +16698,10 @@ export type UserUncheckedUpdateWithoutRegistrationReviewerInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -15924,6 +16772,10 @@ export type UserUncheckedUpdateManyWithoutRegistrationReviewerInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -15949,6 +16801,10 @@ export type UserCreateManySchoolInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -15974,6 +16830,10 @@ export type UserUpdateWithoutSchoolInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -16044,6 +16904,10 @@ export type UserUncheckedUpdateWithoutSchoolInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16114,6 +16978,10 @@ export type UserUncheckedUpdateManyWithoutSchoolInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16139,6 +17007,10 @@ export type UserCreateManySchoolGroupInput = {
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   registrationApprovalStatus?: $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Date | string | null
+  termsVersion?: string | null
+  privacyVersion?: string | null
+  age14Confirmed?: boolean
   registrationReviewReason?: string | null
   registrationReviewedAt?: Date | string | null
   registrationReviewedById?: string | null
@@ -16164,6 +17036,10 @@ export type UserUpdateWithoutSchoolGroupInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authVersion?: Prisma.IntFieldUpdateOperationsInput | number
@@ -16234,6 +17110,10 @@ export type UserUncheckedUpdateWithoutSchoolGroupInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16304,6 +17184,10 @@ export type UserUncheckedUpdateManyWithoutSchoolGroupInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   registrationApprovalStatus?: Prisma.EnumRegistrationApprovalStatusFieldUpdateOperationsInput | $Enums.RegistrationApprovalStatus
+  registrationConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  termsVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  age14Confirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   registrationReviewReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   registrationReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   registrationReviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16747,6 +17631,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   role?: boolean
   status?: boolean
   registrationApprovalStatus?: boolean
+  registrationConsentAt?: boolean
+  termsVersion?: boolean
+  privacyVersion?: boolean
+  age14Confirmed?: boolean
   registrationReviewReason?: boolean
   registrationReviewedAt?: boolean
   registrationReviewedById?: boolean
@@ -16822,6 +17710,10 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   role?: boolean
   status?: boolean
   registrationApprovalStatus?: boolean
+  registrationConsentAt?: boolean
+  termsVersion?: boolean
+  privacyVersion?: boolean
+  age14Confirmed?: boolean
   registrationReviewReason?: boolean
   registrationReviewedAt?: boolean
   registrationReviewedById?: boolean
@@ -16851,6 +17743,10 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   role?: boolean
   status?: boolean
   registrationApprovalStatus?: boolean
+  registrationConsentAt?: boolean
+  termsVersion?: boolean
+  privacyVersion?: boolean
+  age14Confirmed?: boolean
   registrationReviewReason?: boolean
   registrationReviewedAt?: boolean
   registrationReviewedById?: boolean
@@ -16880,6 +17776,10 @@ export type UserSelectScalar = {
   role?: boolean
   status?: boolean
   registrationApprovalStatus?: boolean
+  registrationConsentAt?: boolean
+  termsVersion?: boolean
+  privacyVersion?: boolean
+  age14Confirmed?: boolean
   registrationReviewReason?: boolean
   registrationReviewedAt?: boolean
   registrationReviewedById?: boolean
@@ -16894,7 +17794,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "loginIdentifierEncrypted" | "loginIdentifierLookup" | "passwordHash" | "mustChangePassword" | "nameEncrypted" | "nameLookup" | "imageEncrypted" | "role" | "status" | "registrationApprovalStatus" | "registrationReviewReason" | "registrationReviewedAt" | "registrationReviewedById" | "authVersion" | "schoolId" | "schoolGroupId" | "studentNumber" | "isSchoolRepresentative" | "onboardingCompletedAt" | "lastLoginAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "loginIdentifierEncrypted" | "loginIdentifierLookup" | "passwordHash" | "mustChangePassword" | "nameEncrypted" | "nameLookup" | "imageEncrypted" | "role" | "status" | "registrationApprovalStatus" | "registrationConsentAt" | "termsVersion" | "privacyVersion" | "age14Confirmed" | "registrationReviewReason" | "registrationReviewedAt" | "registrationReviewedById" | "authVersion" | "schoolId" | "schoolGroupId" | "studentNumber" | "isSchoolRepresentative" | "onboardingCompletedAt" | "lastLoginAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.User$schoolArgs<ExtArgs>
   schoolGroup?: boolean | Prisma.User$schoolGroupArgs<ExtArgs>
@@ -17021,6 +17921,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     role: $Enums.UserRole
     status: $Enums.UserStatus
     registrationApprovalStatus: $Enums.RegistrationApprovalStatus
+    registrationConsentAt: Date | null
+    termsVersion: string | null
+    privacyVersion: string | null
+    age14Confirmed: boolean
     registrationReviewReason: string | null
     registrationReviewedAt: Date | null
     registrationReviewedById: string | null
@@ -17515,6 +18419,10 @@ export interface UserFieldRefs {
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
   readonly registrationApprovalStatus: Prisma.FieldRef<"User", 'RegistrationApprovalStatus'>
+  readonly registrationConsentAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly termsVersion: Prisma.FieldRef<"User", 'String'>
+  readonly privacyVersion: Prisma.FieldRef<"User", 'String'>
+  readonly age14Confirmed: Prisma.FieldRef<"User", 'Boolean'>
   readonly registrationReviewReason: Prisma.FieldRef<"User", 'String'>
   readonly registrationReviewedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly registrationReviewedById: Prisma.FieldRef<"User", 'String'>

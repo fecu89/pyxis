@@ -17,7 +17,7 @@ export const metadata = getMetadata({
   noIndex: true,
 });
 
-type LoginSearchParams = { error?: string | string[]; callbackUrl?: string | string[] };
+type LoginSearchParams = { error?: string | string[]; callbackUrl?: string | string[]; signup?: string | string[] };
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -53,7 +53,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
         <h1>{APP_NAME} 시작하기</h1>
         <p>아이디 계정을 만들거나 카카오로 계속할 수 있어요.</p>
-        <AuthForm callbackUrl={callbackUrl} initialError={authErrorMessage(first(params.error))} />
+        <AuthForm callbackUrl={callbackUrl} initialError={authErrorMessage(first(params.error))} initialSignupRequired={first(params.signup) === "required"} />
       </div>
     </main>
   );

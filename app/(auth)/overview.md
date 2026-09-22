@@ -1,5 +1,8 @@
 # Overview
 
+카카오 신규 가입 동의가 없으면 `/login?signup=required&callbackUrl=...`로 돌아와 회원가입
+탭과 공통 동의 필드를 표시합니다. 기존 회원 로그인은 가입 동의를 다시 요구하지 않습니다.
+
 이 폴더는 pyxis 구현에서 `app/(auth)` 영역을 담당합니다. 셸이 없는 게이트 화면 모음이고,
 `/onboarding`·`/approval-pending`·`/change-password`로의 강제 이동은 `proxy.ts`가 판정합니다.
 

@@ -72,6 +72,7 @@ try {
   async function enterRegistration(modal = false) {
     await page.evaluate((modal) => window.render(modal), modal);
     await page.getByRole("tab", { name: "회원가입", exact: true }).click();
+    for (const checkbox of await page.getByRole("checkbox").all()) await checkbox.check();
     await form.getByLabel("아이디", { exact: true }).fill("newmember");
     await form.getByRole("button", { name: "아이디 중복 확인", exact: true }).click();
     await password.waitFor();

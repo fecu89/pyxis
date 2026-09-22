@@ -6,7 +6,7 @@ import { getAvatarPath } from "@/lib/files/paths";
 import { apiError, assertSameOrigin } from "@/lib/http";
 import { readJsonWithLimit } from "@/lib/http-json";
 import { getPrisma } from "@/lib/prisma";
-import { encryptUserPii } from "@/lib/security/pii-crypto";
+import { encryptUserLoginIdentifier, encryptUserPii } from "@/lib/security/pii-crypto";
 import { isNicknameAvailable, isNicknameUniqueConflict, nicknameSchema } from "@/lib/users/nickname";
 import { z } from "zod";
 
@@ -49,6 +49,7 @@ export async function DELETE(request: Request) {
     const successions = await prisma.$transaction(async (tx) => {
       const profile = await tx.user.findUnique({ where: { id: user.id }, select: { schoolId: true } });
       const result = await succeedOwnedBoards(tx, user.id, profile?.schoolId ?? null);
+      const deletedKey = randomUUID();
       await tx.user.update({
         where: { id: user.id },
         data: {
@@ -59,7 +60,8 @@ export async function DELETE(request: Request) {
           imageEncrypted: null,
           passwordHash: null,
           // 탈퇴 후 같은 loginId 또는 카카오 이메일로 다시 가입할 수 있도록 조회 키를 무효화합니다.
-          loginIdentifierLookup: `deleted:${randomUUID()}`,
+          loginIdentifierLookup: `deleted:${deletedKey}`,
+          loginIdentifierEncrypted: encryptUserLoginIdentifier(user.id, `deleted-${deletedKey}`),
         },
       });
       return result;

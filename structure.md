@@ -1,6 +1,13 @@
 # pyxis 구조와 상호작용
 
-마지막 확인일: 2026-08-25
+최근 부분 갱신: 2026-09-22 (가입 동의·탈퇴·관리자 일괄 역할 변경)
+
+가입 UI는 `components/auth/signup-consent-fields.tsx`와 공용 `Modal`을 사용하며,
+`legal-document.tsx`의 동일 본문을 `/terms`·`/privacy`에서도 렌더링한다.
+일반 가입은 `/api/auth/register`에서 직접 동의를 검증하고, 카카오는
+`/api/auth/signup-consent`의 15분 암호화 티켓을 `signIn` 및 신규 생성 직전에 재검증한다.
+로그인 전용 흐름과 OAuth 콜백 뒤에는 티켓을 지운다. 계정과 동의 이력은 같은 생성 작업으로 저장한다.
+상세 운영 절차는 `docs/signup-consent.md`에 정리되어 있다.
 
 이 문서는 코드 전문 대신 화면, 컴포넌트, API, 서버 도메인 모듈, 저장소가 어떻게 이어지는지 보여주는 탐색 지도다. 폴더별 세부 정책은 각 폴더의 `overview.md`를 참고한다.
 

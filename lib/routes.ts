@@ -1,6 +1,9 @@
 import type { NavItemView, NavSectionView, TopSectionView } from "@/lib/nav-view";
 import { COURSE_LIST_PATH, DASHBOARD_PATH, PAD_HOME_PATH, QUIZ_ASSIGNMENTS_PATH } from "@/lib/route-paths";
 
+// Cookie scope, not a navigable page/API endpoint.
+export const AUTH_API_COOKIE_PATH = "/api/auth/";
+
 // 경로·구역·권한을 한곳에 선언하고 사이드바, `proxy.ts`, 링크 생성기가 함께 읽습니다.
 // 메뉴 정의가 컴포넌트 JSX에, 접근 규칙이 프록시에 따로 있으면 둘이 조용히 어긋나
 // "메뉴엔 보이는데 들어가면 403"이 생깁니다. 한곳에서 선언하면 그 표류가 구조적으로 막힙니다.
@@ -126,6 +129,8 @@ export const ROUTES = [
   // ── marketing ────────────────────────────────────────────────
   { id: "home", path: "/", zone: "marketing" },
   { id: "guide", path: "/guide", zone: "marketing" },
+  { id: "terms", path: "/terms", zone: "marketing" },
+  { id: "privacy", path: "/privacy", zone: "marketing" },
 
   // ── auth ─────────────────────────────────────────────────────
   { id: "login", path: "/login", zone: "auth" },

@@ -23,6 +23,8 @@ import {
 import { trustedClientIdentifier } from "@/lib/security/client-ip";
 import { notifyRegistrationApprovalRequested } from "@/lib/users/registration-approvals";
 import { resolveKakaoProfileImage } from "@/lib/users/kakao-profile-image";
+import { signupConsentData } from "@/lib/auth/signup-consent";
+import { readSignupConsent, signupConsentRedirect } from "@/lib/auth/signup-consent-cookie";
 
 function isVerifiedKakaoProfile(profile: KakaoProfile | undefined) {
   return profile?.kakao_account?.is_email_valid === true
@@ -93,6 +95,8 @@ async function syncKakaoUser(user: { email?: string | null; name?: string | null
     });
   }
 
+  const consentAt = await readSignupConsent();
+  if (!consentAt) throw new Error("회원가입 동의가 필요합니다. 가입 화면에서 다시 확인해 주세요.");
   const image = await resolveKakaoProfileImage(user.image);
   const id = randomUUID();
   const bootstrapEmail = process.env.BOOTSTRAP_SUPER_ADMIN_EMAIL
@@ -109,6 +113,7 @@ async function syncKakaoUser(user: { email?: string | null; name?: string | null
       role,
       registrationApprovalStatus: role === "SUPER_ADMIN" ? "APPROVED" : "PENDING",
       lastLoginAt: now,
+      ...signupConsentData(consentAt),
     },
     select: {
       id: true,
@@ -212,7 +217,8 @@ export const authOptions = {
       if (account?.provider !== "kakao" || !user.email) return false;
       if (!isVerifiedKakaoProfile(profile as KakaoProfile | undefined)) return false;
       const existing = await findUserByKakaoEmail(user.email);
-      return !existing || existing.status === "ACTIVE";
+      if (existing) return existing.status === "ACTIVE";
+      return (await readSignupConsent()) ? true : await signupConsentRedirect();
     },
     async jwt({ token, user, account }) {
       let userId = typeof token.userId === "string" ? token.userId : null;

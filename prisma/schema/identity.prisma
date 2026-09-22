@@ -189,6 +189,11 @@ model User {
   status                     UserStatus                 @default(ACTIVE)
   // 기존 계정과 관리자가 발급한 계정은 승인 상태를 유지하고, 자가 가입만 PENDING을 명시합니다.
   registrationApprovalStatus RegistrationApprovalStatus @default(APPROVED)
+  // 자가 가입 시의 문서 버전과 14세 이상 자기확인입니다. 기존/발급 계정에 소급 동의하지 않습니다.
+  registrationConsentAt      DateTime?
+  termsVersion               String?
+  privacyVersion             String?
+  age14Confirmed             Boolean                    @default(false)
   registrationReviewReason   String?
   registrationReviewedAt     DateTime?
   registrationReviewedById   String?

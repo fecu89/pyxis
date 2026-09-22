@@ -1,5 +1,10 @@
 # 인증 API 개요
 
+일반·카카오 자가 가입은 이용약관·개인정보 수집/이용·만 14세 이상 자기확인이 필수입니다.
+`POST /api/auth/signup-consent`는 현재 버전 동의를 확인하고 카카오 콜백용 15분 HttpOnly 티켓을
+발급합니다. `DELETE`는 이전 티켓을 지웁니다. 카카오 콜백 응답에서도 성공/거절 모두 티켓을
+지우며, 서버의 `signIn`과 신규 `User.create` 직전에서 다시 검증합니다.
+
 pyxis 로그인·세션 API는 NextAuth의 `GET/POST /api/auth/[...nextauth]`, 일반 계정은 `POST /api/auth/register/check-login-id` 확인 뒤 `POST /api/auth/register`가 생성합니다.
 
 - 지원 provider: 로그인 아이디·비밀번호 Credentials, Kakao OAuth(검증 이메일)

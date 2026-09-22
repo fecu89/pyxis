@@ -192,6 +192,8 @@ export async function proxy(request: NextRequest) {
   // 공개 API는 강제 비밀번호 변경·온보딩보다 먼저 통과시키되, 승인 전 계정만 익명 참여자로
   // 낮춥니다. 승인된 로그인 사용자의 공개 설문 응답 등은 기존처럼 계정에 연결됩니다.
   if (openApiPath) return passThrough(request, context, { publicGuest: accountApprovalBlocked });
+  // Legal notices must remain readable before profile completion or a forced password change.
+  if (pathname === "/terms" || pathname === "/privacy") return passThrough(request, context);
 
   if (pathname === PASSWORD_CHANGE_PATH) {
     if (!userId) {

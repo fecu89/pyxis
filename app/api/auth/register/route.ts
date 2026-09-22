@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Prisma } from "@/generated/prisma/client";
 import { credentialRegisterSchema } from "@/lib/auth/credentials";
+import { signupConsentData } from "@/lib/auth/signup-consent";
 import { hashUserPassword } from "@/lib/auth/password";
 import { registrationLoginIdAvailability } from "@/lib/auth/registration";
 import { prepareRegistrationAttempt, recordRegistrationResult } from "@/lib/auth/security";
@@ -66,6 +67,7 @@ export async function POST(request: Request) {
         passwordHash,
         role: "STUDENT",
         registrationApprovalStatus: "PENDING",
+        ...signupConsentData(),
       },
       select: { id: true },
     });

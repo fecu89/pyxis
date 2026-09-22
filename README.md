@@ -193,6 +193,10 @@ pyxis는 학교 구성원이 **패드**에 글·첨부·댓글·반응을 모으
 
 ### 계정·소속·권한
 
+- **가입 동의** — 일반·카카오 신규 가입은 이용약관, 개인정보 수집·이용, 만 14세 이상 자기확인을 각각 받습니다. 생년월일·신분증은 수집하지 않습니다. `/terms`·`/privacy`와 공용 모달에 같은 문구를 표시하고 동의 시각·버전을 계정과 함께 저장합니다. 기존·관리자 발급 계정에 소급 동의하지 않습니다.
+- **일괄 역할 변경** — 학생↔교사 전환은 학교와 새 역할에 맞는 반·부서를 함께 선택합니다. 일부 저장이 실패하면 대상별 사유를 표시하고 실패한 선택을 유지합니다.
+- **탈퇴** — 자기 탈퇴에서도 원래 로그인 아이디·이메일의 암호문을 무작위 삭제용 값으로 교체합니다. 학습 콘텐츠·소속·감사 기록까지 모두 삭제하는 기능은 아닙니다.
+
 - **두 가지 로그인** — 영문자·숫자 3~20자 아이디와 강한 비밀번호(10자 이상, 영문자·숫자·특수문자 포함), 또는 카카오 OAuth. 두 로그인 식별자는 공통 HMAC 조회값과 AES-GCM 암호문으로 보관합니다.
 - **역할** — 학생 · 교사 · 전체관리자. 자가 가입과 최초 카카오 로그인 계정은 `PENDING`으로 만들어져 전체관리자 승인 뒤 온보딩으로 넘어갑니다. 교사 신청자는 학교 대표교사 또는 전체관리자의 승인을 받기 전까지 `STUDENT`로 유지됩니다.
 - **학교 계층** — 학교 → 학년 → 반(CLASS)/부서(DEPARTMENT). 학생은 1~99 사이의 출석번호를 가지며 같은 반의 번호 중복은 DB 고유 인덱스가 막습니다. 학생도 패드와 퀴즈를 직접 만들 수 있고, 기본 소유 한도는 패드가 보관된 패드를 포함해 10개(교사 40개), 퀴즈가 10개(교사 무제한)입니다. 설문은 교사 이상만 만듭니다. 자세한 차이는 [학생 입장에서 본 pyxis](#학생-입장에서-본-pyxis)를 보세요.
@@ -480,7 +484,7 @@ yarn db:create-admin pyxadmin '여기에-강한-비밀번호'   # 아이디·비
 yarn dev
 ```
 
-터미널에 `Ready`가 뜨면 브라우저에서 `http://localhost:3001`을 엽니다. 로그인 창의 **회원가입**에서 3~20자 영문·숫자 아이디를 중복 확인한 뒤 10자 이상이면서 영문자·숫자·특수문자를 포함한 비밀번호로 계정을 만들 수 있고, 곧바로 고유 닉네임·프로필 사진·학교·반/부서 설정으로 이어집니다. 학생은 즉시 완료되고, 교사는 학교 대표교사 또는 전체관리자의 승인이 필요합니다. 자가 가입 계정 자체도 전체관리자의 가입 승인을 거칩니다.
+터미널에 `Ready`가 뜨면 브라우저에서 `http://localhost:3001`을 엽니다. 로그인 창의 **회원가입**에서 약관·개인정보 수집/이용·만 14세 이상 확인 후 3~20자 영문·숫자 아이디를 중복 확인하고, 10자 이상이면서 영문자·숫자·특수문자를 포함한 비밀번호로 계정을 만듭니다. 카카오 신규 가입에도 같은 동의가 필요합니다. 자가 가입 계정은 먼저 전체관리자의 승인을 받고 닉네임·프로필 사진·학교·반/부서를 설정합니다. 교사 신청에는 추가로 학교 대표교사 또는 전체관리자의 승인이 필요합니다.
 
 시드가 만든 예시 패드는 전체 공개라 로그인 없이 `http://localhost:3001/b/career-exploration`에서 바로 열립니다.
 
@@ -563,12 +567,12 @@ yarn tsc --noEmit
 yarn build        # 주의: 운영 서버가 .next-prod를 쓰는 중이면 직접 실행하지 말고 yarn deploy를 쓰세요
 ```
 
-`scripts/`에는 도메인별 검증 스크립트가 51개 있습니다. 고친 영역에 해당하는 것을 함께 돌립니다.
+`scripts/`의 도메인별 검증 명령은 `package.json`에서 확인합니다. 고친 영역에 해당하는 것을 함께 돌립니다. `verify:signup-consent`·`verify:admin-bulk`는 운영 DB를 사용하지 않는 테스트이며 브라우저 검증에는 Playwright와 Chromium이 필요합니다. 별도 설치 경로는 `PLAYWRIGHT_MODULE_PATH`로 지정할 수 있습니다. 기존 `verify:http` 등 일부 명령은 실제 DB에 데이터를 만들므로 운영 환경에서 무작정 실행하지 마세요.
 
 | 영역 | 명령 |
 |---|---|
 | 라우트·경계 | `verify:routes` · `verify:api-boundaries` · `verify:performance` · `verify:seo` |
-| 인증·가입·권한 | `verify:auth` · `verify:auth-password-ui` · `verify:approvals` · `verify:access` · `verify:access-request-notifications` · `verify:succession` |
+| 인증·가입·권한 | `verify:signup-consent` · `verify:admin-bulk` · `verify:auth` · `verify:auth-password-ui` · `verify:approvals` · `verify:access` · `verify:access-request-notifications` · `verify:succession` |
 | 패드 | `verify:pad-realtime` · `verify:pad-nav-layout` · `verify:pad-settings-members` · `verify:post` · `verify:post-content` · `verify:post-card-menu` · `verify:pagination` · `verify:board-create-options` · `verify:board-password-security` |
 | 손님·공개 참여 | `verify:guest` · `verify:link-guest` · `verify:invite-redemption` · `verify:short-links` · `verify:public-quiz-limits` |
 | 퀴즈 | `verify:quiz-save` · `verify:quiz-live` · `verify:quiz-assign` · `verify:quiz-images` |
@@ -610,5 +614,6 @@ PM2_APP=pyxis PORT=3001 yarn deploy
 |---|---|
 | [`overview.md`](./overview.md) | 제품 전체 개요 — 계정·소속, 손님 글쓰기, 패드 편집·공유, 주요 영역과 렌더링 원칙 |
 | [`structure.md`](./structure.md) | 화면·API·서버 모듈·데이터 모델의 연결. 페이지 진입점 표, 대표 상호작용 흐름, 디자인 토큰, 운영 전제 |
+| [`docs/signup-consent.md`](./docs/signup-consent.md) | 가입 동의·14세 자기확인·탈퇴 범위·일괄 역할 변경 검증과 마이그레이션 순서 |
 | 각 폴더의 `overview.md` | 폴더별 책임과 그렇게 만든 이유(`lib/forms`, `lib/quiz`, `lib/files`, `components/pad` 등) |
 | `mdFiles/` | 진행 중인 작업 현황(`report.md`)과 기능별 계획 문서 |

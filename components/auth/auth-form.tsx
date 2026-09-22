@@ -5,6 +5,8 @@ import { signIn } from "next-auth/react";
 import { Check, ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { DASHBOARD_PATH } from "@/lib/route-paths";
 import { useDebouncedCallback } from "@/lib/use-debounced-callback";
+import { SignupConsentFields } from "@/components/auth/signup-consent-fields";
+import { emptySignupConsent, hasSignupConsent } from "@/lib/legal/constants";
 
 const PASSWORD_MIN_LENGTH = 10;
 
@@ -22,11 +24,14 @@ const PASSWORD_MIN_LENGTH = 10;
 export function AuthForm({
   callbackUrl = DASHBOARD_PATH,
   initialError = null,
+  initialSignupRequired = false,
 }: {
   callbackUrl?: string;
   initialError?: string | null;
+  initialSignupRequired?: boolean;
 }) {
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register">(initialSignupRequired ? "register" : "login");
+  const [consent, setConsent] = useState(emptySignupConsent);
   const [error, setError] = useState(initialError ?? "");
   const [busy, setBusy] = useState<"credentials" | "login-id-check" | "register" | "kakao" | null>(null);
   const [loginId, setLoginId] = useState("");
@@ -93,6 +98,10 @@ export function AuthForm({
       setError("비밀번호 확인이 일치하지 않습니다.");
       return;
     }
+    if (!hasSignupConsent(consent)) {
+      setError("필수 가입 동의와 만 14세 이상 확인을 완료해 주세요.");
+      return;
+    }
     setBusy("register");
     try {
       const response = await fetch("/api/auth/register", {
@@ -102,6 +111,7 @@ export function AuthForm({
           loginId: registerLoginId,
           password: registerPassword,
           passwordConfirm,
+          consent,
         }),
       });
       const result = await response.json().catch(() => null) as { error?: string } | null;
@@ -150,8 +160,22 @@ export function AuthForm({
 
   async function kakaoLogin() {
     setError("");
+    if (mode === "register" && !hasSignupConsent(consent)) {
+      setError("필수 가입 동의와 만 14세 이상 확인을 완료해 주세요.");
+      return;
+    }
     setBusy("kakao");
     try {
+      if (mode === "register") {
+        const response = await fetch("/api/auth/signup-consent", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(consent) });
+        if (!response.ok) {
+          const result = await response.json().catch(() => null);
+          throw new Error(result?.error || "가입 동의를 저장하지 못했습니다.");
+        }
+      } else {
+        const response = await fetch("/api/auth/signup-consent", { method: "DELETE" });
+        if (!response.ok) throw new Error("이전 가입 동의를 정리하지 못했습니다. 다시 시도해 주세요.");
+      }
       const result = await signIn("kakao", { callbackUrl });
       if (result?.error) throw new Error("카카오 로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.");
     } catch (reason) {
@@ -186,6 +210,10 @@ export function AuthForm({
           회원가입
         </button>
       </div>
+      {mode === "register" && <>
+        {initialSignupRequired && <p className="form-hint">카카오 신규 가입을 위해 아래 항목을 확인한 뒤 카카오로 다시 계속해 주세요.</p>}
+        <SignupConsentFields value={consent} onChange={value => { setConsent(value); setError(""); }} disabled={authPending} />
+      </>}
       {mode === "login" ? (
         <form id="auth-login-panel" className="stack-form auth-form" role="tabpanel" aria-labelledby="auth-login-tab" aria-busy={authPending} onSubmit={submitLogin}>
           <label>아이디<input type="text" value={loginId} onChange={(event) => setLoginId(event.target.value)} autoComplete="username" pattern="[A-Za-z0-9]{3,20}" minLength={3} maxLength={20} spellCheck={false} autoCapitalize="none" required autoFocus disabled={authPending} /></label>
@@ -254,7 +282,7 @@ export function AuthForm({
             {confirmationState === "mismatch" ? "비밀번호 확인이 일치하지 않습니다." : confirmationState === "match" ? "비밀번호가 일치합니다." : ""}
           </p>
           {error && <p className="form-error" role="alert">{error}</p>}
-          <button type="submit" className="button primary full" disabled={authPending || !passwordsLongEnough || !passwordsMatch}>{busy === "register" ? "계정 만드는 중…" : "계정 만들기"}</button>
+          <button type="submit" className="button primary full" disabled={authPending || !passwordsLongEnough || !passwordsMatch || !hasSignupConsent(consent)}>{busy === "register" ? "계정 만드는 중…" : "계정 만들기"}</button>
           <p className="form-hint">계정을 만든 뒤 관리자 승인을 받으면 닉네임과 학교·반 또는 부서를 설정합니다.</p>
         </form>
       )}
@@ -268,6 +296,7 @@ export function AuthForm({
         </button>
         <p className="form-hint">카카오는 검증된 이메일과 프로필 정보를 연결하며, 최초 연결은 관리자 승인 후 사용할 수 있습니다.</p>
       </div>
+      <nav className="auth-legal-links" aria-label="서비스 약관"><a href="/terms" target="_blank" rel="noopener noreferrer">이용약관</a><a href="/privacy" target="_blank" rel="noopener noreferrer">개인정보 처리방침</a></nav>
     </>
   );
 }

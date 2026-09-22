@@ -1,5 +1,8 @@
 # Overview
 
+- `terms/page.tsx`·`privacy/page.tsx`: 공개 이용약관·개인정보 처리방침. 가입 모달과 동일한
+  `LegalDocument` 본문을 사용하며, 프록시는 온보딩·강제 비밀번호 변경 상태에서도 두 문서를 허용합니다.
+
 이 폴더는 pyxis 구현에서 `app/(marketing)` 영역을 담당합니다. 셸이 없는 공개 화면이라 각
 페이지가 자체 헤더를 갖습니다.
 

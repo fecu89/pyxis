@@ -2,6 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 import { normalizeLoginIdentifier } from "@/lib/security/pii-crypto";
+import { signupConsentSchema } from "@/lib/auth/signup-consent";
 
 export const credentialLoginIdValueSchema = z.string()
   .trim()
@@ -46,6 +47,7 @@ export const credentialLoginSchema = z.object({
 export const credentialLoginIdSchema = z.object({ loginId: credentialLoginIdValueSchema });
 
 export const credentialRegisterSchema = z.object({
+  consent: signupConsentSchema,
   loginId: credentialLoginIdValueSchema,
   password: registrationPasswordSchema,
   passwordConfirm: registrationPasswordSchema,

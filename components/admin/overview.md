@@ -1,5 +1,10 @@
 # Overview
 
+사용자 선택 후 일괄 역할 변경에서 학생/교사를 고르면 학교와 해당 역할에 맞는 반/부서를 함께
+선택·저장합니다. 기존 반을 남긴 채 교사 역할만 보내던 실패를 방지하며, 서버 권한 검사는
+유지합니다. `skipped` 사유는 사용자별로 표시하고 실패한 대상은 목록 갱신 후에도 선택을 유지해
+재시도할 수 있습니다. 운영 DB 없는 Chromium 회귀 검증: `yarn verify:admin-bulk`.
+
 `/admin/*` 사용자·권한 관리 화면의 Client Component 모음입니다. 사용자 권한 관리 목록은 이름과 전체 로그인 식별자를 표시하고, 프로필 URL 같은 나머지 원문 개인정보는 명시적인 조회 작업에서만 일시 응답으로 표시하며 조회 기록을 감사 로그에 남깁니다.
 
 `types.ts`의 `UserRole`·`UserStatus`·`SystemPermission`은 손으로 적지 않고 `generated/prisma/enums`에서 가져옵니다. quiz 병합으로 `SystemPermission`이 12개에서 16개로 늘었을 때 손으로 적은 유니온은 조용히 뒤처져 서버가 내려준 값을 타입이 거부하는 상태가 됩니다. 생성 타입을 쓰면 `Record<SystemPermission, string>`인 권한 라벨 맵이 컴파일 단계에서 누락을 잡아줍니다.

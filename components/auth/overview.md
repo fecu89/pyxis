@@ -2,6 +2,10 @@
 
 이 폴더는 pyxis 구현에서 `components/auth` 영역을 담당합니다.
 
+- `signup-consent-fields.tsx`: 일반/카카오 신규 가입이 공유하는 기본 해제된 필수 확인란 3개. 내용을 읽을 때 기존 공용 `Modal`을 사용합니다. 생년월일이나 신분증 입력은 없습니다.
+- `legal-document.tsx`: 이용약관·개인정보 처리방침의 단일 본문. 가입 모달과 공개 `/terms`·`/privacy`에서 재사용합니다. 운영자·문의·버전 상수는 `lib/legal/constants.ts`에만 선언합니다.
+- 동의 없는 제출은 UI와 서버 양쪽에서 거절합니다. 카카오 로그인 모드에서는 이전 가입 티켓을 먼저 지우고, 가입 모드에서는 유효한 동의 티켓을 받은 뒤 OAuth로 이동합니다. `yarn verify:signup-consent`는 실제 폼·공용 모달·서버 경계를 운영 DB 없이 검사합니다.
+
 - `auth-form.tsx`: 로그인·회원가입 폼. `/login` 페이지와 공개 홈의 모달이 함께 씁니다. 아이디
   로그인, 2단계 회원가입(아이디 중복 확인 → 비밀번호), 카카오 로그인을 한 컴포넌트가 담고,
   성공하면 `window.location.assign`으로 이동합니다 — `router.push`는 클라이언트 캐시를 그대로

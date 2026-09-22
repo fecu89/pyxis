@@ -1,5 +1,10 @@
 # 일반 회원가입 API
 
+요청에는 `consent: { terms: true, privacy: true, age14: true, termsVersion, privacyVersion }`가
+필수입니다. 현재 버전과 다르거나 누락·거부한 항목이 있으면 계정 생성 전 400으로 거절합니다.
+동의 시각은 클라이언트 입력을 믿지 않고 서버에서 생성하며 `registrationConsentAt`,
+`termsVersion`, `privacyVersion`, `age14Confirmed`를 계정 생성과 함께 저장합니다.
+
 `POST /api/auth/register`는 `loginId`와 비밀번호·비밀번호 확인을 받아 소속 없는 `STUDENT` 계정을
 `registrationApprovalStatus=PENDING`으로 만듭니다. 성공 직후 클라이언트가 NextAuth Credentials
 provider로 로그인하지만 `/approval-pending`에서 전체관리자의 승인을 기다리고, 승인 뒤

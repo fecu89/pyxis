@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+.signup-consent { min-width: 0; margin: 16px 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.signup-consent legend { padding: 0 4px; font-size: 13px; font-weight: 700; }
+.signup-consent > div { display: flex; align-items: center; gap: 8px; }
+.signup-consent label { display: flex; min-width: 0; flex: 1; align-items: center; gap: 8px; min-height: 44px; font-size: 12px; cursor: pointer; }
+.signup-consent input[type="checkbox"] { flex: none; width: 18px; height: 18px; accent-color: var(--brand); }
+.signup-consent button { flex: none; min-height: 44px; }
+.signup-consent p { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 8px 0 0; }
+.auth-legal-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 18px; font-size: 12px; color: var(--muted); }
+.auth-legal-links a,.legal-document a { text-decoration: underline; text-underline-offset: 3px; }
+.legal-page { max-width: 840px; margin: 0 auto; padding: 32px 20px; }
+.legal-page nav { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 24px; }
+.legal-page h1 { font-size: 28px; font-weight: 800; }
+.legal-document { min-width: 0; font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
+.legal-document h3 { margin: 24px 0 8px; font-size: 16px; font-weight: 750; }
+.legal-document p { margin: 12px 0; }
+.legal-document ul { padding-left: 22px; list-style: disc; }
+.legal-document li { margin: 8px 0; }
+
 /* 다크 모드는 <html data-theme="dark">로만 켭니다(아래 "Dark mode" 절 참고). Tailwind는 기본적으로
    prefers-color-scheme를 보므로, `dark:` 변형이 이 프로젝트의 판정과 어긋나지 않도록 다시 정의합니다.
    이 선언이 없으면 quiz에서 이식한 컴포넌트의 `dark:*` 클래스가 조용히 무시됩니다. */

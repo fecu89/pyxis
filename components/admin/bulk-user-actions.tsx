@@ -21,7 +21,7 @@ export function BulkUserActions({ actor, selectedIds, selectedUsers, schools, on
   selectedUsers: AdminUserRecord[];
   schools: SchoolDirectoryItem[];
   onClose: () => void;
-  onApplied: (result: BulkUpdateResult) => void;
+  onApplied: (result: BulkUpdateResult) => void | Promise<void>;
 }) {
   const confirm = useConfirm();
   const isRepresentative = actor.role === "TEACHER" && actor.isSchoolRepresentative;
@@ -45,19 +45,25 @@ export function BulkUserActions({ actor, selectedIds, selectedUsers, schools, on
     ? (isRepresentative ? "ORGANIZATION" : "ROLE")
     : mode;
 
-  const groupType = selectedRole === "STUDENT" ? "CLASS" : selectedRole === "TEACHER" ? "DEPARTMENT" : null;
+  const organizationRole = activeMode === "ROLE" ? role : selectedRole;
+  const groupType = organizationRole === "STUDENT" ? "CLASS" : organizationRole === "TEACHER" ? "DEPARTMENT" : null;
+  const roleNeedsOrganization = activeMode === "ROLE" && groupType !== null;
   const groupPlaceholder = groupType === "CLASS" ? "반 선택" : groupType === "DEPARTMENT" ? "부서 선택" : "반·부서 선택";
   const targetSchoolId = schoolId === "__NONE__" ? "" : schoolId;
   const availableGroups = schools.find((school) => school.id === targetSchoolId)?.groups.filter((group) => !groupType || group.type === groupType) ?? [];
   const moveClasses = schools.find((school) => school.id === moveSchoolId)?.groups.filter((group) => group.type === "CLASS") ?? [];
-  const canSubmit = activeMode === "ORGANIZATION"
-    ? Boolean(schoolId)
+  const validGroup = availableGroups.some((group) => group.id === schoolGroupId);
+  const canSubmit = roleNeedsOrganization
+    ? Boolean(targetSchoolId) && validGroup
+    : activeMode === "ORGANIZATION"
+    ? Boolean(schoolId) && (!groupType || (Boolean(targetSchoolId) && validGroup))
     : activeMode === "MOVE"
       ? Boolean(moveSchoolGroupId)
       : true;
 
   function chooseMode(nextMode: BulkMode) {
     setMode(nextMode);
+    setSchoolGroupId("");
     setError("");
   }
 
@@ -77,7 +83,7 @@ export function BulkUserActions({ actor, selectedIds, selectedUsers, schools, on
             reason: `관리자 대시보드에서 반 일괄 이동 (${selectedIds.length}명)`,
           }),
         })) as { moved: { userId: string }[] };
-        onApplied({ updated: movedResult.moved.map(({ userId }) => userId), skipped: [] });
+        await onApplied({ updated: movedResult.moved.map(({ userId }) => userId), skipped: [] });
         return;
       }
 
@@ -90,13 +96,13 @@ export function BulkUserActions({ actor, selectedIds, selectedUsers, schools, on
           reason: `관리자 대시보드에서 ${modeLabel} 일괄 변경 (${selectedIds.length}명)`,
           ...(activeMode === "ROLE" ? { role } : {}),
           ...(activeMode === "STATUS" ? { status } : {}),
-          ...(activeMode === "ORGANIZATION" ? {
+          ...(activeMode === "ORGANIZATION" || roleNeedsOrganization ? {
             schoolId: schoolId === "__NONE__" ? null : schoolId,
             schoolGroupId: schoolId === "__NONE__" ? null : schoolGroupId || null,
           } : {}),
         }),
       }));
-      onApplied(result as BulkUpdateResult);
+      await onApplied(result as BulkUpdateResult);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "일괄 수정에 실패했습니다.");
     } finally {
@@ -114,7 +120,7 @@ export function BulkUserActions({ actor, selectedIds, selectedUsers, schools, on
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userIds: selectedIds, reason: `관리자 대시보드에서 회원 일괄 삭제 (${selectedIds.length}명)` }),
       }));
-      onApplied(result as BulkUpdateResult);
+      await onApplied(result as BulkUpdateResult);
     } catch (deleteError) {
       setError(deleteError instanceof Error ? deleteError.message : "회원을 일괄 삭제하지 못했습니다.");
     } finally {
@@ -139,11 +145,11 @@ export function BulkUserActions({ actor, selectedIds, selectedUsers, schools, on
       </div>
 
       <div className="admin-bulk-compact-controls">
-        {activeMode === "ROLE" ? <label><span>바꿀 역할</span><select className="admin-inline-select" value={role} onChange={(event) => setRole(event.target.value as UserRole)} disabled={pending}><option value="STUDENT">학생</option><option value="TEACHER">교사</option><option value="ADMIN">보조관리자</option><option value="SUPER_ADMIN">전체관리자</option></select></label> : null}
+        {activeMode === "ROLE" ? <label><span>바꿀 역할</span><select className="admin-inline-select" value={role} onChange={(event) => { setRole(event.target.value as UserRole); setSchoolGroupId(""); }} disabled={pending}><option value="STUDENT">학생</option><option value="TEACHER">교사</option><option value="ADMIN">보조관리자</option><option value="SUPER_ADMIN">전체관리자</option></select></label> : null}
         {activeMode === "STATUS" ? <label><span>바꿀 상태</span><select className="admin-inline-select" value={status} onChange={(event) => setStatus(event.target.value as UserStatus)} disabled={pending}><option value="ACTIVE">활성</option><option value="SUSPENDED">정지</option></select></label> : null}
-        {activeMode === "ORGANIZATION" ? <>
-          <label><span>학교</span><select className="admin-inline-select" value={schoolId} onChange={(event) => { setSchoolId(event.target.value); setSchoolGroupId(""); }} disabled={pending}><option value="">학교 선택</option><option value="__NONE__">소속 없음</option>{schools.map((school) => <option key={school.id} value={school.id}>{school.name}</option>)}</select></label>
-          <label><span>{groupPlaceholder}</span><select className="admin-inline-select" value={schoolGroupId} onChange={(event) => setSchoolGroupId(event.target.value)} disabled={pending || !targetSchoolId}><option value="">{groupPlaceholder}</option>{availableGroups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
+        {activeMode === "ORGANIZATION" || roleNeedsOrganization ? <>
+          <label><span>학교</span><select aria-label="학교" className="admin-inline-select" value={schoolId} onChange={(event) => { setSchoolId(event.target.value); setSchoolGroupId(""); }} disabled={pending}><option value="">학교 선택</option>{!groupType ? <option value="__NONE__">소속 없음</option> : null}{schools.map((school) => <option key={school.id} value={school.id}>{school.name}</option>)}</select></label>
+          <label><span>{groupPlaceholder}</span><select aria-label={groupPlaceholder} className="admin-inline-select" value={schoolGroupId} onChange={(event) => setSchoolGroupId(event.target.value)} disabled={pending || !targetSchoolId}><option value="">{groupPlaceholder}</option>{availableGroups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
         </> : null}
         {activeMode === "MOVE" ? <>
           <label><span>학교</span><select className="admin-inline-select" value={moveSchoolId} onChange={(event) => { setMoveSchoolId(event.target.value); setMoveSchoolGroupId(""); }} disabled={pending}><option value="">학교 선택</option>{schools.map((school) => <option key={school.id} value={school.id}>{school.name}</option>)}</select></label>
@@ -153,6 +159,7 @@ export function BulkUserActions({ actor, selectedIds, selectedUsers, schools, on
       </div>
 
       {activeMode === "MOVE" ? <p className="admin-bulk-note">도착 반의 빈 번호를 앞에서부터 자동 배정합니다.</p> : null}
+      {roleNeedsOrganization ? <p className="admin-bulk-note">선택한 사용자 모두를 지정한 학교와 {groupType === "CLASS" ? "반으로" : "부서로"} 함께 변경합니다.</p> : null}
       {error ? <p className="admin-bulk-error" role="alert"><TriangleAlert size={14} aria-hidden />{error}</p> : null}
     </form>
   );

@@ -47,6 +47,7 @@ export function AdminUsersPanel({ actor, initialUsers, initialTotalCount, initia
   const [searchTruncated, setSearchTruncated] = useState(initialSearchTruncated);
   const [error, setError] = useState("");
   const [bulkNotice, setBulkNotice] = useState("");
+  const [bulkFailures, setBulkFailures] = useState<{ userId: string; name: string; reason: string }[]>([]);
   const [selectionAnchor, setSelectionAnchor] = useState<number | null>(null);
   const loadControllerRef = useRef<AbortController | null>(null);
   const filterGroups = schools.find((school) => school.id === schoolFilter)?.groups ?? [];
@@ -69,7 +70,7 @@ export function AdminUsersPanel({ actor, initialUsers, initialTotalCount, initia
     onSearch: (query) => { void loadUsers(1, pageSize, { query }); },
   });
 
-  async function loadUsers(targetPage: number, targetPageSize: number, overrides: Partial<AdminUserInitialFilters> = {}) {
+  async function loadUsers(targetPage: number, targetPageSize: number, overrides: Partial<AdminUserInitialFilters> = {}, preserveSelection = false) {
     loadControllerRef.current?.abort();
     const controller = new AbortController();
     loadControllerRef.current = controller;
@@ -100,7 +101,9 @@ export function AdminUsersPanel({ actor, initialUsers, initialTotalCount, initia
       setAppliedQuery(search);
       setSearchTruncated(Boolean(result.searchTruncated));
       setActionUserId(null);
-      setSelectedIds(new Set());
+      setSelectedIds((current) => preserveSelection
+        ? new Set((result.users as AdminUserRecord[]).filter((user) => current.has(user.id)).map((user) => user.id))
+        : new Set());
       setSelectionAnchor(null);
     } catch (reason) {
       if (reason instanceof DOMException && reason.name === "AbortError") return;
@@ -186,13 +189,18 @@ export function AdminUsersPanel({ actor, initialUsers, initialTotalCount, initia
     setSelectionAnchor(index);
   }
 
-  function onBulkApplied(result: BulkUpdateResult) {
-    setSelectedIds(new Set());
+  async function onBulkApplied(result: BulkUpdateResult) {
+    setSelectedIds(new Set(result.skipped.map(({ userId }) => userId)));
+    setSelectionAnchor(null);
+    setBulkFailures(result.skipped.map((failure) => ({
+      ...failure,
+      name: users.find((user) => user.id === failure.userId)?.name || "이름 없음",
+    })));
     const changedLabel = result.deleted ? "삭제" : "변경";
     setBulkNotice(result.skipped.length
       ? `${result.updated.length}명 ${changedLabel}, ${result.skipped.length}명은 권한·조건이 맞지 않아 건너뛰었습니다.`
       : `${result.updated.length}명을 ${changedLabel}했습니다.`);
-    void loadUsers(page, pageSize);
+    if (result.updated.length || result.deleted?.length) await loadUsers(page, pageSize, {}, true);
   }
 
   return (
@@ -237,6 +245,9 @@ export function AdminUsersPanel({ actor, initialUsers, initialTotalCount, initia
 
         {selectedList.length > 0 ? <BulkUserActions actor={actor} selectedIds={selectedList} selectedUsers={users.filter((user) => selectedIds.has(user.id))} schools={schools} onClose={() => { setSelectedIds(new Set()); setSelectionAnchor(null); }} onApplied={onBulkApplied} /> : null}
         {bulkNotice ? <p className="admin-bulk-notice" role="status">{bulkNotice}</p> : null}
+        {bulkFailures.length > 0 ? <ul className="admin-bulk-notice" aria-label="저장하지 못한 사용자" role="alert">
+          {bulkFailures.map(({ userId, name, reason }) => <li key={userId}>{name}: {reason}</li>)}
+        </ul> : null}
 
         <div className="select-toolbar">
           <span>{selectedIds.size > 0 ? `${selectedIds.size}명 선택됨` : `${users.length}명 표시 중`}</span>
