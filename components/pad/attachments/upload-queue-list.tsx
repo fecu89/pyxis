@@ -101,7 +101,7 @@ function UploadQueueRow({
       <span className={styles.copy}>
         <span className={styles.nameRow}>
           <strong>{item.file.name}</strong>
-          <span>{formatSize(item.file.size)} · {statusLabel[item.status]}</span>
+          <span>{formatSize(item.file.size)} · {item.status === "uploading" && item.progress >= 99 ? "저장 확인 중" : statusLabel[item.status]}</span>
         </span>
         {kind === "AUDIO" && mediaUrl && <audio className={styles.mediaPlayer} controls preload="metadata" src={mediaUrl} />}
         {kind === "VIDEO" && mediaUrl && <video className={`${styles.mediaPlayer} ${styles.video}`} controls preload="metadata" src={mediaUrl} />}

@@ -6,6 +6,7 @@ import { boardPostEventDelivery } from "@/lib/board/post-snapshot";
 import { createAuditLogData } from "@/lib/auth/audit";
 import { createPostUploadDirectory } from "@/lib/files/paths";
 import { storeAttachmentUpload } from "@/lib/files/store-upload";
+import { backgroundImagesEnabled, enqueueImageJob, ImageJobBusyError } from "@/lib/files/image-job-store";
 import { AttachmentLimitError, guestMaxUploadBytes } from "@/lib/files/validation";
 import { warmUpPdfPreview } from "@/lib/files/document-convert";
 import { apiError, assertSameOrigin } from "@/lib/http";
@@ -61,7 +62,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pos
     if (isBoardFrozen(access)) return Response.json({ error: "동결된 패드에는 파일을 올릴 수 없습니다." }, { status: 409 });
 
     // 손님은 이미지만. 문서·압축·실행 가능한 형식은 신원 없는 업로더에게 열어 줄 이유가 없고,
-    // 이미지는 sharp가 전부 webp로 다시 인코딩하므로 원본 바이트가 그대로 남지 않습니다.
+    // 이미지는 메타데이터를 제거한 안전한 초기 이미지 또는 재인코딩 결과만 제공됩니다.
     const uploadContext = {
       target: "게시물 첨부",
       userId: user?.id,
@@ -73,8 +74,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ pos
       request,
       createPostUploadDirectory(post.boardId, post.id),
       user
-        ? { context: uploadContext }
-        : { allowedTypes: ["IMAGE"], maxBytes: await guestMaxUploadBytes(), context: uploadContext },
+        ? { context: uploadContext, deferImageProcessing: backgroundImagesEnabled() }
+        : { allowedTypes: ["IMAGE"], maxBytes: await guestMaxUploadBytes(), context: uploadContext, deferImageProcessing: backgroundImagesEnabled() },
     );
     cleanup = stored.cleanup;
     const attachment = await prisma.$transaction(async (tx) => {
@@ -95,7 +96,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ pos
           ...stored.data,
           sortOrder: (last?.sortOrder ?? -1) + 1,
         },
-        select: { id: true, type: true, originalName: true, mimeType: true, fileSize: true, width: true, height: true, altText: true, caption: true, externalUrl: true, previewImageUrl: true },
+        select: { id: true, type: true, originalName: true, mimeType: true, fileSize: true, width: true, height: true, imageRevision: true, altText: true, caption: true, externalUrl: true, previewImageUrl: true },
+      });
+      if (stored.pendingImage) await enqueueImageJob(tx, {
+        attachmentId: created.id, boardId: post.boardId, postId, inputPath: stored.data.storagePath,
       });
       if (user && !isBoardScopedPostEdit(access, user.id, post.authorId)) {
         await tx.adminAuditLog.create({
@@ -125,6 +129,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pos
     return Response.json({ attachment: { ...attachment, url: `/f/${attachment.id}` } }, { status: 201 });
   } catch (error) {
     if (cleanup) await cleanup();
+    if (error instanceof ImageJobBusyError) return Response.json({ error: error.message }, { status: 503, headers: { "Retry-After": "5", "Cache-Control": "no-store" } });
     if (error instanceof AttachmentLimitError) return Response.json({ error: error.message }, { status: 400 });
     return apiError(error, "파일 업로드에 실패했습니다.");
   }

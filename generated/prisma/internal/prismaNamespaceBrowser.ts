@@ -84,6 +84,7 @@ export const ModelName = {
   Section: 'Section',
   Post: 'Post',
   Attachment: 'Attachment',
+  ImageProcessingJob: 'ImageProcessingJob',
   Comment: 'Comment',
   CommentMention: 'CommentMention',
   Reaction: 'Reaction',
@@ -690,12 +691,35 @@ export const AttachmentScalarFieldEnum = {
   externalUrl: 'externalUrl',
   previewImageUrl: 'previewImageUrl',
   thumbnailPath: 'thumbnailPath',
+  imageRevision: 'imageRevision',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
   deletedAt: 'deletedAt'
 } as const
 
 export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
+
+
+export const ImageProcessingJobScalarFieldEnum = {
+  id: 'id',
+  attachmentId: 'attachmentId',
+  boardId: 'boardId',
+  postId: 'postId',
+  inputPath: 'inputPath',
+  status: 'status',
+  attempts: 'attempts',
+  availableAt: 'availableAt',
+  leaseToken: 'leaseToken',
+  leaseExpiresAt: 'leaseExpiresAt',
+  outputPath: 'outputPath',
+  thumbnailPath: 'thumbnailPath',
+  cleanupAfter: 'cleanupAfter',
+  lastErrorCode: 'lastErrorCode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ImageProcessingJobScalarFieldEnum = (typeof ImageProcessingJobScalarFieldEnum)[keyof typeof ImageProcessingJobScalarFieldEnum]
 
 
 export const CommentScalarFieldEnum = {

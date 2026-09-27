@@ -25,6 +25,7 @@ import { usePadEvents } from "@/components/pad/use-pad-events";
 import type { PadInitialData, PostData, SectionData } from "@/components/pad/types";
 import type { BoardEvent, BoardEventPayload } from "@/lib/realtime/board-events";
 import { requestJson } from "@/lib/api-client";
+import { preserveImageRevisions } from "@/lib/files/attachment-url";
 import { APP_NAME } from "@/lib/brand";
 import { PAD_HOME_PATH } from "@/lib/route-paths";
 
@@ -365,7 +366,7 @@ export function PadCanvas({
         type: "post.updated", entityId: post.id, sectionId: section.id,
         payload: { post, layoutChanged: existing.isPinned !== post.isPinned },
       }, board.newPostPlacement, currentUserId);
-      return preserveAttachments ? updated : { ...updated, posts: updated.posts.map((item) => item.id === post.id ? { ...item, attachments: post.attachments } : item) };
+      return preserveAttachments ? updated : { ...updated, posts: updated.posts.map((item) => item.id === post.id ? { ...item, attachments: preserveImageRevisions(item.attachments, post.attachments) } : item) };
     });
     realtimeEventRevision.current += 1;
     setLiveData((current) => ({ ...current, board: { ...current.board, sections: update(current.board.sections) } }));

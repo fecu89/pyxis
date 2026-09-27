@@ -430,6 +430,7 @@ export const ModelName = {
   Section: 'Section',
   Post: 'Post',
   Attachment: 'Attachment',
+  ImageProcessingJob: 'ImageProcessingJob',
   Comment: 'Comment',
   CommentMention: 'CommentMention',
   Reaction: 'Reaction',
@@ -462,7 +463,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "activity" | "form" | "formVisit" | "formField" | "formFieldOption" | "formResponse" | "formAnswer" | "formUploadedFile" | "formShare" | "user" | "authRateLimit" | "authSecurityEvent" | "school" | "schoolGrade" | "schoolGroup" | "teacherApprovalRequest" | "userSystemPermission" | "adminAuditLog" | "notification" | "systemSetting" | "board" | "boardInviteLink" | "boardMember" | "boardAccessRequest" | "boardActivity" | "boardFollow" | "boardVisit" | "boardFavorite" | "dashboardFolder" | "dashboardFolderBoard" | "section" | "post" | "attachment" | "comment" | "commentMention" | "reaction" | "quiz" | "subject" | "subjectStudent" | "subjectSchoolGroup" | "quizShare" | "quizFavorite" | "quizVisit" | "question" | "choice" | "quizSession" | "quizAssignment" | "sessionParticipant" | "answer" | "shortLink"
+    modelProps: "activity" | "form" | "formVisit" | "formField" | "formFieldOption" | "formResponse" | "formAnswer" | "formUploadedFile" | "formShare" | "user" | "authRateLimit" | "authSecurityEvent" | "school" | "schoolGrade" | "schoolGroup" | "teacherApprovalRequest" | "userSystemPermission" | "adminAuditLog" | "notification" | "systemSetting" | "board" | "boardInviteLink" | "boardMember" | "boardAccessRequest" | "boardActivity" | "boardFollow" | "boardVisit" | "boardFavorite" | "dashboardFolder" | "dashboardFolderBoard" | "section" | "post" | "attachment" | "imageProcessingJob" | "comment" | "commentMention" | "reaction" | "quiz" | "subject" | "subjectStudent" | "subjectSchoolGroup" | "quizShare" | "quizFavorite" | "quizVisit" | "question" | "choice" | "quizSession" | "quizAssignment" | "sessionParticipant" | "answer" | "shortLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2908,6 +2909,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ImageProcessingJob: {
+      payload: Prisma.$ImageProcessingJobPayload<ExtArgs>
+      fields: Prisma.ImageProcessingJobFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ImageProcessingJobFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ImageProcessingJobFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>
+        }
+        findFirst: {
+          args: Prisma.ImageProcessingJobFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ImageProcessingJobFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>
+        }
+        findMany: {
+          args: Prisma.ImageProcessingJobFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>[]
+        }
+        create: {
+          args: Prisma.ImageProcessingJobCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>
+        }
+        createMany: {
+          args: Prisma.ImageProcessingJobCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ImageProcessingJobCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>[]
+        }
+        delete: {
+          args: Prisma.ImageProcessingJobDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>
+        }
+        update: {
+          args: Prisma.ImageProcessingJobUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>
+        }
+        deleteMany: {
+          args: Prisma.ImageProcessingJobDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ImageProcessingJobUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ImageProcessingJobUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>[]
+        }
+        upsert: {
+          args: Prisma.ImageProcessingJobUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ImageProcessingJobPayload>
+        }
+        aggregate: {
+          args: Prisma.ImageProcessingJobAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateImageProcessingJob>
+        }
+        groupBy: {
+          args: Prisma.ImageProcessingJobGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ImageProcessingJobGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ImageProcessingJobCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ImageProcessingJobCountAggregateOutputType> | number
+        }
+      }
+    }
     Comment: {
       payload: Prisma.$CommentPayload<ExtArgs>
       fields: Prisma.CommentFieldRefs
@@ -4776,12 +4851,35 @@ export const AttachmentScalarFieldEnum = {
   externalUrl: 'externalUrl',
   previewImageUrl: 'previewImageUrl',
   thumbnailPath: 'thumbnailPath',
+  imageRevision: 'imageRevision',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
   deletedAt: 'deletedAt'
 } as const
 
 export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
+
+
+export const ImageProcessingJobScalarFieldEnum = {
+  id: 'id',
+  attachmentId: 'attachmentId',
+  boardId: 'boardId',
+  postId: 'postId',
+  inputPath: 'inputPath',
+  status: 'status',
+  attempts: 'attempts',
+  availableAt: 'availableAt',
+  leaseToken: 'leaseToken',
+  leaseExpiresAt: 'leaseExpiresAt',
+  outputPath: 'outputPath',
+  thumbnailPath: 'thumbnailPath',
+  cleanupAfter: 'cleanupAfter',
+  lastErrorCode: 'lastErrorCode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ImageProcessingJobScalarFieldEnum = (typeof ImageProcessingJobScalarFieldEnum)[keyof typeof ImageProcessingJobScalarFieldEnum]
 
 
 export const CommentScalarFieldEnum = {
@@ -5940,6 +6038,7 @@ export type GlobalOmitConfig = {
   section?: Prisma.SectionOmit
   post?: Prisma.PostOmit
   attachment?: Prisma.AttachmentOmit
+  imageProcessingJob?: Prisma.ImageProcessingJobOmit
   comment?: Prisma.CommentOmit
   commentMention?: Prisma.CommentMentionOmit
   reaction?: Prisma.ReactionOmit

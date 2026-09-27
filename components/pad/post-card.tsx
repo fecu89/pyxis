@@ -15,12 +15,13 @@ import type { PadCapabilities, PostData, ReactionKey } from "@/components/pad/ty
 import { boardPostRoutePath } from "@/lib/board/route-paths";
 import { getLinkCardThumbnail, getLinkSourceHost } from "@/lib/link-preview/link-card";
 import type { ReactionCounts } from "@/lib/reactions/types";
+import { attachmentImageUrl } from "@/lib/files/attachment-url";
 
 function findPostCover(attachments: PostData["attachments"]) {
   for (const attachment of attachments) {
     if (attachment.type === "IMAGE") {
       return {
-        src: `/f/${attachment.id}?variant=thumbnail`,
+        src: attachmentImageUrl(attachment, "thumbnail"),
         alt: attachment.altText || attachment.originalName,
         link: false,
         video: false,

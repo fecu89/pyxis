@@ -1,10 +1,9 @@
 import "server-only";
 
 import { ZipArchive, type ArchiverError } from "archiver";
-import { createReadStream } from "node:fs";
-import { stat } from "node:fs/promises";
+import { finished } from "node:stream/promises";
 import type { BoardExportData } from "@/lib/exports/data";
-import { resolveStoredFile } from "@/lib/files/paths";
+import { openAttachmentRepresentation } from "@/lib/files/attachment-read";
 
 const PATH_SEPARATORS = /[\\/]+/g;
 const CONTROL_CHARS = /[\x00-\x1f]/g;
@@ -36,13 +35,20 @@ export function buildAttachmentsZipStream(data: BoardExportData) {
             }
             continue;
           }
-          const absolutePath = resolveStoredFile(attachment.storagePath);
-          const fileInfo = await stat(absolutePath).catch(() => null);
-          if (!fileInfo?.isFile()) continue;
-          const fileName = sanitizeZipSegment(attachment.originalName, `${attachment.id}`);
-          archive.append(createReadStream(absolutePath), { name: `${entryDir}/${fileName}` });
+          const opened = await openAttachmentRepresentation(attachment).catch(() => null);
+          if (!opened) continue;
+          const fileName = sanitizeZipSegment(opened.attachment.originalName, `${attachment.id}`);
+          const stream = opened.handle.createReadStream({ autoClose: true });
+          const abort = () => stream.destroy();
+          archive.once("close", abort);
+          try {
+            archive.append(stream, { name: `${entryDir}/${fileName}` });
+            await finished(stream); // Bound open descriptors while archiver consumes each entry.
+          } finally { archive.off("close", abort); await opened.handle.close().catch(() => undefined); }
         }
       }
+    } catch {
+      archive.destroy(new Error("첨부 ZIP을 생성하지 못했습니다."));
     } finally {
       void archive.finalize();
     }

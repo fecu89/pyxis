@@ -44,3 +44,4 @@
 - `20260824010000_add_board_password_encrypted`: 패드 소유자 전용 현재 비밀번호 확인을 위한 AES-GCM 암호문 컬럼을 추가합니다. 기존 scrypt 해시는 그대로 유지하므로 과거 패드의 접근 검증은 변하지 않고, 암호화본은 다음 비밀번호 설정·변경 때부터 채워집니다.
 - `20260825010000_add_short_links`: 패드·퀴즈 세션·설문이 원주소를 유지하면서 전역 `/go/{slug}` 별칭 하나를 가질 수 있게 합니다. CHECK 제약이 대상 하나만 연결되도록 보장하고 대상 영구 삭제 시 별칭도 함께 삭제합니다.
 - `20260825020000_harden_short_links_and_board_password`: 변경·해제·퀴즈 마감 뒤 slug를 `disabledAt` 예약 행으로 보존합니다. 활성 대상별 부분 unique 인덱스와 FK `SET NULL`로 과거 QR 탈취를 막고, 패드 공유 비밀번호 원문 조회 감사 액션을 추가합니다.
+- `20260922010000_pad_image_jobs`: Attachment.imageRevision 및 지속 이미지 변환/정리 작업.

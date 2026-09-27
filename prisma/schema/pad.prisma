@@ -405,6 +405,7 @@ model Attachment {
   externalUrl     String?
   previewImageUrl String?
   thumbnailPath   String?
+  imageRevision   Int            @default(0)
   sortOrder       Int            @default(0)
   createdAt       DateTime       @default(now())
   deletedAt       DateTime?
@@ -417,6 +418,29 @@ model Attachment {
   @@index([commentId, sortOrder])
   @@index([uploaderId])
   @@index([deletedAt])
+}
+
+// Deliberately no cascade FK: cleanup records must outlive attachment/board deletion.
+model ImageProcessingJob {
+  id             String   @id @default(cuid())
+  attachmentId   String   @unique
+  boardId        String
+  postId         String
+  inputPath      String
+  status         String   @default("PENDING")
+  attempts       Int      @default(0)
+  availableAt    DateTime @default(now())
+  leaseToken     String?
+  leaseExpiresAt DateTime?
+  outputPath     String?
+  thumbnailPath  String?
+  cleanupAfter   DateTime?
+  lastErrorCode  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([status, availableAt])
+  @@index([boardId])
 }
 
 model Comment {

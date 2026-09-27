@@ -29,3 +29,8 @@
 ## 음성 녹음이 VIDEO로 잘못 분류되던 버그 (수정됨)
 
 `media-capture.tsx`의 음성 녹음(`mode: "audio"`)은 결과 File의 `type`을 `recorder.mimeType`으로 채우는데, Chrome 등 대부분 브라우저는 `MediaRecorder.mimeType`을 `"audio/webm;codecs=opus"`처럼 코덱 파라미터가 붙은 문자열로 돌려줍니다. 서버 검증(`lib/files/validation.ts`)은 WebM 컨테이너가 음성·영상을 구분하지 못하는 문제를 브라우저가 보낸 MIME으로 보정하는데, 그 비교가 정확히 `"audio/webm"` 문자열과만 일치했습니다 — 그래서 실제 녹음 파일(코덱 파라미터 포함)은 이 보정에 걸리지 못하고 항상 `mimeType: "video/webm"`, `attachmentType: "VIDEO"`로 저장됐습니다(업로드 자체는 성공하지만 첨부 유형이 잘못 붙는 조용한 버그). 코덱 파라미터가 붙은 문자열도 인식하도록 비교 조건을 넓혀 수정했습니다. 자세한 내용은 `lib/files/overview.md`.
+## 이미지 최적화 이후 갱신
+
+Pad 게시물의 빠른 업로드는 원본 수신·검증·저장만 기다립니다. 변환 완료는 별도
+attachment.updated 이벤트의 imageRevision으로 표시 URL을 바꾸며 기존 본문 링크는 유지합니다.
+업로드 진행률 99% 이후에는 ‘저장 확인 중’을 표시하고 변환을 게시 대기 상태로 표현하지 않습니다.

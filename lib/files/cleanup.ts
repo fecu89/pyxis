@@ -1,5 +1,6 @@
 import { rm, unlink } from "node:fs/promises";
 import { getBoardUploadDirectory, resolveStoredFile } from "@/lib/files/paths";
+import { getPrisma } from "@/lib/prisma";
 
 export type StoredAttachmentFiles = {
   storagePath: string | null;
@@ -49,6 +50,9 @@ export async function removeStoredAttachmentFiles(attachments: StoredAttachmentF
 
 export async function removeBoardUploadDirectory(boardId: string) {
   try {
+    await getPrisma().imageProcessingJob.updateMany({ where: { boardId }, data: {
+      status: "CLEANUP_PENDING", cleanupAfter: new Date(), leaseToken: null, leaseExpiresAt: null,
+    } });
     await rm(/* turbopackIgnore: true */ getBoardUploadDirectory(boardId), { recursive: true, force: true });
     return true;
   } catch (error) {

@@ -1,6 +1,7 @@
 import { removeBoardUploadDirectory, removeStoredAttachmentFiles, type StoredAttachmentFiles } from "@/lib/files/cleanup";
 import { padTrashCutoff } from "@/lib/board/trash-policy";
 import { getPrisma } from "@/lib/prisma";
+import { cancelAttachmentImageJobs } from "@/lib/files/image-job-store";
 
 type DeletedAttachment = StoredAttachmentFiles & { id: string };
 
@@ -14,6 +15,7 @@ const SWEEP_INTERVAL_MS = 7 * 24 * 60 * 60 * 1_000;
  */
 export async function purgeDeletedPadAttachments(attachments: DeletedAttachment[]) {
   if (!attachments.length) return { purged: 0, removed: 0, missing: 0, failed: 0 };
+  await cancelAttachmentImageJobs(attachments.map(item => item.id));
   const cleanup = await removeStoredAttachmentFiles(attachments);
   if (cleanup.failed) return { purged: 0, ...cleanup };
 

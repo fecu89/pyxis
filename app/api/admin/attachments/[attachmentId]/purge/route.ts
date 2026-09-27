@@ -4,6 +4,7 @@ import { createAuditLogData } from "@/lib/auth/audit";
 import { removeStoredAttachmentFiles } from "@/lib/files/cleanup";
 import { apiError, assertSameOrigin } from "@/lib/http";
 import { getPrisma } from "@/lib/prisma";
+import { cancelAttachmentImageJobs } from "@/lib/files/image-job-store";
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ attachmentId: string }> }) {
   try {
@@ -33,6 +34,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ a
     const boardScoped = commentAuthorId !== null
       ? isBoardScopedCommentModeration(access, user.id, commentAuthorId)
       : isBoardScopedPostEdit(access, user.id, attachment.post.authorId);
+    await cancelAttachmentImageJobs([attachmentId]);
     await prisma.$transaction(async (transaction) => {
       await transaction.attachment.delete({ where: { id: attachmentId } });
       if (!boardScoped) {

@@ -1,5 +1,6 @@
 import type { PostData, SectionData } from "@/components/pad/types";
 import type { BoardEvent } from "@/lib/realtime/board-events";
+import { mergeAttachmentImage, preserveImageRevisions } from "@/lib/files/attachment-url";
 
 const CARD_COMMENT_LIMIT = 20;
 
@@ -273,12 +274,13 @@ export function applyBoardEventDelta(
     }));
   }
 
-  if (event.postId && event.type === "attachment.created" && payload?.attachment) {
+  if (event.postId && (event.type === "attachment.created" || event.type === "attachment.updated") && payload?.attachment) {
     return updatePost(current, event.postId, (post) => {
       const index = post.attachments.findIndex((attachment) => attachment.id === payload.attachment!.id);
       const attachments = index < 0
         ? [...post.attachments, payload.attachment!]
-        : post.attachments.map((attachment) => attachment.id === payload.attachment!.id ? payload.attachment! : attachment);
+        : post.attachments.map((attachment) => attachment.id === payload.attachment!.id
+          ? mergeAttachmentImage(attachment, event.type === "attachment.updated" && payload.attachmentPatch ? payload.attachmentPatch : payload.attachment!) : attachment);
       return { ...post, attachments };
     });
   }
@@ -322,7 +324,7 @@ export function applyBoardEventDelta(
   if (event.postId && event.type === "attachment.updated" && payload?.attachmentPatch) {
     return updatePost(current, event.postId, (post) => ({
       ...post,
-      attachments: post.attachments.map((attachment) => attachment.id === payload.attachmentPatch!.id ? { ...attachment, ...payload.attachmentPatch } : attachment),
+      attachments: post.attachments.map((attachment) => attachment.id === payload.attachmentPatch!.id ? mergeAttachmentImage(attachment, payload.attachmentPatch!) : attachment),
     }));
   }
   if (event.postId && event.type === "attachment.updated" && payload?.attachmentIds) {
@@ -419,7 +421,7 @@ export function reconcileSectionsPreservingLayout(
       // 서버 컴포넌트 갱신은 첫 페이지만 다시 보냅니다. 사용자가 이미 "더 보기"로 받은
       // 뒷페이지 카드는 응답에 없다는 이유만으로 버리지 않고, 삭제/재정렬 이벤트가 오면
       // 별도 경로에서 제거하거나 전체 로컬 배치를 비웁니다.
-      return serverPost ?? post;
+      return serverPost ? { ...serverPost, attachments: preserveImageRevisions(post.attachments, serverPost.attachments) } : post;
     });
     const newInServerSection = serverSection.posts.filter((post) => !currentPostIds.has(post.id));
     const posts = mergeNewPosts(existingInCurrentSection, newInServerSection, placement);

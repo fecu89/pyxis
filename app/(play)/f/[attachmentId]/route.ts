@@ -1,5 +1,4 @@
-import { createReadStream } from "node:fs";
-import { stat } from "node:fs/promises";
+import { open, type FileHandle } from "node:fs/promises";
 import { Readable } from "node:stream";
 import { canDownloadAttachment, canModeratePosts, canReadEffectiveBoard, getEffectiveBoardAccess } from "@/lib/auth/authorization";
 import { getCurrentUser } from "@/lib/auth/current-user";
@@ -45,6 +44,11 @@ function parseRange(header: string, size: number) {
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ attachmentId: string }> }) {
+  return serveAttachment(request, params, false);
+}
+
+async function serveAttachment(request: Request, params: Promise<{ attachmentId: string }>, retried: boolean): Promise<Response> {
+  let handle: FileHandle | null = null;
   try {
     const { attachmentId } = await params;
     const currentUser = await getCurrentUser();
@@ -57,6 +61,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ atta
         storagePath: true,
         thumbnailPath: true,
         mimeType: true,
+        imageRevision: true,
         type: true,
         post: { select: { boardId: true, deletedAt: true, status: true, authorId: true } },
       },
@@ -109,7 +114,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ atta
     }
 
     const filePath = previewPath ?? resolveStoredFile(thumbnail ? attachment.thumbnailPath! : attachment.storagePath);
-    const fileStat = await stat(/* turbopackIgnore: true */ filePath).catch(() => null);
+    handle = await open(/* turbopackIgnore: true */ filePath, "r").catch((error: NodeJS.ErrnoException) => {
+      if (error.code === "ENOENT") return null;
+      throw error;
+    });
+    if (!handle) return retried ? new Response("파일을 찾을 수 없습니다.", { status: 404 }) : serveAttachment(request, params, true);
+    const fileStat = await handle.stat();
     if (!fileStat?.isFile()) return new Response("파일을 찾을 수 없습니다.", { status: 404 });
     const contentType = previewPath ? "application/pdf" : thumbnail ? "image/webp" : attachment.mimeType || "application/octet-stream";
     const baseHeaders = {
@@ -125,9 +135,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ atta
       // 동안 브라우저 캐시로 파일을 계속 볼 수 있습니다. no-cache는 캐시 자체는 허용하되 매번
       // 서버에 재검증을 요구하므로, 권한 변경이 즉시 반영되면서 304로 재전송 비용도 아낍니다.
       "Cache-Control": "private, no-cache, must-revalidate",
-      // 파일은 UUID 저장명으로 한 번 쓰고 바뀌지 않으므로, 재검증은 변경 여부가 아니라 권한을
-      // 다시 확인하기 위한 것입니다. ETag로 본문 재전송만 피합니다.
-      ETag: `"${attachmentId}-${fileStat.size}-${fileStat.mtimeMs}"`,
+      // A representation can change after optimization; variants and revisions must not share 304s.
+      ETag: `"${attachmentId}-${variant ?? "original"}-${attachment.imageRevision}-${fileStat.size}-${fileStat.mtimeMs}"`,
     };
     const rangeHeader = request.headers.get("range");
     // 여기까지 왔다면 권한 검사는 모두 통과한 상태이므로, 내용이 그대로면 본문 없이 304만
@@ -138,15 +147,20 @@ export async function GET(request: Request, { params }: { params: Promise<{ atta
     if (rangeHeader) {
       const range = parseRange(rangeHeader, fileStat.size);
       if (!range) return new Response(null, { status: 416, headers: { ...baseHeaders, "Content-Range": `bytes */${fileStat.size}` } });
-      const stream = createReadStream(/* turbopackIgnore: true */ filePath, { start: range.start, end: range.end });
+      const stream = handle.createReadStream({ start: range.start, end: range.end, autoClose: true });
+      handle = null; // Ownership passes to the stream, including cancellation/error closure.
       return new Response(Readable.toWeb(stream) as ReadableStream<Uint8Array>, {
         status: 206,
         headers: { ...baseHeaders, "Content-Length": String(range.end - range.start + 1), "Content-Range": `bytes ${range.start}-${range.end}/${fileStat.size}` },
       });
     }
-    return new Response(Readable.toWeb(createReadStream(/* turbopackIgnore: true */ filePath)) as ReadableStream<Uint8Array>, { headers: { ...baseHeaders, "Content-Length": String(fileStat.size) } });
+    const stream = handle.createReadStream({ autoClose: true });
+    handle = null;
+    return new Response(Readable.toWeb(stream) as ReadableStream<Uint8Array>, { headers: { ...baseHeaders, "Content-Length": String(fileStat.size) } });
   } catch (error) {
     console.error(error);
     return new Response("파일 처리 중 오류가 발생했습니다.", { status: 500 });
+  } finally {
+    await handle?.close().catch(() => undefined);
   }
 }

@@ -2,6 +2,9 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 import { copyFile, mkdir, rm, stat } from "node:fs/promises";
+import { createWriteStream } from "node:fs";
+import { pipeline } from "node:stream/promises";
+import { openAttachmentRepresentation } from "@/lib/files/attachment-read";
 import path from "node:path";
 import { Prisma, type BoardMemberRole } from "@/generated/prisma/client";
 import type { CurrentUser } from "@/lib/auth/current-user";
@@ -72,6 +75,7 @@ function copiedMemberRole(userRole: "SUPER_ADMIN" | "ADMIN" | "TEACHER" | "STUDE
 
 async function copyStoredAttachment(args: {
   source: {
+    id: string;
     type: "IMAGE" | "PDF" | "DOCUMENT" | "VIDEO" | "AUDIO" | "FILE" | "LINK";
     originalName: string;
     storedName: string | null;
@@ -92,7 +96,8 @@ async function copyStoredAttachment(args: {
   targetUserId: string;
   stagedFiles: StoredAttachmentFiles[];
 }): Promise<Prisma.AttachmentCreateManyInput> {
-  const { source, targetBoardId, targetPostId, targetUserId, stagedFiles } = args;
+  const { targetBoardId, targetPostId, targetUserId, stagedFiles } = args;
+  let source = args.source;
   if (source.type === "LINK") {
     return {
       id: randomUUID(),
@@ -118,42 +123,46 @@ async function copyStoredAttachment(args: {
     throw new BoardReuseError(`첨부파일 ${source.originalName}의 저장 정보를 찾을 수 없습니다.`, 409);
   }
 
-  const extension = path.extname(source.storedName);
-  const { baseName, storedName } = createStoredFilename(extension);
-  const directory = createPostUploadDirectory(targetBoardId, targetPostId);
-  await mkdir(/* turbopackIgnore: true */ directory, { recursive: true });
-  const destination = path.join(/* turbopackIgnore: true */ directory, storedName);
-  await copyFile(/* turbopackIgnore: true */ resolveStoredFile(source.storagePath), destination);
-  const staged: StoredAttachmentFiles = { storagePath: toStoragePath(destination), thumbnailPath: null };
-  stagedFiles.push(staged);
+  const opened = await openAttachmentRepresentation(source);
+  source = opened.attachment;
+  try {
+    const extension = path.extname(source.storedName!);
+    const { baseName, storedName } = createStoredFilename(extension);
+    const directory = createPostUploadDirectory(targetBoardId, targetPostId);
+    await mkdir(/* turbopackIgnore: true */ directory, { recursive: true });
+    const destination = path.join(/* turbopackIgnore: true */ directory, storedName);
+    const staged: StoredAttachmentFiles = { storagePath: toStoragePath(destination), thumbnailPath: null };
+    stagedFiles.push(staged);
+    await pipeline(opened.handle.createReadStream({ autoClose: false }), createWriteStream(/* turbopackIgnore: true */ destination, { flags: "wx" }));
 
-  if (source.thumbnailPath) {
-    const thumbnailDirectory = path.join(/* turbopackIgnore: true */ directory, "thumbnails");
-    await mkdir(/* turbopackIgnore: true */ thumbnailDirectory, { recursive: true });
-    const thumbnailDestination = path.join(/* turbopackIgnore: true */ thumbnailDirectory, `${baseName}.webp`);
-    await copyFile(/* turbopackIgnore: true */ resolveStoredFile(source.thumbnailPath), thumbnailDestination);
-    staged.thumbnailPath = toStoragePath(thumbnailDestination);
-  }
+    if (source.thumbnailPath) {
+      const thumbnailDirectory = path.join(/* turbopackIgnore: true */ directory, "thumbnails");
+      await mkdir(/* turbopackIgnore: true */ thumbnailDirectory, { recursive: true });
+      const thumbnailDestination = path.join(/* turbopackIgnore: true */ thumbnailDirectory, `${baseName}.webp`);
+      await copyFile(/* turbopackIgnore: true */ resolveStoredFile(source.thumbnailPath), thumbnailDestination);
+      staged.thumbnailPath = toStoragePath(thumbnailDestination);
+    }
 
-  return {
-    id: randomUUID(),
-    postId: targetPostId,
-    uploaderId: targetUserId,
-    type: source.type,
-    originalName: source.originalName,
-    storedName,
-    storagePath: staged.storagePath,
-    mimeType: source.mimeType,
-    fileSize: source.fileSize,
-    width: source.width,
-    height: source.height,
-    altText: source.altText,
-    caption: source.caption,
-    externalUrl: null,
-    previewImageUrl: null,
-    thumbnailPath: staged.thumbnailPath,
-    sortOrder: source.sortOrder,
-  };
+    return {
+      id: randomUUID(),
+      postId: targetPostId,
+      uploaderId: targetUserId,
+      type: source.type,
+      originalName: source.originalName,
+      storedName,
+      storagePath: staged.storagePath,
+      mimeType: source.mimeType,
+      fileSize: source.fileSize,
+      width: source.width,
+      height: source.height,
+      altText: source.altText,
+      caption: source.caption,
+      externalUrl: null,
+      previewImageUrl: null,
+      thumbnailPath: staged.thumbnailPath,
+      sortOrder: source.sortOrder,
+    };
+  } finally { await opened.handle.close(); }
 }
 
 async function mapWithConcurrency<T, R>(items: T[], concurrency: number, mapper: (item: T) => Promise<R>) {
@@ -220,6 +229,7 @@ export async function cloneBoard(sourceBoardId: string, user: CurrentUser, optio
             where: { deletedAt: null, commentId: null },
             orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
             select: {
+              id: true,
               type: true,
               originalName: true,
               storedName: true,

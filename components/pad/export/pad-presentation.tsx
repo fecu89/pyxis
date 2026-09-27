@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { BoardExportPost } from "@/lib/exports/data";
 import styles from "@/components/pad/export/pad-presentation.module.css";
+import { attachmentImageUrl } from "@/lib/files/attachment-url";
 
 // 발표 화면도 마크다운 렌더러 청크를 슬라이드 전환 코드와 분리합니다(서버 렌더링은 유지).
 const PostBody = dynamic(() => import("@/components/pad/post-body").then((mod) => mod.PostBody));
@@ -48,7 +49,7 @@ export function PadPresentation({ boardTitle, boardSlug, posts }: { boardTitle: 
             {post.attachments.some((attachment) => attachment.type === "IMAGE") && (
               <div className={styles.images}>
                 {post.attachments.filter((attachment) => attachment.type === "IMAGE").map((attachment) => (
-                  <img key={attachment.id} src={`/f/${attachment.id}`} alt={attachment.originalName} />
+                  <img key={attachment.id} src={attachmentImageUrl(attachment)} alt={attachment.originalName} />
                 ))}
               </div>
             )}

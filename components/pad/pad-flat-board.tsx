@@ -13,6 +13,7 @@ import { SortablePostCard } from "@/components/pad/sortable-post-card";
 import type { LayoutSection, PadAppearance } from "@/components/pad/layouts/types";
 import type { PadCapabilities, PadSortMode, PostData, SectionData } from "@/components/pad/types";
 import { requestJson } from "@/lib/api-client";
+import { attachmentImageUrl } from "@/lib/files/attachment-url";
 
 // WALL/GRID(드래그로 순서를 바꾸는 담벼락·격자 레이아웃)에서만 쓰는 @dnd-kit 의존 코드입니다.
 // pad-sections-board.tsx와 같은 이유로 이 파일 하나로 모아 next/dynamic 지연 로드 대상으로 둡니다.
@@ -21,7 +22,7 @@ function PostDragPreview({ post }: { post: PostData }) {
   return (
     <article className="post-card dragging drag-overlay-card">
       <div className="post-card-meta"><Avatar name={post.author.name} image={post.author.image} /><span>{post.author.name || "이름 없는 친구"}</span>{post.isPinned && <span className="pin"><Pin size={12} />고정</span>}</div>
-      {firstImage && <img className="post-cover" src={`/f/${firstImage.id}?variant=thumbnail`} alt={firstImage.originalName} loading="lazy" />}
+      {firstImage && <img className="post-cover" src={attachmentImageUrl(firstImage, "thumbnail")} alt={firstImage.originalName} loading="lazy" />}
       <div className="post-card-copy">{post.title && <h3>{post.title}</h3>}{post.body && <p>{post.body.replace(/[#*_>`\-[\]]/g, " ").replace(/\s+/g, " ").trim().slice(0, 132)}</p>}</div>
       {post.attachments.length > 0 && <div className="post-files"><span>{post.attachments.some((item) => item.type === "IMAGE") ? <Paperclip size={14} /> : <FileText size={14} />}{attachmentSummary(post.attachments)}</span></div>}
       <footer><span className={post.viewerReacted ? "liked" : ""}><Heart size={16} fill={post.viewerReacted ? "currentColor" : "none"} />{post.reactionCount || "응원"}</span><span><MessageCircle size={16} />{post.commentCount || "댓글"}</span></footer>

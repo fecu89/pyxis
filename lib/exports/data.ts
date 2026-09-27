@@ -29,7 +29,7 @@ const baseSelect = {
   attachments: {
     where: { deletedAt: null, commentId: null },
     orderBy: { sortOrder: "asc" as const },
-    select: { id: true, type: true, originalName: true, storagePath: true, externalUrl: true, previewImageUrl: true, mimeType: true, fileSize: true },
+    select: { id: true, type: true, originalName: true, storagePath: true, externalUrl: true, previewImageUrl: true, mimeType: true, fileSize: true, imageRevision: true },
   },
   reactions: { select: { key: true } },
   _count: { select: { comments: { where: { deletedAt: null } } } },
@@ -64,7 +64,7 @@ export type BoardExportPost = {
   // commentCount는 relations에 "comments"를 안 넣어도 항상 채워집니다(가벼운 집계 쿼리).
   // comments 배열 자체(본문·작성자 포함)는 relations에 "comments"를 넣었을 때만 채워집니다.
   commentCount: number;
-  attachments: { id: string; type: string; originalName: string; storagePath: string | null; externalUrl: string | null; previewImageUrl: string | null; mimeType: string; fileSize: number }[];
+  attachments: { id: string; type: string; originalName: string; storagePath: string | null; externalUrl: string | null; previewImageUrl: string | null; mimeType: string; fileSize: number; imageRevision?: number }[];
   comments: { id: string; authorName: string | null; body: string; parentId: string | null; createdAt: Date }[];
   reactionCounts: Record<string, number>;
 };
@@ -130,6 +130,7 @@ export async function gatherBoardExportData(
         previewImageUrl: attachment.previewImageUrl,
         mimeType: attachment.mimeType,
         fileSize: attachment.fileSize,
+        imageRevision: attachment.imageRevision,
       })),
       comments: "comments" in post
         ? (post.comments as {

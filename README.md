@@ -617,3 +617,5 @@ PM2_APP=pyxis PORT=3001 yarn deploy
 | [`docs/signup-consent.md`](./docs/signup-consent.md) | 가입 동의·14세 자기확인·탈퇴 범위·일괄 역할 변경 검증과 마이그레이션 순서 |
 | 각 폴더의 `overview.md` | 폴더별 책임과 그렇게 만든 이유(`lib/forms`, `lib/quiz`, `lib/files`, `components/pad` 등) |
 | `mdFiles/` | 진행 중인 작업 현황(`report.md`)과 기능별 계획 문서 |
+> Pad 사진의 원본 우선 게시·백그라운드 변환 설정과 적용 순서는
+> [운영 안내](docs/pad-background-images.md)를 참고하세요. 마이그레이션 후 설정을 켜야 활성화됩니다.

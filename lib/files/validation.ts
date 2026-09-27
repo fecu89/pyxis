@@ -77,7 +77,7 @@ export async function validateUploadedFile(file: StreamedUpload, options: { maxB
 
   const detected = await detectFileType(file);
   if (IMAGE_EXTENSIONS.has(originalExtension)) {
-    if (!detected?.mime.startsWith("image/")) throw new Error("이미지 파일의 실제 형식을 확인할 수 없습니다.");
+    if (!detected || !["image/jpeg", "image/png", "image/webp", "image/gif"].includes(detected.mime)) throw new Error("이미지 파일의 실제 형식을 확인할 수 없습니다.");
     // 이미지 상한은 전체 상한과 따로 둡니다. 서버가 어차피 다시 인코딩하므로 원본이 클 이유가
     // 적고, 큰 이미지는 sharp 변환 시간과 메모리를 그만큼 더 먹습니다.
     //

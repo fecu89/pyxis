@@ -29,6 +29,8 @@ import type { PadCapabilities, PadData, PostData, ReactionKey, SectionData } fro
 import { boardRoutePath } from "@/lib/board/route-paths";
 import type { ReactionCounts } from "@/lib/reactions/types";
 import { requestJson } from "@/lib/api-client";
+import { mergeAttachmentImage, preserveImageRevisions, upsertAttachmentImage } from "@/lib/files/attachment-url";
+import { usePadEvents } from "@/components/pad/use-pad-events";
 
 function readCustomValues(post: PostData): PostFieldValues {
   if (!post.customFieldValues) return {};
@@ -59,7 +61,7 @@ export function PostDetailPage({
   const [postSource, setPostSource] = useState(initialPost);
   if (postSource !== initialPost) {
     setPostSource(initialPost);
-    setPost(initialPost);
+    setPost({ ...initialPost, attachments: preserveImageRevisions(post.attachments, initialPost.attachments) });
   }
   const canEdit = capabilities.editAnyPost || (capabilities.editOwnContent && post.isMine);
   const mentionCandidates = useMemo(() => buildMentionCandidates(board), [board]);
@@ -77,6 +79,20 @@ export function PostDetailPage({
   const { load: loadComments } = thread;
   const guest = useGuestIdentity();
 
+  usePadEvents(board.id, (event) => {
+    if (event.postId !== post.id) return;
+    if (event.type === "attachment.deleted") {
+      setPost(current => ({ ...current, attachments: current.attachments.filter(item => item.id !== event.entityId) }));
+      return;
+    }
+    if (event.type !== "attachment.updated" || !event.payload?.attachmentPatch) return;
+    const patch = event.payload.attachmentPatch;
+    const snapshot = event.payload.attachment;
+    setPost(current => ({ ...current, attachments: snapshot
+      ? upsertAttachmentImage(current.attachments, snapshot, patch)
+      : current.attachments.map(item => item.id === patch.id ? mergeAttachmentImage(item, patch) : item) }));
+  }, () => router.refresh(), currentUserId);
+
   // 손님은 첫 댓글 직전에 이름을 한 번 묻습니다(카드의 한 줄 입력창과 같은 흐름).
   const createComment = useCallback(async (body: string, parentId: string | null, files: File[], mentioned: string[]) => {
     if (!(await guest.ensureName())) return;
@@ -87,7 +103,7 @@ export function PostDetailPage({
     let active = true;
     queueMicrotask(() => {
       if (!active) return;
-      setAttachments(post.attachments);
+      setAttachments(current => preserveImageRevisions(current, post.attachments));
       setError("");
       void loadComments().catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : "댓글을 불러오지 못했습니다."); });
     });
@@ -192,10 +208,11 @@ export function PostDetailPage({
                 onSaved={(savedPost) => {
                   setPost((current) => ({
                     ...savedPost,
+                    attachments: preserveImageRevisions(current.attachments, savedPost.attachments),
                     viewerReacted: current.viewerReacted,
                     viewerReactions: current.viewerReactions,
                   }));
-                  setAttachments(savedPost.attachments);
+                  setAttachments(current => preserveImageRevisions(current, savedPost.attachments));
                 }}
               />
             ) : <>

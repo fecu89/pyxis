@@ -183,6 +183,11 @@ export type Post = Prisma.PostModel
  */
 export type Attachment = Prisma.AttachmentModel
 /**
+ * Model ImageProcessingJob
+ *
+ */
+export type ImageProcessingJob = Prisma.ImageProcessingJobModel
+/**
  * Model Comment
  *
  */

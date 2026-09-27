@@ -59,6 +59,7 @@
     "verify:access-request-notifications": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-access-request-notifications.ts",
     "verify:pagination": "tsx scripts/verify-post-pagination.ts",
     "verify:pad-realtime": "tsx scripts/verify-pad-realtime-merge.ts",
+    "verify:pad-images": "node --test --test-concurrency=1 scripts/verify-pad-image-intake.mjs scripts/verify-pad-image-jobs.mjs scripts/verify-pad-image-upload.mjs scripts/verify-pad-image-worker.mjs scripts/verify-pad-image-serving.mjs scripts/verify-pad-image-reuse.mjs && node scripts/verify-pad-image-browser.mjs",
     "verify:pad-nav-layout": "node scripts/verify-pad-nav-layout.mjs",
     "verify:pad-settings-members": "node scripts/verify-pad-settings-members.mjs",
     "verify:post-card-menu": "node scripts/verify-post-card-menu.mjs",

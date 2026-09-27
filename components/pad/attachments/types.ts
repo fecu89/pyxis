@@ -6,6 +6,7 @@ export type AttachmentViewData = {
   originalName: string;
   mimeType: string;
   fileSize: number;
+  imageRevision?: number;
   width: number | null;
   height: number | null;
   altText?: string | null;

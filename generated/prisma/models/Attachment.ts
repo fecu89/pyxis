@@ -30,6 +30,7 @@ export type AttachmentAvgAggregateOutputType = {
   fileSize: number | null
   width: number | null
   height: number | null
+  imageRevision: number | null
   sortOrder: number | null
 }
 
@@ -37,6 +38,7 @@ export type AttachmentSumAggregateOutputType = {
   fileSize: number | null
   width: number | null
   height: number | null
+  imageRevision: number | null
   sortOrder: number | null
 }
 
@@ -59,6 +61,7 @@ export type AttachmentMinAggregateOutputType = {
   externalUrl: string | null
   previewImageUrl: string | null
   thumbnailPath: string | null
+  imageRevision: number | null
   sortOrder: number | null
   createdAt: Date | null
   deletedAt: Date | null
@@ -83,6 +86,7 @@ export type AttachmentMaxAggregateOutputType = {
   externalUrl: string | null
   previewImageUrl: string | null
   thumbnailPath: string | null
+  imageRevision: number | null
   sortOrder: number | null
   createdAt: Date | null
   deletedAt: Date | null
@@ -107,6 +111,7 @@ export type AttachmentCountAggregateOutputType = {
   externalUrl: number
   previewImageUrl: number
   thumbnailPath: number
+  imageRevision: number
   sortOrder: number
   createdAt: number
   deletedAt: number
@@ -118,6 +123,7 @@ export type AttachmentAvgAggregateInputType = {
   fileSize?: true
   width?: true
   height?: true
+  imageRevision?: true
   sortOrder?: true
 }
 
@@ -125,6 +131,7 @@ export type AttachmentSumAggregateInputType = {
   fileSize?: true
   width?: true
   height?: true
+  imageRevision?: true
   sortOrder?: true
 }
 
@@ -147,6 +154,7 @@ export type AttachmentMinAggregateInputType = {
   externalUrl?: true
   previewImageUrl?: true
   thumbnailPath?: true
+  imageRevision?: true
   sortOrder?: true
   createdAt?: true
   deletedAt?: true
@@ -171,6 +179,7 @@ export type AttachmentMaxAggregateInputType = {
   externalUrl?: true
   previewImageUrl?: true
   thumbnailPath?: true
+  imageRevision?: true
   sortOrder?: true
   createdAt?: true
   deletedAt?: true
@@ -195,6 +204,7 @@ export type AttachmentCountAggregateInputType = {
   externalUrl?: true
   previewImageUrl?: true
   thumbnailPath?: true
+  imageRevision?: true
   sortOrder?: true
   createdAt?: true
   deletedAt?: true
@@ -306,6 +316,7 @@ export type AttachmentGroupByOutputType = {
   externalUrl: string | null
   previewImageUrl: string | null
   thumbnailPath: string | null
+  imageRevision: number
   sortOrder: number
   createdAt: Date
   deletedAt: Date | null
@@ -353,6 +364,7 @@ export type AttachmentWhereInput = {
   externalUrl?: Prisma.StringNullableFilter<"Attachment"> | string | null
   previewImageUrl?: Prisma.StringNullableFilter<"Attachment"> | string | null
   thumbnailPath?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  imageRevision?: Prisma.IntFilter<"Attachment"> | number
   sortOrder?: Prisma.IntFilter<"Attachment"> | number
   createdAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Attachment"> | Date | string | null
@@ -380,6 +392,7 @@ export type AttachmentOrderByWithRelationInput = {
   externalUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   previewImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnailPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageRevision?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -410,6 +423,7 @@ export type AttachmentWhereUniqueInput = Prisma.AtLeast<{
   externalUrl?: Prisma.StringNullableFilter<"Attachment"> | string | null
   previewImageUrl?: Prisma.StringNullableFilter<"Attachment"> | string | null
   thumbnailPath?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  imageRevision?: Prisma.IntFilter<"Attachment"> | number
   sortOrder?: Prisma.IntFilter<"Attachment"> | number
   createdAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Attachment"> | Date | string | null
@@ -437,6 +451,7 @@ export type AttachmentOrderByWithAggregationInput = {
   externalUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   previewImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnailPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageRevision?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -469,6 +484,7 @@ export type AttachmentScalarWhereWithAggregatesInput = {
   externalUrl?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
   previewImageUrl?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
   thumbnailPath?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
+  imageRevision?: Prisma.IntWithAggregatesFilter<"Attachment"> | number
   sortOrder?: Prisma.IntWithAggregatesFilter<"Attachment"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Attachment"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Attachment"> | Date | string | null
@@ -490,6 +506,7 @@ export type AttachmentCreateInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -517,6 +534,7 @@ export type AttachmentUncheckedCreateInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -538,6 +556,7 @@ export type AttachmentUpdateInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -565,6 +584,7 @@ export type AttachmentUncheckedUpdateInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -589,6 +609,7 @@ export type AttachmentCreateManyInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -610,6 +631,7 @@ export type AttachmentUpdateManyMutationInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -634,6 +656,7 @@ export type AttachmentUncheckedUpdateManyInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -668,6 +691,7 @@ export type AttachmentCountOrderByAggregateInput = {
   externalUrl?: Prisma.SortOrder
   previewImageUrl?: Prisma.SortOrder
   thumbnailPath?: Prisma.SortOrder
+  imageRevision?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -677,6 +701,7 @@ export type AttachmentAvgOrderByAggregateInput = {
   fileSize?: Prisma.SortOrder
   width?: Prisma.SortOrder
   height?: Prisma.SortOrder
+  imageRevision?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
 }
 
@@ -699,6 +724,7 @@ export type AttachmentMaxOrderByAggregateInput = {
   externalUrl?: Prisma.SortOrder
   previewImageUrl?: Prisma.SortOrder
   thumbnailPath?: Prisma.SortOrder
+  imageRevision?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -723,6 +749,7 @@ export type AttachmentMinOrderByAggregateInput = {
   externalUrl?: Prisma.SortOrder
   previewImageUrl?: Prisma.SortOrder
   thumbnailPath?: Prisma.SortOrder
+  imageRevision?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -732,6 +759,7 @@ export type AttachmentSumOrderByAggregateInput = {
   fileSize?: Prisma.SortOrder
   width?: Prisma.SortOrder
   height?: Prisma.SortOrder
+  imageRevision?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
 }
 
@@ -877,6 +905,7 @@ export type AttachmentCreateWithoutUploaderInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -902,6 +931,7 @@ export type AttachmentUncheckedCreateWithoutUploaderInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -955,6 +985,7 @@ export type AttachmentScalarWhereInput = {
   externalUrl?: Prisma.StringNullableFilter<"Attachment"> | string | null
   previewImageUrl?: Prisma.StringNullableFilter<"Attachment"> | string | null
   thumbnailPath?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  imageRevision?: Prisma.IntFilter<"Attachment"> | number
   sortOrder?: Prisma.IntFilter<"Attachment"> | number
   createdAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Attachment"> | Date | string | null
@@ -976,6 +1007,7 @@ export type AttachmentCreateWithoutPostInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -1001,6 +1033,7 @@ export type AttachmentUncheckedCreateWithoutPostInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -1048,6 +1081,7 @@ export type AttachmentCreateWithoutCommentInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -1073,6 +1107,7 @@ export type AttachmentUncheckedCreateWithoutCommentInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -1122,6 +1157,7 @@ export type AttachmentCreateManyUploaderInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -1143,6 +1179,7 @@ export type AttachmentUpdateWithoutUploaderInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1168,6 +1205,7 @@ export type AttachmentUncheckedUpdateWithoutUploaderInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1191,6 +1229,7 @@ export type AttachmentUncheckedUpdateManyWithoutUploaderInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1214,6 +1253,7 @@ export type AttachmentCreateManyPostInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -1235,6 +1275,7 @@ export type AttachmentUpdateWithoutPostInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1260,6 +1301,7 @@ export type AttachmentUncheckedUpdateWithoutPostInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1283,6 +1325,7 @@ export type AttachmentUncheckedUpdateManyWithoutPostInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1306,6 +1349,7 @@ export type AttachmentCreateManyCommentInput = {
   externalUrl?: string | null
   previewImageUrl?: string | null
   thumbnailPath?: string | null
+  imageRevision?: number
   sortOrder?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
@@ -1327,6 +1371,7 @@ export type AttachmentUpdateWithoutCommentInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1352,6 +1397,7 @@ export type AttachmentUncheckedUpdateWithoutCommentInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1375,6 +1421,7 @@ export type AttachmentUncheckedUpdateManyWithoutCommentInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageRevision?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1401,6 +1448,7 @@ export type AttachmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   externalUrl?: boolean
   previewImageUrl?: boolean
   thumbnailPath?: boolean
+  imageRevision?: boolean
   sortOrder?: boolean
   createdAt?: boolean
   deletedAt?: boolean
@@ -1428,6 +1476,7 @@ export type AttachmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   externalUrl?: boolean
   previewImageUrl?: boolean
   thumbnailPath?: boolean
+  imageRevision?: boolean
   sortOrder?: boolean
   createdAt?: boolean
   deletedAt?: boolean
@@ -1455,6 +1504,7 @@ export type AttachmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   externalUrl?: boolean
   previewImageUrl?: boolean
   thumbnailPath?: boolean
+  imageRevision?: boolean
   sortOrder?: boolean
   createdAt?: boolean
   deletedAt?: boolean
@@ -1482,12 +1532,13 @@ export type AttachmentSelectScalar = {
   externalUrl?: boolean
   previewImageUrl?: boolean
   thumbnailPath?: boolean
+  imageRevision?: boolean
   sortOrder?: boolean
   createdAt?: boolean
   deletedAt?: boolean
 }
 
-export type AttachmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postId" | "commentId" | "uploaderId" | "guestId" | "type" | "originalName" | "storedName" | "storagePath" | "mimeType" | "fileSize" | "width" | "height" | "altText" | "caption" | "externalUrl" | "previewImageUrl" | "thumbnailPath" | "sortOrder" | "createdAt" | "deletedAt", ExtArgs["result"]["attachment"]>
+export type AttachmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postId" | "commentId" | "uploaderId" | "guestId" | "type" | "originalName" | "storedName" | "storagePath" | "mimeType" | "fileSize" | "width" | "height" | "altText" | "caption" | "externalUrl" | "previewImageUrl" | "thumbnailPath" | "imageRevision" | "sortOrder" | "createdAt" | "deletedAt", ExtArgs["result"]["attachment"]>
 export type AttachmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
   comment?: boolean | Prisma.Attachment$commentArgs<ExtArgs>
@@ -1530,6 +1581,7 @@ export type $AttachmentPayload<ExtArgs extends runtime.Types.Extensions.Internal
     externalUrl: string | null
     previewImageUrl: string | null
     thumbnailPath: string | null
+    imageRevision: number
     sortOrder: number
     createdAt: Date
     deletedAt: Date | null
@@ -1977,6 +2029,7 @@ export interface AttachmentFieldRefs {
   readonly externalUrl: Prisma.FieldRef<"Attachment", 'String'>
   readonly previewImageUrl: Prisma.FieldRef<"Attachment", 'String'>
   readonly thumbnailPath: Prisma.FieldRef<"Attachment", 'String'>
+  readonly imageRevision: Prisma.FieldRef<"Attachment", 'Int'>
   readonly sortOrder: Prisma.FieldRef<"Attachment", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Attachment", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Attachment", 'DateTime'>

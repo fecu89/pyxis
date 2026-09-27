@@ -30,7 +30,7 @@ export const boardPostCardSelect = {
   attachments: {
     where: { deletedAt: null, commentId: null },
     orderBy: { sortOrder: "asc" },
-    select: { id: true, type: true, originalName: true, mimeType: true, fileSize: true, width: true, height: true, altText: true, caption: true, externalUrl: true, previewImageUrl: true },
+    select: { id: true, type: true, originalName: true, mimeType: true, fileSize: true, width: true, height: true, imageRevision: true, altText: true, caption: true, externalUrl: true, previewImageUrl: true },
   },
   reactions: { select: { key: true, userId: true } },
   comments: cardCommentSelect,

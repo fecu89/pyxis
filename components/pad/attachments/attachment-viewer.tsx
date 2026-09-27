@@ -34,6 +34,7 @@ import type {
   AttachmentViewData,
 } from "@/components/pad/attachments/types";
 import { getLinkCardThumbnail, getLinkSourceHost } from "@/lib/link-preview/link-card";
+import { attachmentImageUrl } from "@/lib/files/attachment-url";
 
 function formatSize(size: number) {
   if (size >= 1024 * 1024) return `${(size / 1024 / 1024).toFixed(1)}MB`;
@@ -107,7 +108,7 @@ export function AttachmentViewer({
             {attachment.type === "IMAGE" && (
               <img
                 className={styles.media}
-                src={`${url}?variant=thumbnail`}
+                src={attachmentImageUrl(attachment, "thumbnail")}
                 alt={attachment.altText || attachment.originalName}
                 loading="lazy"
                 width={attachment.width ?? undefined}

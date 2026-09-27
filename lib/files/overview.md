@@ -39,3 +39,10 @@ pyxis는 현재 오브젝트 스토리지 없이 `UPLOAD_DIR` 아래의 로컬 �
 - 옮기기 전에 쌓인 data URL은 `yarn db:backfill-quiz-images`(`--dry-run` 지원)가 50건씩 파일로 내립니다. DB 원본이 그대로일 때만 조건부 갱신하므로 실행 중 편집을 덮어쓰지 않으며, 신규 저장에서는 `data:`를 받지 않습니다.
 
 프로필 사진은 게시물 첨부와 별도 경로(`UPLOAD_DIR/avatars/{userId}/avatar.webp`)에 저장합니다. Attachment 테이블에 연결되지 않는 단일 파일이라 30일 복구 이력을 두지 않고 새로 올리면 덮어쓰며, 512×512 WebP로만 변환합니다. 경로 헬퍼는 `paths.ts`의 `getAvatarDirectory`/`getAvatarPath`이며 사용자 ID 형식을 검증해 경로 조작을 막습니다.
+## Pad 게시물 비동기 이미지 처리
+
+`image-intake.ts`/`image-metadata.ts`는 안전한 초기 이미지를 준비합니다.
+`image-job-store.ts`, `image-worker.ts`, `image-job-cleanup.ts`는 DB 기반 임대·변환·파일 정리를
+담당하며 `server.ts`에서 시작됩니다. `attachment-url.ts`는 revision 기반 표시와 병합,
+`attachment-read.ts`는 파일 교체와 복사/내보내기의 경합을 처리합니다.
+설정과 롤백은 `docs/pad-background-images.md`를 참고하세요.

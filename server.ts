@@ -12,6 +12,7 @@ import { startQuizImageSweeper } from "@/lib/quiz/image-sweep";
 import { startFormResponseDigestScheduler } from "@/lib/forms/response-digest";
 import { startFormFileSweeper } from "@/lib/forms/file-sweep";
 import { startPadTrashSweeper } from "@/lib/files/pad-trash-sweep";
+import { startPadImageWorker } from "@/lib/files/image-worker";
 
 // Next.js 요청 처리와 Socket.IO를 한 http.Server에 얹습니다. 퀴즈의 실시간 진행(문항 시작·답안
 // 제출·리더보드)이 SSE로는 부족한 양방향 통신이라 커스텀 서버가 필요합니다. 패드의 알림·보드
@@ -99,6 +100,10 @@ app.prepare().then(() => {
     startFormResponseDigestScheduler();
     startFormFileSweeper();
     startPadTrashSweeper();
+    const imageWorker = startPadImageWorker();
+    const stopImages = () => { void imageWorker.stop().finally(() => process.exit(0)); };
+    process.once("SIGTERM", stopImages);
+    process.once("SIGINT", stopImages);
     console.log(`> ${APP_NAME} ready on ${bindHost ?? "0.0.0.0"}:${port} (${dev ? "dev" : "production"})`);
   });
 });

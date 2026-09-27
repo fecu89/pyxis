@@ -8,6 +8,7 @@ import { createStoredFilename, normalizeOriginalFilename } from "@/lib/files/fil
 import { type StreamedUpload, streamMultipartFile } from "@/lib/files/multipart";
 import { toStoragePath } from "@/lib/files/paths";
 import { withImageProcessingSlot } from "@/lib/files/processing-queue";
+import { prepareInitialImage } from "@/lib/files/image-intake";
 import { maxUploadBytes, validateUploadedFile } from "@/lib/files/validation";
 
 /** 실패 로그에 남길 업로더와 대상. 거절된 업로드는 DB에 아무 흔적도 남지 않으므로 여기서만 알 수 있습니다. */
@@ -46,7 +47,7 @@ function logUploadFailure(context: UploadContext, uploaded: StreamedUpload | nul
 export async function storeAttachmentUpload(
   request: Request,
   directory: string,
-  options: { allowedTypes?: AttachmentType[]; maxBytes?: number; context?: UploadContext } = {},
+  options: { allowedTypes?: AttachmentType[]; maxBytes?: number; context?: UploadContext; deferImageProcessing?: boolean } = {},
 ) {
   let uploadedFile: StreamedUpload | null = null;
   let incomingPath: string | null = null;
@@ -62,6 +63,15 @@ export async function storeAttachmentUpload(
     const validated = await validateUploadedFile(uploaded, { maxBytes: limit });
     if (options.allowedTypes && !options.allowedTypes.includes(validated.attachmentType)) {
       throw new Error("이 위치에 첨부할 수 없는 파일 형식입니다.");
+    }
+    if (validated.isImage && options.deferImageProcessing) {
+      const initial = await prepareInitialImage(incomingPath, directory, uploaded.originalName);
+      if (initial) {
+        try { await unlink(/* turbopackIgnore: true */ incomingPath); }
+        catch (error) { await initial.cleanup(); throw error; }
+        incomingPath = null;
+        return { ...initial, pendingImage: true };
+      }
     }
     const { baseName, storedName } = createStoredFilename(validated.extension);
     const originalName = normalizeOriginalFilename(uploaded.originalName, validated.extension);
@@ -106,6 +116,7 @@ export async function storeAttachmentUpload(
     completedPath = null;
     thumbnailPath = null;
     return {
+      pendingImage: false,
       data: {
         type: validated.attachmentType,
         originalName,
@@ -123,7 +134,7 @@ export async function storeAttachmentUpload(
       },
     };
   } catch (error) {
-    if (options.context) logUploadFailure(options.context, uploadedFile, error);
+    if (options.context) logUploadFailure(options.context, options.deferImageProcessing ? null : uploadedFile, error);
     if (incomingPath) await unlink(/* turbopackIgnore: true */ incomingPath).catch(() => undefined);
     if (processingPath) await unlink(/* turbopackIgnore: true */ processingPath).catch(() => undefined);
     if (completedPath) await unlink(/* turbopackIgnore: true */ completedPath).catch(() => undefined);

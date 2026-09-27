@@ -3,6 +3,7 @@ import { PostBody } from "@/components/pad/post-body";
 import { PrintActions } from "@/components/pad/export/print-actions";
 import type { PadData } from "@/components/pad/types";
 import styles from "@/components/pad/export/pad-print-view.module.css";
+import { attachmentImageUrl } from "@/lib/files/attachment-url";
 
 // 다른 독자가 실제 보드에서 이미 볼 수 있는 범위(PUBLISHED)만 보여줍니다 — 승인 대기·거절 게시물은
 // 여기서도 제외합니다. 일반 보드 조회가 읽을 수 있는 게시물을 모두 담으므로 인쇄도 전체를 포함합니다.
@@ -38,7 +39,7 @@ export function PadPrintView({ board }: { board: PadData }) {
                 {post.attachments.some((attachment) => attachment.type === "IMAGE") && (
                   <div className={styles.images}>
                     {post.attachments.filter((attachment) => attachment.type === "IMAGE").map((attachment) => (
-                      <img key={attachment.id} src={`/f/${attachment.id}`} alt={attachment.altText || attachment.originalName} />
+                      <img key={attachment.id} src={attachmentImageUrl(attachment)} alt={attachment.altText || attachment.originalName} />
                     ))}
                   </div>
                 )}
