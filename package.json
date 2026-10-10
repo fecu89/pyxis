@@ -44,6 +44,7 @@
     "verify:invite-redemption": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-invite-redemption.ts",
     "verify:link-preview": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-link-preview.ts",
     "verify:multipart-limits": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-multipart-limits.ts",
+    "verify:stream-lifecycle": "node --conditions=react-server --import tsx --test scripts/verify-stream-lifecycle.ts",
     "verify:export-limits": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-export-rate-limits.ts",
     "verify:forms-schema": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-forms-schema.ts",
     "verify:forms-save": "NODE_OPTIONS=--conditions=react-server tsx scripts/verify-forms-save.ts",

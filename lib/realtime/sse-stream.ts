@@ -53,7 +53,7 @@ function acquireSlot(key: string, maxPerKey: number) {
 
 export type EventEmitFn = (name: string, data: unknown) => boolean;
 
-const tooManyConnections = Response.json(
+const tooManyConnections = () => Response.json(
   { error: "실시간 연결이 너무 많습니다. 열려 있는 다른 탭을 닫고 다시 시도해 주세요." },
   { status: 429, headers: { "Cache-Control": "private, no-store", "Retry-After": "30" } },
 );
@@ -71,7 +71,7 @@ export function createEventStream(options: {
   subscribe: (emit: EventEmitFn, close: () => void) => (() => void) | void;
 }): Response {
   const releaseSlot = acquireSlot(options.connectionKey, options.maxPerKey);
-  if (!releaseSlot) return tooManyConnections;
+  if (!releaseSlot) return tooManyConnections();
 
   let cleanup: (() => void) | undefined;
   let closed = false;
@@ -106,6 +106,7 @@ export function createEventStream(options: {
       // subscribe가 "ready" 이벤트를 동기적으로 보낼 수 있으므로 cleanup을 먼저 정의해 둡니다
       // (그 시점에 write가 실패하면 cleanup이 아직 undefined라 슬롯이 새어 나갔습니다).
       let unsubscribe: (() => void) | void;
+      const onAbort = () => cleanup?.();
       const heartbeat = setInterval(() => {
         write(encoder.encode(`: heartbeat ${Date.now()}\n\n`));
       }, HEARTBEAT_INTERVAL_MS);
@@ -114,10 +115,16 @@ export function createEventStream(options: {
         if (closed) return;
         closed = true;
         clearInterval(heartbeat);
+        options.request.signal.removeEventListener("abort", onAbort);
         try { unsubscribe?.(); } catch { /* 구독 해제 실패가 나머지 정리를 막지 않게 합니다. */ }
         releaseSlot();
         try { controller.close(); } catch { /* 이미 닫혔거나 오류 상태면 무시합니다. */ }
       };
+
+      if (options.request.signal.aborted) {
+        cleanup();
+        return;
+      }
 
       try {
         unsubscribe = options.subscribe(emit, () => cleanup?.());
@@ -126,11 +133,17 @@ export function createEventStream(options: {
         throw error;
       }
 
+      // subscribe 내부에서 동기적으로 닫혔다면 반환된 구독 해제 함수를 뒤늦게 정리합니다.
+      if (closed) {
+        try { unsubscribe?.(); } catch { /* 종료된 구독의 정리 실패는 전파하지 않습니다. */ }
+        return;
+      }
+
       if (options.request.signal.aborted) {
         cleanup();
         return;
       }
-      options.request.signal.addEventListener("abort", () => cleanup?.(), { once: true });
+      options.request.signal.addEventListener("abort", onAbort, { once: true });
     },
     cancel() {
       cleanup?.();

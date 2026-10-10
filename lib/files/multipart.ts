@@ -89,25 +89,18 @@ export async function streamMultipartFile(
       file.on("data", (chunk: Buffer) => { if (upload) upload.size += chunk.length; });
       file.on("limit", () => { truncated = true; });
       writePromise = pipeline(file, createWriteStream(/* turbopackIgnore: true */ temporaryPath, { flags: "wx" }));
+      // 본문 파싱보다 파일 쓰기가 먼저 실패할 수 있으므로 즉시 거부를 처리합니다.
+      // parser와 입력도 종료시켜 모든 쓰기가 끝난 뒤 임시 파일을 삭제할 수 있게 합니다.
+      void writePromise.catch((error: Error) => { parser.destroy(error); });
     });
 
-    await new Promise<void>((resolve, reject) => {
-      const input = Readable.fromWeb(request.body as unknown as NodeReadableStream);
-      const abort = () => input.destroy(new Error("업로드가 취소되었습니다."));
-      let receivedBytes = 0;
-      input.on("data", (chunk: Buffer) => {
-        receivedBytes += chunk.length;
-        if (receivedBytes > maxTotalBytes) input.destroy(new Error("업로드 데이터가 허용 크기를 초과했습니다."));
-      });
-      request.signal.addEventListener("abort", abort, { once: true });
-      input.once("error", reject);
-      parser.once("error", reject);
-      parser.once("close", () => {
-        request.signal.removeEventListener("abort", abort);
-        resolve();
-      });
-      input.pipe(parser);
+    const input = Readable.fromWeb(request.body as unknown as NodeReadableStream);
+    let receivedBytes = 0;
+    input.on("data", (chunk: Buffer) => {
+      receivedBytes += chunk.length;
+      if (receivedBytes > maxTotalBytes) input.destroy(new Error("업로드 데이터가 허용 크기를 초과했습니다."));
     });
+    await pipeline(input, parser, { signal: request.signal });
 
     if (writePromise) await writePromise;
     if (!upload) throw new Error("업로드할 파일이 없습니다.");
@@ -116,7 +109,9 @@ export async function streamMultipartFile(
     if (invalidFields) throw new Error("업로드 항목 형식이 올바르지 않습니다.");
     return Object.assign({}, upload as StreamedUpload, { fields });
   } catch (error) {
+    if (writePromise) await (writePromise as Promise<void>).catch(() => undefined);
     await unlink(/* turbopackIgnore: true */ temporaryPath).catch(() => undefined);
+    if (request.signal.aborted) throw new Error("업로드가 취소되었습니다.");
     throw error;
   }
 }
