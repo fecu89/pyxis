@@ -933,7 +933,7 @@
 .post-inline-composer-header > div:first-child { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
 .post-inline-composer-header span { overflow: hidden; color: var(--muted); font-size: 11px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
 .post-inline-composer-header h2 { margin: 0; color: var(--ink); font-size: 18px; line-height: 1.35; letter-spacing: 0; }
-.post-inline-composer-actions { display: flex; flex: none; align-items: center; gap: 7px; }
+.post-inline-composer-actions { display: flex; min-width: 0; flex: 1; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 7px; }
 .post-inline-composer-actions .composer-header-submit { min-width: 88px; min-height: 40px; }
 .post-inline-composer .composer-form { display: flex; min-height: 0; padding: 0; flex: 1; flex-direction: column; gap: 0; }
 .post-inline-composer .composer-editor-scroll { padding: 26px 30px 32px; overflow: visible; }

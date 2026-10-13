@@ -101,7 +101,9 @@ function UploadQueueRow({
       <span className={styles.copy}>
         <span className={styles.nameRow}>
           <strong>{item.file.name}</strong>
-          <span>{formatSize(item.file.size)} · {item.status === "uploading" && item.progress >= 99 ? "저장 확인 중" : statusLabel[item.status]}</span>
+          <span>{formatSize(item.file.size)} · {item.status === "uploading"
+            ? item.progress >= 100 ? "서버 저장 확인 중" : `업로드 중 ${item.progress}%`
+            : statusLabel[item.status]}</span>
         </span>
         {kind === "AUDIO" && mediaUrl && <audio className={styles.mediaPlayer} controls preload="metadata" src={mediaUrl} />}
         {kind === "VIDEO" && mediaUrl && <video className={`${styles.mediaPlayer} ${styles.video}`} controls preload="metadata" src={mediaUrl} />}
@@ -112,6 +114,7 @@ function UploadQueueRow({
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={item.progress}
+            aria-valuetext={item.status === "queued" ? "업로드 대기" : item.progress >= 100 ? "전송 완료, 서버 저장 확인 중" : `${item.progress}% 전송`}
             aria-label={`${item.file.name} 업로드 진행률`}
           >
             <span className={styles.progressBar} style={{ width: `${item.progress}%` }} />
@@ -152,6 +155,29 @@ function UploadQueueRow({
         )}
       </span>
     </li>
+  );
+}
+
+export type UploadSubmissionPhase = "preparing" | "attachments" | "finalizing";
+
+/** Kept in the composer's fixed header, independent of the attachment list's scroll position. */
+export function UploadProgressSummary({ items, phase }: { items: AttachmentUploadItem[]; phase: UploadSubmissionPhase | null }) {
+  const files = items.filter(item => item.status !== "cancelled");
+  const active = files.filter(item => item.status === "uploading");
+  if (!phase && !active.length) return null;
+  let label = phase === "preparing" ? "게시 준비 중" : "게시물 저장 중";
+  const completed = files.filter(item => item.status === "success").length;
+  if ((phase === "attachments" || !phase) && files.length) {
+    const totalBytes = files.reduce((sum, item) => sum + item.file.size, 0);
+    const sentBytes = files.reduce((sum, item) => sum + item.file.size * (item.status === "success" ? 1 : item.progress / 100), 0);
+    const awaitingSave = active.length > 0 && active.every(item => item.progress >= 100) && !files.some(item => item.status === "queued");
+    label = awaitingSave ? "서버 저장 확인 중" : `전송 ${Math.min(99, totalBytes ? Math.round(sentBytes / totalBytes * 100) : 0)}%`;
+  }
+  return (
+    <div className={styles.summary} role="status" aria-label="게시 진행상황" aria-atomic="true">
+      <strong>{label}</strong>
+      {files.length > 0 && <small>첨부 {completed}/{files.length}개 완료</small>}
+    </div>
   );
 }
 

@@ -7,7 +7,7 @@ import type { AttachmentMetadataInput, AttachmentUploadItem, AttachmentViewData 
 import { useGuestIdentity } from "@/components/pad/guest-identity";
 import { cachedUploadPolicy, fetchUploadPolicy } from "@/lib/files/upload-policy-client";
 import { MediaCapture } from "@/components/pad/attachments/media-capture";
-import { UploadQueueList } from "@/components/pad/attachments/upload-queue-list";
+import { UploadQueueList, UploadProgressSummary, type UploadSubmissionPhase } from "@/components/pad/attachments/upload-queue-list";
 import { useAttachmentUploadQueue } from "@/components/pad/attachments/use-attachment-upload-queue";
 import { DraftRecovery } from "@/components/pad/composer/draft-status";
 import { ComposerAttachmentMetadata } from "@/components/pad/composer/composer-attachment-metadata";
@@ -108,6 +108,7 @@ export function PostComposer({ open, onClose, sectionId, sectionTitle, fieldConf
   const [linkOpen, setLinkOpen] = useState(false);
   const [moreToolsOpen, setMoreToolsOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitPhase, setSubmitPhase] = useState<UploadSubmissionPhase>("preparing");
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
   const [fileError, setFileError] = useState("");
@@ -477,6 +478,7 @@ export function PostComposer({ open, onClose, sectionId, sectionTitle, fieldConf
       setError("첨부 파일 또는 링크를 하나 이상 추가해 주세요.");
       return;
     }
+    setSubmitPhase("preparing");
     setSubmitting(true);
     setError("");
     try {
@@ -498,7 +500,9 @@ export function PostComposer({ open, onClose, sectionId, sectionTitle, fieldConf
       let version = saved.post.version as number;
       setSavedTarget({ id: postId, version });
 
+      setSubmitPhase("attachments");
       const uploadResult = await queue.start(postId);
+      setSubmitPhase("finalizing");
       const replacements = new Map<string, string>();
       for (const item of uploadResult.successful) replacements.set(`upload:${item.id}`, item.attachment.id);
       const uploadedAttachments = new Map<string, AttachmentViewData>([
@@ -573,12 +577,13 @@ export function PostComposer({ open, onClose, sectionId, sectionTitle, fieldConf
     ...links.map((link) => link.url),
   ];
   const submitLabel = submitting ? (post ? "수정 중" : "게시 중") : savedTarget ? "다시 게시하기" : post ? "수정하기" : "게시하기";
+  const progressSummary = <UploadProgressSummary items={queue.items} phase={submitting ? submitPhase : null} />;
 
   const composerForm = (
     <form id={formId} className="composer-form" onSubmit={submit} onPaste={handlePaste}>
         <div className="composer-editor-scroll" onPointerDown={closeToolPanels} onFocusCapture={closeToolPanels}>
           {draft.availableDraft && <DraftRecovery savedAt={draft.availableDraft.savedAt} onRestore={draft.restoreDraft} onDiscard={draft.discardDraft} />}
-          {savedTarget && <div className="composer-partial-save-notice" role="status"><Check size={15} /><span><b>본문은 저장되었습니다.</b><small>실패한 첨부를 재시도한 뒤 다시 게시해 주세요.</small></span></div>}
+          {savedTarget && error && !submitting && !queue.isUploading && <div className="composer-partial-save-notice" role="status"><Check size={15} /><span><b>본문은 저장되었습니다.</b><small>{failedQueueCount > 0 || links.length > 0 ? "실패한 첨부를 재시도한 뒤 다시 게시해 주세요." : "오류를 확인한 뒤 다시 게시해 주세요."}</small></span></div>}
           {fieldConfig.title.visible && <label className="composer-title-field">제목 {fieldConfig.title.required ? <span>필수</span> : <span>선택</span>}<input value={draft.value.title} onChange={(event) => draft.setValue((current) => ({ ...current, title: event.target.value }))} placeholder={fieldConfig.title.placeholder} maxLength={200} required={fieldConfig.title.required} autoFocus /></label>}
           {fieldConfig.body.visible && (
             <div className="composer-body-field">
@@ -666,6 +671,7 @@ export function PostComposer({ open, onClose, sectionId, sectionTitle, fieldConf
             <h2 id={`${formId}-heading`}>게시물 수정</h2>
           </div>
           <div className="post-inline-composer-actions">
+            {progressSummary}
             <button type="button" className="icon-button" onClick={() => void requestCloseComposer()} aria-label="수정 취소" title="수정 취소"><X size={18} /></button>
             <button type="submit" form={formId} className="button primary composer-header-submit" disabled={submitting || queue.isUploading}>{submitting && <LoaderCircle className="spin" size={16} />}{submitLabel}</button>
           </div>
@@ -682,7 +688,7 @@ export function PostComposer({ open, onClose, sectionId, sectionTitle, fieldConf
       title={post ? `${sectionTitle} 게시물 수정` : `${sectionTitle}에 게시물 작성`}
       className="composer-modal"
       variant="composer"
-      headerAction={<button type="submit" form={formId} className="button primary composer-header-submit" disabled={submitting || queue.isUploading}>{submitting && <LoaderCircle className="spin" size={16} />}{submitLabel}</button>}
+      headerAction={<>{progressSummary}<button type="submit" form={formId} className="button primary composer-header-submit" disabled={submitting || queue.isUploading}>{submitting && <LoaderCircle className="spin" size={16} />}{submitLabel}</button></>}
     >
       {composerForm}
     </Modal>

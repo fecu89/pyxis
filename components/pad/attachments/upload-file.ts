@@ -15,8 +15,10 @@ export function uploadAttachmentFile(postId: string, file: File, options: Upload
     request.responseType = "json";
     request.upload.addEventListener("progress", (event) => {
       if (!event.lengthComputable || event.total <= 0) return;
-      options.onProgress(Math.min(99, Math.round((event.loaded / event.total) * 100)));
+      options.onProgress(Math.min(99, Math.floor((event.loaded / event.total) * 100)));
     });
+    // Sending the request body is not the same as receiving a successful save response.
+    request.upload.addEventListener("load", () => options.onProgress(100));
     request.addEventListener("load", () => {
       options.onRequest(null);
       const response = request.response as { attachment?: UploadedAttachment; error?: string } | null;

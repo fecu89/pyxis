@@ -114,10 +114,30 @@
 }
 
 .progressBar {
+  display: block;
   height: 100%;
   border-radius: inherit;
   background: var(--brand);
   transition: width .15s ease;
+}
+
+.summary {
+  display: grid;
+  min-width: 0;
+  max-width: 180px;
+  margin-left: auto;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary strong { color: var(--ink); font-size: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .progressBar { transition: none; }
 }
 
 .error {
