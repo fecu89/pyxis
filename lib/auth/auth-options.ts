@@ -214,10 +214,24 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === "credentials") return Boolean(user.id);
-      if (account?.provider !== "kakao" || !user.email) return false;
-      if (!isVerifiedKakaoProfile(profile as KakaoProfile | undefined)) return false;
+      if (account?.provider !== "kakao") return false;
+      // false를 돌려주면 NextAuth는 로그 없이 AccessDenied 하나로 뭉개므로, 원인별 코드로 보내고
+      // 서버에 사유를 남깁니다(이메일 등 PII는 기록하지 않음).
+      const kakaoAccount = (profile as KakaoProfile | undefined)?.kakao_account;
+      const deny = (reason: string) => {
+        console.warn("[kakao-signin] denied", {
+          reason,
+          hasEmail: Boolean(user.email),
+          emailNeedsAgreement: kakaoAccount?.email_needs_agreement,
+          isEmailValid: kakaoAccount?.is_email_valid,
+          isEmailVerified: kakaoAccount?.is_email_verified,
+        });
+        return `/login?error=${reason}`;
+      };
+      if (!user.email) return deny("KakaoEmailMissing");
+      if (!isVerifiedKakaoProfile(profile as KakaoProfile | undefined)) return deny("KakaoEmailUnverified");
       const existing = await findUserByKakaoEmail(user.email);
-      if (existing) return existing.status === "ACTIVE";
+      if (existing) return existing.status === "ACTIVE" ? true : deny("AccountInactive");
       return (await readSignupConsent()) ? true : await signupConsentRedirect();
     },
     async jwt({ token, user, account }) {

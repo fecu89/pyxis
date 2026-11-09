@@ -1,3 +1,4 @@
+import { authErrorMessage } from "@/lib/auth/auth-error-message";
 import { redirect } from "next/navigation";
 import { getMetadata } from "@/utils/seo/getMetadata";
 import { getCurrentUser } from "@/lib/auth/current-user";
@@ -21,12 +22,6 @@ type LandingSearchParams = {
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
-}
-
-function authErrorMessage(error: string | undefined) {
-  if (!error) return null;
-  if (error === "AccessDenied") return "카카오 계정의 이메일 제공 동의가 필요합니다.";
-  return "카카오 로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.";
 }
 
 export default async function PublicHomePage({
